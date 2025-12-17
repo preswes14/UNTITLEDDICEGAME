@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untitled Dice Game - Floor 1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #eee;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #4a4a6a;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: #ffd700;
+        }
+
+        .floor-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .gold {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* Main game area */
+        .main-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Map Panel */
+        .map-panel {
+            width: 300px;
+            background: rgba(0,0,0,0.4);
+            border-right: 2px solid #4a4a6a;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .map-panel h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #88ccff;
+        }
+
+        .map-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .map-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .map-node {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid #555;
+            position: relative;
+        }
+
+        .map-node.current {
+            border-color: #ffd700;
+            box-shadow: 0 0 15px #ffd700;
+            animation: pulse 1.5s infinite;
+        }
+
+        .map-node.completed {
+            opacity: 0.5;
+            border-color: #4a4a4a;
+        }
+
+        .map-node.locked {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .map-node.available {
+            border-color: #88ff88;
+            cursor: pointer;
+        }
+
+        .map-node.available:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px #88ff88;
+        }
+
+        .map-node.good { background: #2d5a27; }
+        .map-node.bad { background: #5a2727; }
+        .map-node.neutral { background: #5a5a27; }
+        .map-node.boss { background: #5a2757; }
+        .map-node.start { background: #275a5a; }
+
+        .map-path {
+            width: 3px;
+            height: 20px;
+            background: #555;
+            margin: 0 auto;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 15px #ffd700; }
+            50% { box-shadow: 0 0 25px #ffd700; }
+        }
+
+        /* Encounter Panel */
+        .encounter-panel {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .encounter-content {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .encounter-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encounter-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .encounter-type {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .encounter-type.good { background: #2d5a27; }
+        .encounter-type.bad { background: #5a2727; }
+        .encounter-type.neutral { background: #5a5a27; }
+        .encounter-type.boss { background: #5a2757; }
+
+        .encounter-description {
+            flex: 1;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .encounter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .option-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #4a4a6a;
+            color: #fff;
+        }
+
+        .option-btn:hover {
+            background: #6a6a8a;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.physical { background: #8b4513; }
+        .option-btn.verbal { background: #4a6a8a; }
+        .option-btn.preventative { background: #6a4a8a; }
+
+        .option-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Players sidebar */
+        .players-panel {
+            width: 250px;
+            background: rgba(0,0,0,0.4);
+            border-left: 2px solid #4a4a6a;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .player-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .player-card h3 {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .player-hp {
+            color: #ff6b6b;
+        }
+
+        .player-dice {
+            display: flex;
+            gap: 5px;
+        }
+
+        .mini-die {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mini-die.physical { background: #8b4513; }
+        .mini-die.verbal { background: #4a6a8a; }
+        .mini-die.preventative { background: #6a4a8a; }
+
+        .mini-die:hover {
+            transform: scale(1.1);
+        }
+
+        /* Dice Tray */
+        .dice-tray {
+            background: linear-gradient(to bottom, #2a2a3a, #1a1a2a);
+            border-top: 3px solid #4a4a6a;
+            padding: 20px;
+            min-height: 180px;
+        }
+
+        .dice-tray h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #88ccff;
+        }
+
+        .dice-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .player-dice-group {
+            text-align: center;
+        }
+
+        .player-dice-group h4 {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .dice-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .die {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            position: relative;
+        }
+
+        .die.physical { background: linear-gradient(135deg, #8b4513, #a0522d); }
+        .die.verbal { background: linear-gradient(135deg, #4a6a8a, #5a7a9a); }
+        .die.preventative { background: linear-gradient(135deg, #6a4a8a, #7a5a9a); }
+
+        .die:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .die.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        .die.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .die.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .die-name {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .die-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .die.rolling {
+            animation: roll 0.1s infinite;
+        }
+
+        @keyframes roll {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Roll result display */
+        .roll-result {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            padding: 40px 60px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 1000;
+            border: 3px solid #ffd700;
+            display: none;
+        }
+
+        .roll-result.show {
+            display: block;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .roll-result h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .roll-result .result-value {
+            font-size: 5rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .roll-result .result-value.success { color: #4ade80; }
+        .roll-result .result-value.fail { color: #f87171; }
+        .roll-result .result-value.crit { color: #ffd700; text-shadow: 0 0 20px #ffd700; }
+
+        .roll-result .outcome {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .roll-result button {
+            padding: 10px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            background: #4a4a6a;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .roll-result button:hover {
+            background: #6a6a8a;
+        }
+
+        /* Setup screen */
+        .setup-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .setup-screen.hidden {
+            display: none;
+        }
+
+        .setup-screen h1 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .setup-screen .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .setup-content {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .player-setup {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+
+        .player-setup h3 {
+            margin-bottom: 15px;
+        }
+
+        .dice-selection {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .dice-category {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .dice-category h4 {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .dice-option {
+            display: block;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dice-option input {
+            margin-right: 10px;
+        }
+
+        .dice-option.physical { background: rgba(139, 69, 19, 0.3); }
+        .dice-option.verbal { background: rgba(74, 106, 138, 0.3); }
+        .dice-option.preventative { background: rgba(106, 74, 138, 0.3); }
+
+        .dice-option:hover {
+            transform: translateX(5px);
+        }
+
+        .start-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Log */
+        .game-log {
+            position: fixed;
+            bottom: 200px;
+            right: 20px;
+            width: 300px;
+            max-height: 200px;
+            background: rgba(0,0,0,0.8);
+            border-radius: 10px;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            z-index: 100;
+        }
+
+        .log-entry {
+            padding: 5px;
+            border-bottom: 1px solid #333;
+            color: #ccc;
+        }
+
+        .log-entry.success { color: #4ade80; }
+        .log-entry.fail { color: #f87171; }
+        .log-entry.crit { color: #ffd700; }
+        .log-entry.info { color: #88ccff; }
+
+        /* Victory/Defeat screens */
+        .end-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .end-screen.show {
+            display: flex;
+        }
+
+        .end-screen h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .end-screen.victory h1 { color: #ffd700; }
+        .end-screen.defeat h1 { color: #f87171; }
+
+        .end-screen p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #aaa;
+        }
+
+        .end-screen button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            background: #4a4a6a;
+            border: none;
+            color: white;
+            border-radius: 8px;
+        }
+
+        /* Upgrade modal */
+        .upgrade-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1500;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .upgrade-modal.show {
+            display: flex;
+        }
+
+        .upgrade-content {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .upgrade-content h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .upgrade-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .upgrade-option {
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .upgrade-option:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+
+        .upgrade-option h4 {
+            color: #88ccff;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Setup Screen -->
+    <div class="setup-screen" id="setupScreen">
+        <h1>UNTITLED DICE GAME</h1>
+        <p class="subtitle">Floor 1: The Dirty Innkeeper</p>
+        <div class="setup-content">
+            <div class="player-setup" id="player1Setup">
+                <h3>Player 1 - Choose Your Dice</h3>
+                <div class="dice-selection">
+                    <div class="dice-category">
+                        <h4>Physical</h4>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p1physical" value="slash" checked> Slash
+                        </label>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p1physical" value="stab"> Stab
+                        </label>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p1physical" value="bonk"> Bonk
+                        </label>
+                    </div>
+                    <div class="dice-category">
+                        <h4>Verbal</h4>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p1verbal" value="threaten" checked> Threaten
+                        </label>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p1verbal" value="deceive"> Deceive
+                        </label>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p1verbal" value="persuade"> Persuade
+                        </label>
+                    </div>
+                    <div class="dice-category">
+                        <h4>Preventative</h4>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p1preventative" value="bribe" checked> Bribe
+                        </label>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p1preventative" value="hide"> Hide
+                        </label>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p1preventative" value="grapple"> Grapple
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="player-setup" id="player2Setup">
+                <h3>Player 2 - Choose Your Dice</h3>
+                <div class="dice-selection">
+                    <div class="dice-category">
+                        <h4>Physical</h4>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p2physical" value="slash"> Slash
+                        </label>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p2physical" value="stab" checked> Stab
+                        </label>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p2physical" value="bonk"> Bonk
+                        </label>
+                    </div>
+                    <div class="dice-category">
+                        <h4>Verbal</h4>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p2verbal" value="threaten"> Threaten
+                        </label>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p2verbal" value="deceive" checked> Deceive
+                        </label>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p2verbal" value="persuade"> Persuade
+                        </label>
+                    </div>
+                    <div class="dice-category">
+                        <h4>Preventative</h4>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p2preventative" value="bribe"> Bribe
+                        </label>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p2preventative" value="hide" checked> Hide
+                        </label>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p2preventative" value="grapple"> Grapple
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="player-setup" id="player3Setup">
+                <h3>Player 3 - Choose Your Dice</h3>
+                <div class="dice-selection">
+                    <div class="dice-category">
+                        <h4>Physical</h4>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p3physical" value="slash"> Slash
+                        </label>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p3physical" value="stab"> Stab
+                        </label>
+                        <label class="dice-option physical">
+                            <input type="radio" name="p3physical" value="bonk" checked> Bonk
+                        </label>
+                    </div>
+                    <div class="dice-category">
+                        <h4>Verbal</h4>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p3verbal" value="threaten"> Threaten
+                        </label>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p3verbal" value="deceive"> Deceive
+                        </label>
+                        <label class="dice-option verbal">
+                            <input type="radio" name="p3verbal" value="persuade" checked> Persuade
+                        </label>
+                    </div>
+                    <div class="dice-category">
+                        <h4>Preventative</h4>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p3preventative" value="bribe"> Bribe
+                        </label>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p3preventative" value="hide"> Hide
+                        </label>
+                        <label class="dice-option preventative">
+                            <input type="radio" name="p3preventative" value="grapple" checked> Grapple
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="start-btn" onclick="startGame()">BEGIN ADVENTURE</button>
+        </div>
+    </div>
+
+    <!-- Main Game -->
+    <div class="game-container">
+        <div class="header">
+            <h1>UNTITLED DICE GAME</h1>
+            <div class="floor-info">
+                <span>Floor 1: The Dirty Innkeeper</span>
+                <span class="gold" id="goldDisplay">Gold: 0</span>
+            </div>
+        </div>
+
+        <div class="main-area">
+            <!-- Map -->
+            <div class="map-panel">
+                <h2>Map</h2>
+                <div class="map-container" id="mapContainer">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+
+            <!-- Encounter -->
+            <div class="encounter-panel">
+                <div class="encounter-content" id="encounterContent">
+                    <div class="encounter-header">
+                        <h2 id="encounterTitle">Select a location on the map</h2>
+                        <span class="encounter-type" id="encounterType" style="display:none;"></span>
+                    </div>
+                    <div class="encounter-description" id="encounterDescription">
+                        <p>Your party stands at the entrance of The Rusty Tankard inn. Rumors say the innkeeper has been overcharging travelers and worse...</p>
+                        <p style="margin-top:15px;">Choose your path wisely. Each icon represents a different type of encounter:</p>
+                        <ul style="margin-top:10px; margin-left:20px;">
+                            <li style="color:#4ade80;">🛡️ Good - Safe encounters, upgrades</li>
+                            <li style="color:#f87171;">⚔️ Bad - Combat, risk for reward</li>
+                            <li style="color:#ffd700;">❓ Neutral - Could go either way</li>
+                            <li style="color:#c084fc;">👑 Boss - The Dirty Innkeeper awaits</li>
+                        </ul>
+                    </div>
+                    <div class="encounter-options" id="encounterOptions">
+                        <!-- Options appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Players -->
+            <div class="players-panel">
+                <h3 style="margin-bottom:15px;">Party</h3>
+                <div id="playersDisplay">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Dice Tray -->
+        <div class="dice-tray">
+            <h3>Dice Tray - Click a die to roll</h3>
+            <div class="dice-grid" id="diceTray">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Roll Result Modal -->
+    <div class="roll-result" id="rollResult">
+        <h2 id="rollDieName">Rolling...</h2>
+        <div class="result-value" id="rollValue">?</div>
+        <div class="outcome" id="rollOutcome"></div>
+        <button onclick="closeRollResult()">Continue</button>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div class="upgrade-modal" id="upgradeModal">
+        <div class="upgrade-content">
+            <h2 id="upgradeTitle">Choose an Upgrade</h2>
+            <p id="upgradeDescription"></p>
+            <div class="upgrade-options" id="upgradeOptions">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Log -->
+    <div class="game-log" id="gameLog">
+        <div class="log-entry info">Welcome to Floor 1!</div>
+    </div>
+
+    <!-- End Screens -->
+    <div class="end-screen victory" id="victoryScreen">
+        <h1>VICTORY!</h1>
+        <p>You have defeated the Dirty Innkeeper!</p>
+        <p>Floor 2 awaits...</p>
+        <button onclick="location.reload()">Play Again</button>
+    </div>
+
+    <div class="end-screen defeat" id="defeatScreen">
+        <h1>DEFEAT</h1>
+        <p>Your party has fallen...</p>
+        <button onclick="location.reload()">Try Again</button>
+    </div>
+
+    <script>
+        // Game State
+        const gameState = {
+            gold: 0,
+            currentNode: 0,
+            players: [],
+            map: [],
+            currentEncounter: null,
+            encounterState: null,
+            rollsNeeded: 0,
+            rollsMade: 0,
+            targetDC: 10,
+            canRoll: false,
+            allowedDiceTypes: ['physical', 'verbal', 'preventative']
+        };
+
+        // Dice definitions
+        const DICE_TYPES = {
+            // Physical
+            slash: { name: 'Slash', category: 'physical', description: 'A sweeping blade attack' },
+            stab: { name: 'Stab', category: 'physical', description: 'A precise piercing strike' },
+            bonk: { name: 'Bonk', category: 'physical', description: 'A solid blunt hit' },
+            // Verbal
+            threaten: { name: 'Threaten', category: 'verbal', description: 'Intimidate your foe' },
+            deceive: { name: 'Deceive', category: 'verbal', description: 'Lie convincingly' },
+            persuade: { name: 'Persuade', category: 'verbal', description: 'Appeal to reason' },
+            // Preventative
+            bribe: { name: 'Bribe', category: 'preventative', description: 'Money talks' },
+            hide: { name: 'Hide', category: 'preventative', description: 'Avoid detection' },
+            grapple: { name: 'Grapple', category: 'preventative', description: 'Hold them in place' }
+        };
+
+        // Encounter definitions
+        const ENCOUNTERS = {
+            start: {
+                type: 'start',
+                name: 'The Rusty Tankard',
+                description: 'You enter the dingy inn. The air smells of stale ale and something worse...',
+                icon: '🏠'
+            },
+            mathematician: {
+                type: 'good',
+                name: 'The Mathematician',
+                description: 'A strange old man with ink-stained fingers beckons you. "Numbers are my trade. For a small fee, I can... adjust your dice."',
+                icon: '🔢',
+                options: [
+                    { text: 'Pay 10 Gold: +1 to a die face', cost: 10, action: 'upgrade_plus1' },
+                    { text: 'Pay 25 Gold: +2 to a die face', cost: 25, action: 'upgrade_plus2' },
+                    { text: 'Leave', action: 'leave' }
+                ]
+            },
+            gambler: {
+                type: 'good',
+                name: 'The Gambler',
+                description: 'A shifty-eyed woman shuffles cards. "Care for a wager? Roll above 15 and I\'ll double your gold. Fail, and... well."',
+                icon: '🎰',
+                options: [
+                    { text: 'Gamble 20 Gold', cost: 20, action: 'gamble', dc: 15 },
+                    { text: 'Leave', action: 'leave' }
+                ]
+            },
+            bandits: {
+                type: 'bad',
+                name: 'Bandit Ambush!',
+                description: 'Three rough-looking thugs block your path! "Your gold or your lives!" They look like they mean business.',
+                icon: '⚔️',
+                dc: 12,
+                hp: 30,
+                reward: 30,
+                options: [
+                    { text: 'Fight! (Physical)', types: ['physical'], action: 'combat' },
+                    { text: 'Intimidate (Verbal)', types: ['verbal'], action: 'combat' },
+                    { text: 'Try to slip away (Preventative)', types: ['preventative'], action: 'combat' }
+                ]
+            },
+            guards: {
+                type: 'bad',
+                name: 'Corrupt Guards',
+                description: 'Two city guards eye you suspiciously. "You look like troublemakers. Pay the \'peace tax\' or face justice."',
+                icon: '🛡️',
+                dc: 13,
+                hp: 25,
+                reward: 25,
+                options: [
+                    { text: 'Resist! (Physical)', types: ['physical'], action: 'combat' },
+                    { text: 'Talk your way out (Verbal)', types: ['verbal'], action: 'combat' },
+                    { text: 'Bribe or Hide (Preventative)', types: ['preventative'], action: 'combat' }
+                ]
+            },
+            ferryman: {
+                type: 'neutral',
+                name: 'The Ferryman',
+                description: 'An ancient boatman waits by a underground river. "I\'ll take you across... but you must roll a die. Whatever happens to it, happens to me." He grins mysteriously.',
+                icon: '⛵',
+                options: [
+                    { text: 'Accept his offer', action: 'ferryman_roll' },
+                    { text: 'Find another way', action: 'leave' }
+                ]
+            },
+            trapper: {
+                type: 'neutral',
+                name: 'The Trapper',
+                description: 'A grizzled hunter displays a collection of strange dice. "Found these in the dungeon. Yours for trade."',
+                icon: '🪤',
+                options: [
+                    { text: 'Trade: Swap a low roll for a random swap', action: 'trapper_trade' },
+                    { text: 'Leave', action: 'leave' }
+                ]
+            },
+            miniboss: {
+                type: 'bad',
+                name: 'The Innkeeper\'s Thug',
+                description: 'A massive bouncer blocks the stairs. "Boss don\'t want visitors." His fists look like hammers.',
+                icon: '💪',
+                dc: 14,
+                hp: 40,
+                reward: 40,
+                options: [
+                    { text: 'Overpower him (Physical)', types: ['physical'], action: 'combat' },
+                    { text: 'Convince him (Verbal)', types: ['verbal'], action: 'combat' },
+                    { text: 'Distract and slip by (Preventative)', types: ['preventative'], action: 'combat' }
+                ]
+            },
+            boss: {
+                type: 'boss',
+                name: 'The Dirty Innkeeper',
+                description: 'The innkeeper reveals his true nature - a cunning crime lord! "You\'ve meddled enough. Time to deal with you personally." He draws a hidden blade.',
+                icon: '👑',
+                dc: 15,
+                hp: 60,
+                reward: 100,
+                options: [
+                    { text: 'Attack! (Physical)', types: ['physical'], action: 'combat' },
+                    { text: 'Expose his crimes (Verbal)', types: ['verbal'], action: 'combat' },
+                    { text: 'Defensive stance (Preventative)', types: ['preventative'], action: 'combat' }
+                ]
+            }
+        };
+
+        // Initialize game
+        function startGame() {
+            // Get player selections
+            for (let p = 1; p <= 3; p++) {
+                const physical = document.querySelector(`input[name="p${p}physical"]:checked`).value;
+                const verbal = document.querySelector(`input[name="p${p}verbal"]:checked`).value;
+                const preventative = document.querySelector(`input[name="p${p}preventative"]:checked`).value;
+
+                gameState.players.push({
+                    id: p,
+                    name: `Player ${p}`,
+                    hp: 20,
+                    maxHp: 20,
+                    dice: {
+                        physical: createDie(physical),
+                        verbal: createDie(verbal),
+                        preventative: createDie(preventative)
+                    }
+                });
+            }
+
+            // Generate map
+            generateMap();
+
+            // Hide setup, show game
+            document.getElementById('setupScreen').classList.add('hidden');
+
+            // Render UI
+            renderMap();
+            renderPlayers();
+            renderDiceTray();
+
+            // Start at first node
+            gameState.map[0].status = 'current';
+            renderMap();
+
+            log('Your adventure begins...', 'info');
+        }
+
+        function createDie(type) {
+            return {
+                type: type,
+                ...DICE_TYPES[type],
+                // Each face of the d20 - can be modified!
+                faces: Array.from({length: 20}, (_, i) => i + 1),
+                lastRoll: null
+            };
+        }
+
+        function generateMap() {
+            // Floor 1 map structure (simplified)
+            const mapStructure = [
+                { encounter: 'start', row: 0 },
+                { encounter: 'mathematician', row: 1 },
+                { encounter: 'bandits', row: 1 },
+                { encounter: 'ferryman', row: 2 },
+                { encounter: 'guards', row: 2 },
+                { encounter: 'gambler', row: 3 },
+                { encounter: 'trapper', row: 3 },
+                { encounter: 'miniboss', row: 4 },
+                { encounter: 'boss', row: 5 }
+            ];
+
+            gameState.map = mapStructure.map((node, index) => ({
+                id: index,
+                ...ENCOUNTERS[node.encounter],
+                encounterKey: node.encounter,
+                row: node.row,
+                status: index === 0 ? 'current' : 'locked',
+                connections: []
+            }));
+
+            // Set up connections (which nodes lead to which)
+            // Start -> mathematician, bandits
+            gameState.map[0].connections = [1, 2];
+            // mathematician -> ferryman, guards
+            gameState.map[1].connections = [3, 4];
+            // bandits -> ferryman, guards
+            gameState.map[2].connections = [3, 4];
+            // ferryman -> gambler, trapper
+            gameState.map[3].connections = [5, 6];
+            // guards -> gambler, trapper
+            gameState.map[4].connections = [5, 6];
+            // gambler -> miniboss
+            gameState.map[5].connections = [7];
+            // trapper -> miniboss
+            gameState.map[6].connections = [7];
+            // miniboss -> boss
+            gameState.map[7].connections = [8];
+        }
+
+        function renderMap() {
+            const container = document.getElementById('mapContainer');
+            container.innerHTML = '';
+
+            // Group by rows
+            const rows = {};
+            gameState.map.forEach(node => {
+                if (!rows[node.row]) rows[node.row] = [];
+                rows[node.row].push(node);
+            });
+
+            // Render from bottom to top (boss at top)
+            const rowKeys = Object.keys(rows).sort((a, b) => b - a);
+
+            rowKeys.forEach((rowKey, rowIndex) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'map-row';
+
+                rows[rowKey].forEach(node => {
+                    const nodeDiv = document.createElement('div');
+                    nodeDiv.className = `map-node ${node.type} ${node.status}`;
+                    nodeDiv.innerHTML = node.icon;
+                    nodeDiv.title = node.name;
+
+                    if (node.status === 'available') {
+                        nodeDiv.onclick = () => selectNode(node.id);
+                    }
+
+                    rowDiv.appendChild(nodeDiv);
+                });
+
+                container.appendChild(rowDiv);
+
+                // Add path lines between rows (except after last)
+                if (rowIndex < rowKeys.length - 1) {
+                    const pathDiv = document.createElement('div');
+                    pathDiv.className = 'map-path';
+                    container.appendChild(pathDiv);
+                }
+            });
+        }
+
+        function selectNode(nodeId) {
+            const node = gameState.map[nodeId];
+            if (node.status !== 'available') return;
+
+            // Mark current as completed
+            const currentNode = gameState.map.find(n => n.status === 'current');
+            if (currentNode) currentNode.status = 'completed';
+
+            // Mark new node as current
+            node.status = 'current';
+            gameState.currentNode = nodeId;
+            gameState.currentEncounter = node;
+
+            // Unlock connected nodes
+            node.connections.forEach(connId => {
+                if (gameState.map[connId].status === 'locked') {
+                    gameState.map[connId].status = 'available';
+                }
+            });
+
+            renderMap();
+            showEncounter(node);
+            log(`Entered: ${node.name}`, 'info');
+        }
+
+        function showEncounter(node) {
+            document.getElementById('encounterTitle').textContent = node.name;
+            document.getElementById('encounterDescription').innerHTML = `<p>${node.description}</p>`;
+
+            const typeSpan = document.getElementById('encounterType');
+            typeSpan.style.display = 'inline-block';
+            typeSpan.className = `encounter-type ${node.type}`;
+            typeSpan.textContent = node.type.toUpperCase();
+
+            const optionsDiv = document.getElementById('encounterOptions');
+            optionsDiv.innerHTML = '';
+
+            if (node.options) {
+                node.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    if (opt.types) btn.classList.add(opt.types[0]);
+                    btn.textContent = opt.text;
+
+                    if (opt.cost && gameState.gold < opt.cost) {
+                        btn.disabled = true;
+                        btn.title = 'Not enough gold';
+                    }
+
+                    btn.onclick = () => handleOption(opt, node);
+                    optionsDiv.appendChild(btn);
+                });
+            }
+
+            // Reset encounter state
+            gameState.encounterState = {
+                enemyHp: node.hp || 0,
+                damage: 0
+            };
+            gameState.canRoll = false;
+            gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
+            renderDiceTray();
+        }
+
+        function handleOption(option, node) {
+            switch(option.action) {
+                case 'leave':
+                    completeEncounter();
+                    break;
+                case 'combat':
+                    startCombat(option, node);
+                    break;
+                case 'upgrade_plus1':
+                    if (spendGold(option.cost)) {
+                        showUpgradeModal(1);
+                    }
+                    break;
+                case 'upgrade_plus2':
+                    if (spendGold(option.cost)) {
+                        showUpgradeModal(2);
+                    }
+                    break;
+                case 'gamble':
+                    if (spendGold(option.cost)) {
+                        gameState.canRoll = true;
+                        gameState.targetDC = option.dc;
+                        gameState.encounterState = {
+                            type: 'gamble',
+                            wager: option.cost
+                        };
+                        document.getElementById('encounterDescription').innerHTML +=
+                            '<p style="color:#ffd700;margin-top:15px;">Roll any die! Beat 15 to double your wager!</p>';
+                        renderDiceTray();
+                    }
+                    break;
+                case 'ferryman_roll':
+                    gameState.canRoll = true;
+                    gameState.encounterState = { type: 'ferryman' };
+                    document.getElementById('encounterDescription').innerHTML +=
+                        '<p style="color:#88ccff;margin-top:15px;">Choose any die to roll for the Ferryman...</p>';
+                    renderDiceTray();
+                    break;
+                case 'trapper_trade':
+                    showTrapperTrade();
+                    break;
+            }
+        }
+
+        function startCombat(option, node) {
+            gameState.canRoll = true;
+            gameState.targetDC = node.dc;
+            gameState.allowedDiceTypes = option.types;
+            gameState.encounterState = {
+                type: 'combat',
+                enemyHp: node.hp,
+                enemyName: node.name,
+                reward: node.reward,
+                isBoss: node.type === 'boss'
+            };
+
+            document.getElementById('encounterDescription').innerHTML = `
+                <p>${node.description}</p>
+                <div style="margin-top:20px; padding:15px; background:rgba(255,0,0,0.2); border-radius:8px;">
+                    <h3>${node.name}</h3>
+                    <p>HP: <span id="enemyHp">${node.hp}</span> / ${node.hp}</p>
+                    <p>DC to hit: ${node.dc}</p>
+                </div>
+                <p style="margin-top:15px; color:#88ccff;">Roll ${option.types.join(' or ')} dice to attack!</p>
+            `;
+
+            document.getElementById('encounterOptions').innerHTML = '';
+            renderDiceTray();
+        }
+
+        function rollDie(playerIndex, dieType) {
+            if (!gameState.canRoll) return;
+
+            const player = gameState.players[playerIndex];
+            const die = player.dice[dieType];
+
+            if (!gameState.allowedDiceTypes.includes(die.category)) {
+                log(`Can't use ${die.name} here!`, 'fail');
+                return;
+            }
+
+            // Visual rolling animation
+            const dieElement = document.querySelector(`[data-player="${playerIndex}"][data-type="${dieType}"]`);
+            dieElement.classList.add('rolling');
+
+            // Roll after animation
+            setTimeout(() => {
+                dieElement.classList.remove('rolling');
+
+                // Get result from the die's faces
+                const faceIndex = Math.floor(Math.random() * 20);
+                const result = die.faces[faceIndex];
+                die.lastRoll = result;
+
+                showRollResult(player, die, result);
+            }, 500);
+        }
+
+        function showRollResult(player, die, result) {
+            const modal = document.getElementById('rollResult');
+            const valueEl = document.getElementById('rollValue');
+            const outcomeEl = document.getElementById('rollOutcome');
+
+            document.getElementById('rollDieName').textContent = `${player.name}'s ${die.name}`;
+            valueEl.textContent = result;
+
+            // Determine outcome class
+            valueEl.className = 'result-value';
+            if (result === 20) {
+                valueEl.classList.add('crit');
+                outcomeEl.textContent = 'NATURAL 20!';
+            } else if (result === 1) {
+                valueEl.classList.add('fail');
+                outcomeEl.textContent = 'CRITICAL FAIL!';
+            } else if (result >= gameState.targetDC) {
+                valueEl.classList.add('success');
+                outcomeEl.textContent = 'Success!';
+            } else {
+                valueEl.classList.add('fail');
+                outcomeEl.textContent = 'Failed...';
+            }
+
+            modal.classList.add('show');
+
+            // Process result
+            processRollResult(player, die, result);
+        }
+
+        function processRollResult(player, die, result) {
+            const state = gameState.encounterState;
+
+            if (state.type === 'combat') {
+                if (result >= gameState.targetDC || result === 20) {
+                    // Hit!
+                    let damage = result;
+                    if (result === 20) damage = 40; // Crit!
+
+                    state.enemyHp -= damage;
+                    log(`${player.name}'s ${die.name} deals ${damage} damage!`, result === 20 ? 'crit' : 'success');
+
+                    if (state.enemyHp <= 0) {
+                        // Victory!
+                        gameState.canRoll = false;
+                        document.getElementById('rollOutcome').textContent += ' ENEMY DEFEATED!';
+                        addGold(state.reward);
+
+                        if (state.isBoss) {
+                            setTimeout(() => {
+                                document.getElementById('victoryScreen').classList.add('show');
+                            }, 1500);
+                        }
+                    } else {
+                        document.getElementById('enemyHp').textContent = state.enemyHp;
+                    }
+                } else {
+                    // Miss - enemy counterattacks
+                    const damage = Math.floor(Math.random() * 5) + 3;
+                    player.hp -= damage;
+                    log(`Miss! ${state.enemyName} hits ${player.name} for ${damage} damage!`, 'fail');
+
+                    if (player.hp <= 0) {
+                        player.hp = 0;
+                        log(`${player.name} has fallen!`, 'fail');
+                    }
+
+                    // Check party wipe
+                    if (gameState.players.every(p => p.hp <= 0)) {
+                        gameState.canRoll = false;
+                        setTimeout(() => {
+                            document.getElementById('defeatScreen').classList.add('show');
+                        }, 1500);
+                    }
+
+                    renderPlayers();
+                }
+            } else if (state.type === 'gamble') {
+                if (result >= gameState.targetDC) {
+                    addGold(state.wager * 2);
+                    log(`Won the gamble! +${state.wager * 2} gold!`, 'crit');
+                } else {
+                    log('Lost the gamble...', 'fail');
+                }
+                gameState.canRoll = false;
+                setTimeout(completeEncounter, 1500);
+            } else if (state.type === 'ferryman') {
+                // Narrative outcome based on roll
+                let narrative = '';
+                if (result >= 15) {
+                    narrative = 'The Ferryman grins as luck favors him. He rows you across swiftly.';
+                    addGold(10);
+                } else if (result >= 10) {
+                    narrative = 'The Ferryman nods stoically. A fair crossing.';
+                } else if (result >= 5) {
+                    narrative = 'The Ferryman winces as misfortune touches him. The boat rocks dangerously.';
+                } else {
+                    narrative = 'The Ferryman howls as terrible luck befalls him! He barely gets you across before collapsing.';
+                }
+                log(narrative, result >= 10 ? 'success' : 'fail');
+                document.getElementById('rollOutcome').textContent = narrative;
+                gameState.canRoll = false;
+                setTimeout(completeEncounter, 2000);
+            }
+
+            renderDiceTray();
+        }
+
+        function closeRollResult() {
+            document.getElementById('rollResult').classList.remove('show');
+        }
+
+        function completeEncounter() {
+            document.getElementById('encounterTitle').textContent = 'Choose your next path';
+            document.getElementById('encounterType').style.display = 'none';
+            document.getElementById('encounterDescription').innerHTML = '<p>Select an available location on the map to continue your journey.</p>';
+            document.getElementById('encounterOptions').innerHTML = '';
+            gameState.canRoll = false;
+            gameState.currentEncounter = null;
+            renderDiceTray();
+        }
+
+        function showUpgradeModal(amount) {
+            const modal = document.getElementById('upgradeModal');
+            const options = document.getElementById('upgradeOptions');
+
+            document.getElementById('upgradeTitle').textContent = `Add +${amount} to a Die Face`;
+            document.getElementById('upgradeDescription').textContent = 'Choose which die to upgrade:';
+
+            options.innerHTML = '';
+
+            gameState.players.forEach((player, pIdx) => {
+                Object.entries(player.dice).forEach(([type, die]) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'upgrade-option';
+                    opt.innerHTML = `
+                        <h4>${player.name}'s ${die.name}</h4>
+                        <p>Current lowest: ${Math.min(...die.faces)}</p>
+                    `;
+                    opt.onclick = () => {
+                        // Find lowest face and increase it
+                        const minIdx = die.faces.indexOf(Math.min(...die.faces));
+                        die.faces[minIdx] += amount;
+                        log(`Upgraded ${player.name}'s ${die.name}! Face ${minIdx + 1}: ${die.faces[minIdx] - amount} → ${die.faces[minIdx]}`, 'success');
+                        modal.classList.remove('show');
+                        renderDiceTray();
+                        completeEncounter();
+                    };
+                    options.appendChild(opt);
+                });
+            });
+
+            modal.classList.add('show');
+        }
+
+        function showTrapperTrade() {
+            const modal = document.getElementById('upgradeModal');
+            document.getElementById('upgradeTitle').textContent = 'The Trapper\'s Trade';
+            document.getElementById('upgradeDescription').textContent = 'Swap your lowest die face with a random value (1-20):';
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            gameState.players.forEach((player, pIdx) => {
+                Object.entries(player.dice).forEach(([type, die]) => {
+                    const minVal = Math.min(...die.faces);
+                    const opt = document.createElement('div');
+                    opt.className = 'upgrade-option';
+                    opt.innerHTML = `
+                        <h4>${player.name}'s ${die.name}</h4>
+                        <p>Trade away: ${minVal}</p>
+                    `;
+                    opt.onclick = () => {
+                        const minIdx = die.faces.indexOf(minVal);
+                        const newVal = Math.floor(Math.random() * 20) + 1;
+                        die.faces[minIdx] = newVal;
+                        log(`Traded! ${player.name}'s ${die.name}: ${minVal} → ${newVal}`, newVal > minVal ? 'success' : 'fail');
+                        modal.classList.remove('show');
+                        renderDiceTray();
+                        completeEncounter();
+                    };
+                    options.appendChild(opt);
+                });
+            });
+
+            modal.classList.add('show');
+        }
+
+        function renderPlayers() {
+            const container = document.getElementById('playersDisplay');
+            container.innerHTML = '';
+
+            gameState.players.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'player-card';
+
+                const hpPercent = (player.hp / player.maxHp) * 100;
+                const hpColor = hpPercent > 50 ? '#4ade80' : hpPercent > 25 ? '#ffd700' : '#f87171';
+
+                card.innerHTML = `
+                    <h3>${player.name} <span class="player-hp" style="color:${hpColor}">♥ ${player.hp}/${player.maxHp}</span></h3>
+                    <div class="player-dice">
+                        ${Object.entries(player.dice).map(([type, die]) => `
+                            <div class="mini-die ${die.category}" title="${die.name}">
+                                ${die.name.substring(0, 3)}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderDiceTray() {
+            const tray = document.getElementById('diceTray');
+            tray.innerHTML = '';
+
+            gameState.players.forEach((player, pIdx) => {
+                const group = document.createElement('div');
+                group.className = 'player-dice-group';
+                group.innerHTML = `<h4>${player.name}</h4>`;
+
+                const row = document.createElement('div');
+                row.className = 'dice-row';
+
+                Object.entries(player.dice).forEach(([type, die]) => {
+                    const dieEl = document.createElement('div');
+                    dieEl.className = `die ${die.category}`;
+                    dieEl.dataset.player = pIdx;
+                    dieEl.dataset.type = type;
+
+                    const canUse = gameState.canRoll &&
+                                   gameState.allowedDiceTypes.includes(die.category) &&
+                                   player.hp > 0;
+
+                    if (!canUse) {
+                        dieEl.classList.add('disabled');
+                    } else {
+                        dieEl.onclick = () => rollDie(pIdx, type);
+                    }
+
+                    dieEl.innerHTML = `
+                        <span class="die-name">${die.name}</span>
+                        <span class="die-value">${die.lastRoll || 'd20'}</span>
+                    `;
+
+                    row.appendChild(dieEl);
+                });
+
+                group.appendChild(row);
+                tray.appendChild(group);
+            });
+        }
+
+        function addGold(amount) {
+            gameState.gold += amount;
+            document.getElementById('goldDisplay').textContent = `Gold: ${gameState.gold}`;
+            log(`+${amount} Gold!`, 'crit');
+        }
+
+        function spendGold(amount) {
+            if (gameState.gold >= amount) {
+                gameState.gold -= amount;
+                document.getElementById('goldDisplay').textContent = `Gold: ${gameState.gold}`;
+                return true;
+            }
+            return false;
+        }
+
+        function log(message, type = '') {
+            const logDiv = document.getElementById('gameLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = message;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // Mark starting node connections as available
+        document.addEventListener('DOMContentLoaded', () => {
+            // Nothing needed here - startGame handles initialization
+        });
+    </script>
+</body>
+</html>
