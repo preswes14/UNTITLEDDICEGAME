@@ -428,7 +428,7 @@
         .map-panel {
             width: 280px;
             background: rgba(0, 0, 0, 0.4);
-            border-right: 2px solid #4a4a6a;
+            border-left: 2px solid #4a4a6a;
             padding: 15px;
             overflow-y: auto;
         }
@@ -611,7 +611,7 @@
         .players-panel {
             width: 220px;
             background: rgba(0, 0, 0, 0.4);
-            border-left: 2px solid #4a4a6a;
+            border-right: 2px solid #4a4a6a;
             padding: 15px;
             overflow-y: auto;
         }
@@ -981,7 +981,7 @@
         .game-log {
             position: fixed;
             bottom: 180px;
-            right: 15px;
+            left: 15px;
             width: 280px;
             max-height: 180px;
             background: rgba(0, 0, 0, 0.85);
@@ -1250,27 +1250,28 @@
             </div>
 
             <div class="main-area">
-                <div class="map-panel">
-                    <h2>🗺️ Map</h2>
-                    <div class="map-container" id="mapContainer"></div>
+                <div class="players-panel">
+                    <h3>⚔️ Party</h3>
+                    <div id="playersDisplay"></div>
                 </div>
 
                 <div class="encounter-panel">
                     <div class="encounter-content" id="encounterContent">
                         <div class="encounter-header">
-                            <h2 id="encounterTitle">Select a location</h2>
+                            <h2 id="encounterTitle">The Rusty Tankard</h2>
                             <span class="encounter-type" id="encounterType" style="display:none;"></span>
                         </div>
                         <div class="encounter-description" id="encounterDescription">
-                            <p>Your party stands at the entrance of The Rusty Tankard inn. Rumors speak of the innkeeper's shady dealings...</p>
+                            <p>Your party arrives at The Rusty Tankard inn as dusk settles over the town. Rumors of the innkeeper's shady dealings have reached your ears...</p>
+                            <p style="margin-top:15px;">Click the <strong>🏠 house icon</strong> on the map to enter and begin your adventure.</p>
                         </div>
                         <div class="encounter-options" id="encounterOptions"></div>
                     </div>
                 </div>
 
-                <div class="players-panel">
-                    <h3>⚔️ Party</h3>
-                    <div id="playersDisplay"></div>
+                <div class="map-panel">
+                    <h2>🗺️ Map</h2>
+                    <div class="map-container" id="mapContainer"></div>
                 </div>
             </div>
 
@@ -1374,8 +1375,11 @@
             start: {
                 type: 'start',
                 name: 'The Rusty Tankard',
-                description: 'You enter the dingy inn. The air smells of stale ale and something worse...',
-                icon: '🏠'
+                description: 'You push open the creaky door and enter the dingy inn. The air smells of stale ale and something worse. Shadowy figures huddle in corners, and the innkeeper watches you with suspicious eyes.',
+                icon: '🏠',
+                options: [
+                    { text: 'Look around and proceed', action: 'leave' }
+                ]
             },
             mathematician: {
                 type: 'good',
@@ -1527,11 +1531,12 @@
             renderPlayers();
             renderDiceTray();
 
-            gameState.map[0].status = 'current';
+            // First node starts as 'available' so player can click to begin
+            gameState.map[0].status = 'available';
             renderMap();
 
             document.getElementById('gameLog').innerHTML = '<h4>📜 Log</h4>';
-            log('Your adventure begins...', 'info');
+            log('Click the inn to begin...', 'info');
         }
 
         function createDie(type) {
