@@ -1,18 +1,26 @@
 # UNTITLED DICE GAME
 
-Brainstorming and initial coding for Untitled Dice Game
+A companion app for collaborative TTRPG action. Designed for 3 players.
 
 ---
 
-## Overview
+## Table of Contents
 
-This is a companion app / guide for collaborative TTRPG action. By default, the game is designed for 3 players.
+1. [Core Mechanics](#core-mechanics)
+2. [The Core Innovation: Dice Swapping](#the-core-innovation-dice-swapping)
+3. [Progression & Rewards](#progression--rewards)
+4. [DOOM & HOPE System](#doom--hope-system)
+5. [Encounters & Map Structure](#encounters--map-structure)
+6. [Boss Encounters & Narrative](#boss-encounters--narrative)
+7. [Roguelite Structure](#roguelite-structure)
+8. [Visual & Multiplayer Design](#visual--multiplayer-design)
+9. [Design Notes](#design-notes)
 
 ---
 
 ## Core Mechanics
 
-Each player has their own set of 3 d20 dice chosen from a pool of about 10. These dice represent talents or gambits that might be attempted in the game. Each of these dice can fall into one of 3 categories:
+Each player has their own set of 3 d20 dice chosen from a pool of about 10. These dice represent talents or gambits that might be attempted in the game. Each die falls into one of 3 categories:
 
 | Physical | Verbal | Preventative |
 |----------|--------|--------------|
@@ -27,17 +35,7 @@ A player will have one die from each category.
 - Player 2: Threaten, Bribe, Stab
 - Player 3: Slash, Deceive, Grapple
 
-Players will encounter various obstacles or combats that they must proceed through. They will do so by taking turns choosing dice and rolling to see if they are successful.
-
----
-
-## Progression & Rewards
-
-Rewards, goals, and gameplay will be oriented around improving these dice. For example:
-- Replace the 2 with a 1, but replace the 3 with a 20
-- Add 5 to a number of your choosing
-
-Players will permanently improve their dice, allowing them to progressively clear more difficult challenges.
+Players encounter various obstacles or combats that they must proceed through by taking turns choosing dice and rolling to see if they are successful.
 
 ---
 
@@ -66,13 +64,133 @@ Teammates could strategize around specific builds:
 
 ---
 
+## Progression & Rewards
+
+Rewards, goals, and gameplay are oriented around improving dice. For example:
+- Replace the 2 with a 1, but replace the 3 with a 20
+- Add 5 to a number of your choosing
+
+Players permanently improve their dice, allowing them to progressively clear more difficult challenges.
+
+### Upgrade Tiers
+
+| Tier | Cost | Effect |
+|------|------|--------|
+| Easy | Cheap | Directly add to a number on a die (2→3 costs 1G, 3→4 costs 2G) |
+| Medium | Moderate | Replace a segment with a fresh roll on a teammate's die, OR replace with a "Chaos" segment (roll all 3 dice, middle number happens) |
+| Hard | Expensive | Choose 5 numbers to become Nat 1s and 5 numbers to become Nat 20s |
+
+### Early Game Upgrades
+- Each hero gets to add 10 to a number between 2 and 9, OR add 5 to any 2 numbers between 9 and 14
+- Choose 1 number on your die between 5 and 9 to scratch out, OR 2 between 10 and 14 (scratch out = blank = re-roll)
+
+### Late Game Complex Upgrades
+- **Middle Out** - All numbers between 5 and 15 (inclusive) are scratched out
+- **Bottoms Up** - Your 1 becomes a 20. Subtract 1 from all other faces (powerful if player has already buffed 2-5)
+- **Tops Down** - Remove your Nat 20. 14, 15, 16, 17, and 18 become 19
+
+---
+
+## DOOM & HOPE System
+
+### Damage Mechanic
+Instead of traditional health, when a player takes a "hit", one or more numbers on their die are reduced (for that battle, or longer in some instances).
+
+### The DOOM Meter
+The party has a shared DOOM meter that fills as they fail actions or take hits:
+- Normal fail or hit: 1 notch
+- Critical hit, massive flub, or Nat 1: 2-3 notches
+
+The DOOM meter indicates that the heroes are unable to overcome the forces of darkness and avoid the prophesied danger.
+
+### The DOOM Die
+- Every point of DOOM subtracts 1 from each number on the die (except 20)
+- When a 1 (natural or DOOM-modified) is rolled, the journey ends
+- When a 20 is rolled, it removes HALF of the current DOOM
+- DOOM resets between Stages
+
+### HOPE
+HOPE offsets accumulated DOOM:
+- Players can accrue HOPE to offset existing DOOM
+- HOPE cannot be "banked" - any HOPE gained when at 0 DOOM is wasted
+- Some dice upgrades add HOPE to specific rolls
+- Example upgrade: "Choose 2 segments between 7 and 15. Reduce both by 5 and add +1 HOPE to both segments"
+
+---
+
+## Encounters & Map Structure
+
+Encounters are set up similar to **Slay the Spire** or **Inscryption** - players advance through a basic overworld, following a generally linear path but making choices at forks. Simple icons indicate encounter types.
+
+### Good Encounters
+*Little to no risk (gifts, upgrades, games, etc.)*
+
+- **The Mathematician** - Adds, subtracts, etc. to dice. Players must take a negative to get a positive but usually come out ahead (e.g., halving 4 to 2 but doubling 8 to 16)
+- **The Alchemist** - Weird dice-splicing: replacing your segments with your friends' dice
+- **The Gambler** - Offers target ranges; players guess HIT or MISS. Smaller reward for likely outcomes, larger reward for unlikely ones
+- **The Priest** - Offers to add HOPE to random segments (weighted towards lower rolls)
+
+### Bad Encounters
+*Fight or overcome obstacles to earn Gold*
+
+- **Bandits** - Can be killed, mugged, or persuaded
+- **Evil People** - Best rewards for killing them
+- **City Guards** - Best rewards for winning/escaping but NOT killing them
+- **Beasts, Monsters, Dragons** - Stage 1 has 1-2 enemy types; each new stage introduces 1-2 new ones and phases out older ones
+
+### Neutral Encounters
+*Can be approached multiple ways - dice swapping often occurs as reward OR punishment*
+
+- **The Ferryman** - Offers passage but you must roll a gambit; whatever you roll happens to him. *May force a temporary swap as "payment" - your Persuade die links to your friend's Stab for this crossing. Hope you don't need to talk your way out of anything on the other side.*
+- **The Trapper** - Has mismatched hodgepodge dice for trade (dice from previous sessions or pre-generated "funny" dice). *Can also offer to "splice" segments between party members' dice for a price - high risk, potentially high reward.*
+- **The Shopkeep** - Buy the effect of a Good Encounter
+- **Drunk Priest** - Lets you choose segments to add HOPE to, but messes up and adds DOOM to some segments too
+- **The "Tree"** - Clearly a man in a tree costume spying on someone. Expose him or let him be - right answer is 50/50; correct choice grants a decent bonus
+- **The Cultist** - Drink the fruit punch for a negative + positive effect, or refuse and risk the cultist's ire (likely DOOM increase). *Drinking may randomly swap a segment with a teammate - you're both in this now, for better or worse.*
+
+**Note on Neutral Encounters:** A botched neutral encounter can *force* an unfavorable swap - suddenly your nat 20 triggers your teammate's worst die. This creates real consequences while reinforcing cooperation: even punishments tie you closer together.
+
+---
+
+## Boss Encounters & Narrative
+
+Each Stage has a designated Boss shaping the narrative. This is a 5-stage campaign with each Stage consisting of:
+- An introduction
+- Several random encounters
+- A miniboss
+- Several more random encounters
+- A boss
+- A conclusion
+
+Boss encounters change minimally over each playthrough. Other encounters are randomly generated (with balance caveats). Each stage features a "miniboss" where players can set themselves up for an easier or harder final boss.
+
+### Main Narrative
+
+One prophecy can be hard enough to unravel. So when 20 prophecies appeared overnight - in the hands of soldiers and shepherds and princes, purple lettering emblazoned on thick vellum - chaos ensued. That was 20 years ago; hoping to make it rich, all manner of bandits and charlatans have chased these prophecies, and as with so many of their names and deeds, the prophecies themselves were lost to history.
+
+Our heroes are some of the few noble-hearted individuals who still hold one of these prophecies, and its cryptic clues have brought them here, to the Dirtbag Inn, where our story begins.
+
+The party learns of ATOM (Assemble The Others Movement) - a doomsday cult seeking to bestow our world unto the evil gods of the universe. Through increasingly obvious hints and decreasingly safe situations, the party must follow the threads and thwart this plot to fulfill the prophecy and save the world.
+
+### Stage Breakdown
+
+| Stage | Boss | Arc |
+|-------|------|-----|
+| 1 | **Dirty Innkeeper** | The party arrives at the inn. They awaken to find all gear missing, the Innkeeper gone. They explore the town for clues. *Miniboss: Town Gossip.* Party fights innkeeper for their stuff but learns he only stole it to pay off debts to ATOM. As they corner him, an arrow from atop the city gates silences him. |
+| 2 | **Corrupt Guard** | After the assassination, the party investigates which guard killed the informant. *Miniboss: Drawbridge/Operator.* They breach the castle, dispose of the guard, and match his sigil to General Heimer in an adjacent city. |
+| 3 | **General Heimer** | Heroes arrive at the Capitol but face Heimer's army outside. They must fight through to confront him. *Miniboss: The Daytime (soldiers) OR The Nighttime (infiltration).* Heimer declares he was following the King's orders. |
+| 4 | **Chthonic King Robert** | Only the capital streets and Royal Guard remain. *Royal Guard: The Jester (games of chance), The Chef (cooking DOOM), The Counselor (persuasion).* Upon defeating the King, a fake "you did it!" screen appears - then the pentagram on the floor activates. |
+| 5 | **BOMB (Big Obvious Malicious Boss)** | The portal pulls players into a warped dimension. *Miniboss: Early BOMB encounter that brutally changes player dice.* ~3 neutral encounters to restore functionality before the final fight. The stage shows 19 "darkened" prophecy lines and heroes on the single lit one - this is the last chance to save the world. |
+
+---
+
 ## Roguelite Structure
 
-This will not be a true roguelike but will have some roguelite elements.
+This is not a true roguelike but has roguelite elements.
 
-Generally this is a progressive campaign: once heroes clear Stage 1, they will play Stage 2 until they beat it, then move on to Stage 3. They don't need to return to Stage 1 each time.
+Generally a progressive campaign: once heroes clear Stage 1, they play Stage 2 until beaten, then Stage 3. No returning to Stage 1 each time.
 
-Various upgrades are unlocked based on how they cleared the earlier stages, as well as base bonuses for starting higher-level stages.
+Various upgrades unlock based on how earlier stages were cleared, plus base bonuses for starting higher-level stages.
 
 **Upgrade Types:**
 - Permanent hero upgrades
@@ -82,101 +200,33 @@ Various upgrades are unlocked based on how they cleared the earlier stages, as w
 
 *This may be the most complicated part of the game.*
 
-### Upgrade Examples
-
-| Tier | Cost | Effect |
-|------|------|--------|
-| Easy | Cheap | Directly add to a number on a die (2→3 costs 1G, 3→4 costs 2G) |
-| Medium | Moderate | Replace a segment with a fresh roll on a teammate's die, OR replace with a "Chaos" segment (roll all 3 dice, middle number happens) |
-| Hard | Expensive | Choose 5 numbers to become Nat 1s and 5 numbers to become Nat 20s |
-
 ---
 
-## Encounters & Map Structure
+## Visual & Multiplayer Design
 
-Encounters/levels will be set up similar to **Slay the Spire** or **Inscryption** - players advance through a basic overworld, following a generally linear path but making choices at forks to choose their route. Simple and recognizable icons will indicate encounter types.
-
-### Encounter Types
-
-**Good Encounters** - Little to no risk (gifts, upgrades, games, etc.)
-- **The Mathematician** - Adds, subtracts, etc. to dice. Players have to take a negative to get a positive but they should usually come out on top (for example, halving 4 to 2 but doubling 8 to 16 is a good trade for the player.)
-- **The Alchemist** - Weird stuff: replacing your segments with your friends' dice
-- **The Gambler** - Offers various target ranges; players guess if they think they will HIT or MISS on their roll. Gambler will offer a smaller reward (like +2 to a random segment) for whichever outcome in a given range is more likely, and a larger reward (like +5 to a chosen segment) for whichever outcome in that given range is less likely. 
-- **The Priest** - Offers to add HOPE to random segments (weighted towards lower rolls)
-
-**Bad Encounters** - Fight or overcome obstacles to earn Gold
-- Combat with bandits (can be killed, mugged, or persuaded)
-- Evil people (best rewards for killing them)
-- City guards (best rewards for winning/escaping but NOT killing them)
-- Beasts, Monsters, Dragons, etc.. Stage 1 should have 1-2 enemy types, and each new stage should introduce 1-2 new ones and generally phase out the older ones.
-
-**Neutral Encounters** - Can be approached multiple ways
-- **The Ferryman** - Offers passage but you must roll a gambit; whatever you roll happens to him
-- **The Trapper** - Has mismatched hodgepodge dice they can trade for (could be dice from previous sessions or pre-generated "funny" dice, maybe both at different prices - for example they have to trade their best die for her best, etc.)
-- **The Shopkeep** - Buy the effect of a Good Encounter
-- **Drunk Priest** - Lets you choose segments to add HOPE to, but messes up the blessing and adds DOOM to some segments too, or possibly just adds to the DOOM meter.
-- **The "Tree"?** - Players come across what is clearly a man in a tree costume spying on someone and get to either expose him or let him be - the right thing to do is 50/50 and if they get it right they get a decent bonus
-- **The Cultist** - Player gets to either drink the fruit punch for a negative + a positive effect, or avoid recruitment and risk the cultist's ire (likely a doom increase)
----
-
-## Boss Encounters & Narrative
-
-Each Stage has a designated Boss, and those Stages will shape the narrative of the game. This is a 5-stage campaign with  each Stage consisting of [an introduction, several random encounters, a miniboss, several more random encounters, a boss, and a conclusion].. - Boss encounters change minimally over each playthrough. Other encounters are randomly generated (with balance caveats)
-- Each of the 5 levels features a "miniboss" where players can set themselves up for an easier final boss, or possibly screw up and give themselves a harder one. Various approaches can be employed in these - it does not always have to be combat.
-  
-Main Narrative: One prophecy can be hard enough to unravel. So when 20 prophecies appeared overnight, in the hands of soldiers and shepards and princes, purple lettering emblazoned on thick vellum - chaos ensued. That was 20 years ago; hoping to make it rich, all manner of bandits and charlatans have chased these prophecies, and as with so many of their names and deeds, the prophecies themselves were lost to history. in the hands of various adventuring groups. Some speak of kings, some speak of stars, but all lead to the same end - total global annihilation.
-Our heroes are some of the few noble-hearted individuals who still hold one of these prophecies, and its cryptic clues have brought them here, to the Dirtbag Inn, where our story begins. The party learns of a growing movement to Assemble The Others Movement (ATOM), which is effectively a doomsday cult that seeks to bestow our world unto the evil gods of the universe to attain transcendence or something. Through increasingly obvious hints and decreasingly safe situations, the party has to follow the threads and thwart this plot in order to comply with the prophecy and save the world!
-
-| Stage | Boss |
-|-------|------|
-| 1 | Dirty Innkeeper |
-  ARC PLOT - The party arrives at the doorway to an inn and are allowed inside for board. They awaken to find all their gear missing, the Innkeeper nowhere to be found! They must explore the town for clues to the Innkeeper's disappearance. Miniboss - Town Gossip.  Party fights innkeeper for their stuff but learn that he only stole it to pay off debts to ATOM, of which he is a former member. As the party defeats/corners the innkeep and finally gets him to talk, an arrow is loosed from atop the city gates, silencing the man and introducing a new opponent.
-| 2 | Corrupt Guard |
-  ARC PLOT - After the Innkeep's assassination, the party investigates the city guard to try to learn which guard killed the would-be informant. (Miniboss - Drawbridge and/or drawbridge operator). After breaching the walls of the Castle they encounter the guard and dispose of him; in doing so, they match the sigil on the pommel of his sword (or issue of his uniform, sigil on his shield, etc) to a certain General Heimer located in an adjacent, larger city.
-| 3 | Subhuman General Heimer|
-  ARC PLOT - The heroes arrive at the Capitol ready to find General Heimer but are met with his army just outside, providing robust defense to the city. They must figure out their way through to Heimer so they can put an end to his use of the troops for these foul delights. (Maybe 2 different possible Minibosses here and the player can pick or maybe be randomly assigned - A, The Daytime where they have to take out a bunch of soldiers, or B, The Nighttime where they have to infiltrate more sneakily). Upon successfully making it, the players have a gritty encounter with Heimer who ultimately declares he was doing it all on the King's Orders.
-| 4 | Chthonic King Robert |
-  ARC PLOT - Having battled through the army outside, only the streets of the capital and the Royal Guard stand between our heroes and their charge. The King has 3 different Royal Guard (The Jester, who likes games of chance; The Chef, who is cooking DOOM for dinner; and The Counselor, who will try to persuade the player out of their mission). Upon making it to The King, should the players survive that encounter, they will be treated to a fake-out "you did it!" screen before noticing the pentagram inscribed on the floor. 
-| 5 | Destroyer of Worlds, Big Obvious Malicious Boss (BOMB) |
-  ARC PLOT - Stepping through the portal created by the pentagram pulls the player into a strange dimension with warped versions of the encounters they've grown used to, both harder and stranger than before. Miniboss here should be an early encounter with the BOMB (picture like an amoeba/neural-network looking creature) where he brutally changes the players dice, leaving them only ~3 neutral encounters to restore them to some kind of functionality before their final encounter with him. The design of this Stage should have 19 "darkened" lines, and then the heroes on the single lit one, indicating this is the one remaining possible prophecy that has not been circumvented, and this is the last and best chance to save the world. They fight BOMB and either lose, resulting in the world's destruction; or win, finally fulfilling their prophecy and saving the world from annihilation! 
-
-
-
-
-
----
-
-## Visual Design
-
-- **Overworld:** Vertical exploration map that takes up the whole screen
+### Visual Design
+- **Overworld:** Vertical exploration map taking up the whole screen
 - **Encounters:** Map rolls up; 3D dice-roller-catcher on bottom, text/art explaining the encounter on top
 
----
+### Multiplayer Interface
+*Ideally:*
 
-## Multiplayer Interface
-
-*Not 100% decided, but ideally:*
-
-Players interface with the game on their own devices (à la **Jackbox** or **Sunderfolk**). This allows fine-tuned decisions for each die without slowing down the game.
+Players interface on their own devices (à la **Jackbox** or **Sunderfolk**). This allows fine-tuned decisions for each die without slowing the game.
 
 - In most situations where an upgrade is granted, all heroes receive it
 - In some situations, the group determines who gets the upgrade
 - Only one player needs to purchase the game (stream or couch co-op)
 
 **Player Interface:**
-- Three dice displayed in 3D that you can rotate and zoom in on
+- Three dice displayed in 3D that can be rotated and zoomed
 - Clicking one zooms in and brings up the "confirm" option to roll in the dice tray on the big screen
 
-NEW THOUGHTS AS OF 12-23-2025 (CONTENT FLESHED OUT ABOVE, AS WELL)
-Good upgrade option for first upgrade: each hero gets to add 10 to a number between 2 and 9, or add 5 to any 2 numbers between 9 and 14. Picturing a very simple interface presenting their options, with eligible 'segments' or faces enumerated in smaller font underneath the upgrade choice.
-Another good upgrade option early - Choose 1 number on your die between 5 and 9 to scratch out, or 2 between 10 and 14. (Scratch out is a blank, so a re-roll on that same die).
-Fun later complex upgrades: Middle Out - all numbers between 5 and 15 (inclusive) are scratched out. Bottoms Up - your 1 becomes a 20. Subtract 1 from all other faces (could be big if player has already buffed 2-5, eg). Tops Down - Remove your Nat 20. 14, 15, 16, 17, and 18 become 19.
-THIS GAME USES A UNIQUE DAMAGE MECHANIC INSTEAD OF HEALTH. when a player takes a "hit", they should have one or more numbers on their die reduced (for that battle, possibly for longer in some instances)
-The party has a "DOOM meter" that fills up as they fail various actions or take hits. In theory, a normal fail or hit is 1 "notch" on the DOOM meter; a critical hit, a massive flub, or a Nat 1 would be 2 or 3 notches. The Danger Meter would indicate that the heroes were unable to overcome the forces of darkness and avoid the danger of which the prophecies speak.
-Whenever there is a Ping or Notch on the damage meter, it is associated with a unique die roll on the DOOM Die. Every point of doom subtracts 1 from each number on the die (except 20), and whenever a 1 (natural or DOOM-modified) is rolled, the journey ends. When a 20 is rolled, it removes HALF of the current DOOM. DOOM resets between Stages.
-The opposite of DOOM is HOPE. Players can accure HOPE to offset DOOM they have accrued, but they cannot accrue HOPE - any HOPE that would be accrued (like if players have 0 DOOM) is wasted. Some dice upgrades will allow a player to add HOPE to rolls; for example, this could be a standard upgrade. Or a more complex version, something like "choose 2 segments betweeen 7 and 15. Reduce both by 5 and add +1 HOPE to both segments".
+---
 
-Other Minor thoughts I don't want to forget:
-Should the players have gotten their prophecy from a beloved figure who has left them notes?
-Why were there 20 prophecies? This needs to tie in better.
-Keep the whole Oppenheimer thing?
+## Design Notes
+
+*Open questions and future considerations:*
+
+- Should the players have gotten their prophecy from a beloved figure who left them notes?
+- Why were there 20 prophecies? This needs to tie in better with the narrative
+- Explore the Oppenheimer thematic parallels further?
