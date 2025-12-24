@@ -159,17 +159,17 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 
 | Encounter | Type | Situation | Risks | Rewards | Stage 5 Modification |
 |-----------|------|-----------|-------|---------|---------------------|
-| **The Mathematician** | Good | Old man offers to adjust dice numbers | None (free) or 20G cost | FREE: +1 to lowest face, PAID: +3 to lowest | *Replaced by Memory Fragment* |
-| **The Alchemist** | Good | Wild-eyed woman offers to splice dice together | None (free) or 25G cost | FREE: Link a low roll to ally, PAID: Link a high roll | *Replaced by Pocket of Reality* |
-| **The Priest** | Good | Serene figure offers blessing | None | +3 HOPE | *N/A in Stage 5* |
-| **The Gambler** | Good | Shifty woman offers a wager | Lose 20G + 1 DOOM on fail | Roll ≥15: Double your 20G wager | *N/A in Stage 5* |
+| **The Mathematician** | Good | Old man offers dice adjustments | None (all free) | FREE: +2 to lowest face, or -1 high/+4 low trade | *Replaced by Memory Fragment* |
+| **The Alchemist** | Good | Wild-eyed woman splices dice | None (all free) | Basic: Link low roll. Risky: Random link +2. Double: Link to BOTH allies! | *Replaced by Pocket of Reality* |
+| **The Priest** | Good | Serene figure offers blessing | None | +3 HOPE, or +5 HOPE (mark die), or bless a segment | *N/A in Stage 5* |
+| **The Gambler** | Good | Craps-style range betting | None | Pick IN/OUT of range, roll. Win = +5 choice, Lose = +3 random | *N/A in Stage 5* |
 | **Bandits** | Bad | Three thugs block your path | DOOM Rolls on misses | 30G, DC 12, Thresholds: P:2/V:2/Pr:1 | *Replaced by Echo of BOMB* |
 | **Corrupt Guards** | Bad | Guards demand "peace tax" | DOOM Rolls on misses | 25G, DC 13, Thresholds: P:2/V:1/Pr:2 | *Replaced by Void Creatures* |
 | **Miniboss (Thug)** | Bad | Massive bouncer blocks stairs | DOOM Rolls on misses | 40G, DC 14, Thresholds: P:3/V:2/Pr:2 | *N/A in Stage 5* |
-| **The Ferryman** | Neutral | Ancient boatman judges your fate | Free: 27% bad (die marked). Paid 15G: guaranteed good | Free: 47% +2 HOPE, 27% safe. Paid: +2 HOPE | *Replaced by The 19 Darkened Lines* |
-| **The Trapper** | Neutral | Hunter offers mystery dice trade | Free: 27% worse value. Paid 20G: guaranteed +6-10 | Free: 47% +5+ value. Paid: +6 to +10 | *N/A in Stage 5* |
-| **The Drunk Priest** | Neutral | Stumbling priest offers blessing | Free: 27% more DOOM. Paid 10G: guaranteed +3 HOPE | Free: 47% +3-4 HOPE. Paid: +3 HOPE, no DOOM | *N/A in Stage 5* |
-| **The Cultist** | Neutral | Robed figure offers purple drink | Free: 27% bad swap + DOOM. Paid 25G: guaranteed good | Free: 47% swap + upgrade. Paid: swap + +5 upgrade | *N/A in Stage 5* |
+| **The Ferryman** | Neutral | Ancient boatman judges fate | Free: 27% die marked. Paid 5G: guaranteed +2 HOPE | Free: 47% +2 HOPE, 27% safe | *Replaced by The 19 Darkened Lines* |
+| **The Trapper** | Neutral | Hunter offers exotic dice trade | Trade based on die power | 3 exotic dice offered. Best→best, worst→worst. Paid 8G: pick any | *N/A in Stage 5* |
+| **The Drunk Priest** | Neutral | Stumbling priest offers blessing | Free: 27% net DOOM | Free: 47% +3-4 HOPE. Paid 3G: guaranteed +3 HOPE | *N/A in Stage 5* |
+| **The Cultist** | Neutral | Robed figure offers purple drink | Free: 27% bad swap + DOOM | Free: 47% swap + +5. Paid 10G: guaranteed good | *N/A in Stage 5* |
 
 ### Stage 5 Unique Encounters (Warped Dimension)
 
@@ -319,24 +319,80 @@ Players interface on their own devices (à la **Jackbox** or **Sunderfolk**). Th
 
 ## Design Notes
 
-*Open questions and future considerations:*
+### Core Design Principles
+
+**Inscryption-Style Progression:** Every non-combat encounter is an opportunity for upgrades. The map lets players choose their path - targeting specific upgrade types or engaging in combat for gold rewards.
+
+**Risk Lives in Combat:** DOOM accumulates and DOOM Rolls occur primarily through combat. Good encounters are safe upgrade opportunities. Neutral encounters have weighted randomness but are usually beneficial.
+
+**Intertwined Fates:** The dice-swapping mechanic creates deep cooperation. Players should constantly be linking their dice together, creating a web of dependencies that makes every roll exciting.
+
+### DOOM System Details
+
+The DOOM die is **separate** from the 9 hero dice. Key clarifications:
+
+1. **DOOM Rolls are forced** - Only triggered when enemies attack (combat misses) or specific narrative events
+2. **DOOM does NOT affect regular rolls** - Hero dice roll normally; DOOM only subtracts from DOOM Rolls
+3. **All Natural 1s add +1 DOOM** - Displayed in RED on the die
+4. **All Natural 20s add +1 HOPE** - Displayed in GOLD on the die
+5. **DOOM Rolls at 0 DOOM** = only 5% chance of failure (rolling a natural 1)
+
+### Encounter Design Philosophy
+
+**Good Encounters (Green):**
+- Always free, always beneficial
+- At most: trade a small negative for a larger positive
+- Examples:
+  - The Gambler: Craps-style betting. Pick "in range" or "out of range", roll any die. Hitting the less likely option = +5 to chosen segment; more likely = +3 to random segment. No cost, no punishment.
+  - The Priest: Free HOPE added to dice segments
+  - The Mathematician: Free +2 to lowest face, or trade -1 high for +4 low
+
+**Bad Encounters (Red):**
+- Combat - earns Gold but risks DOOM Rolls
+- Primary source of Gold (incentivizes engaging)
+- DOOM accumulates on misses
+
+**Neutral Encounters (Yellow):**
+- Weighted probability: 47% good / 27% neutral / 27% bad (~7/15, 4/15, 4/15)
+- Gold spending removes risk entirely
+- Examples:
+  - The Trapper: Offers 3 exotic dice to trade for. Ranked by power - best requires trading your strongest die, worst trades your weakest.
+
+### Economy
+
+**Gold Costs (Lower Tier First):**
+- Basic upgrades: 1-2 Gold
+- Standard upgrades: 3-5 Gold
+- Powerful upgrades: 8-15 Gold
+- Legendary upgrades: 20+ Gold
+
+Combat rewards scale: 5-15G (early), 20-40G (mid), 40-100G (late/boss)
+
+### Exotic Dice (for The Trapper)
+
+Ranked from most to least powerful:
+
+1. **The d6** - Faces: 1, 2, 6, 12, 19, 20 (great for manipulation)
+2. **Lucky 7s** - All 7s become 17s, all 17s become 20s
+3. **The Doubler** - Faces 1-10; double your result
+4. **The Coin Flip** - 10 faces of 20, 10 faces of 1 (high risk/reward)
+5. **The 6996** - All 6s and 9s are flipped (weak, needs work)
+6. **The Cursed** - One 1 becomes a 20, but one 20 becomes a 1
+7. **The Weighted** - Faces 8-15 only (consistent but capped)
+8. **The Low Roller** - Faces 1-10 only, but lowest becomes 15
+9. **The Shifter** - All odd numbers +3, all even -3
+10. **The Wild Card** - Roll triggers a random ally's die instead
+
+### TODO: Features Needing Development
+
+- [ ] Start-of-Stage Upgrade Shop - balanced economy for early identity building
+- [ ] Dice Draft pageantry - make it exciting and dramatic
+- [ ] Ability-specific outcomes - text/consequences for each die type in each situation
+- [ ] More intertwine rewards throughout encounters
+- [ ] Visual flourishes for 1s (red) and 20s (gold)
+
+### Open Questions
 
 - Should the players have gotten their prophecy from a beloved figure who left them notes?
 - Why were there 20 prophecies? This needs to tie in better with the narrative
-- Explore the Oppenheimer thematic parallels further?
-- 
-NOTES FOR CLAUDE 12/24/25 ROUND 1
-I'm going to fix a fundamental misunderstanding about the DOOM system by outlining a few truths about the system. The DOOM die is distinct from the other 9 dice that the heroes have and use "freely". DOOM rolls are forced upon them by situations that would actually cause them potentially mortal peril. In general, failing in an encounter would result in the DOOM meter increasing, making it more likely that future DOOM rolls cause the end of the game. The DOOM meter does NOT affect rolls outside of DOOM rolls. Player rolls on their standard 9 dice do not take blanket minuses like you describe - the game is more elegant than that.
-Of similar but lesser importance is a misunderstanding of what these encounters should be like. Inscryption is a great example - nearly every spot you come across is a free upgrade of some kind to your deck, and the sporadic combats test what you have built. The forking path overworld allows the player to choose which upgrades they want to target, and also lets them choose to engage in combats. Most of the Gold rewards come from combat, which incentivizes the player to do them, but they also are a common way that both DOOM is applied and that DOOM rolls occer (or DOOM checks). Right now you are having, for example, The Gambler cost 20 gold and trigger a doom on fail. At WORST a good encounter should offer a negative tradeoff for a more significant positive benefit - but usually it is just an opportunity to add a positive, or a better positive, or fail to add a positive.
-(It is sort of like Craps odds. Here is an example: The randomly generated range is 8 to 14. Players get to choose "in range" or "out of range" before choosing a die and rolling. The display makees it clear (AGAIN THIS IS AN EXAMPLE) that a HIT IN RANGE (which is less likely) is worth a +5 to a segment of their choosing, and a HIT OUT OF RANGE (1 through 7 plus 15 through 20 is more common) rewards a lesser +3 to a random segment.)
-All the GOOD encounters should be like this, generally - free upgrades with a chance at a better upgrade, or a choice at a negative that is offset by a double-positive, or just a straight-up freebie.
-NEUTRALS should be more like how you have goods - some will be good, some will be bad, most should offer a chance at a benefit but usually with a risk or a downside. I would say that players should have a neutral outcome approximately 4/15 times, a good one 7/15 times, and a bad one 4/15 times
-NOTES FOR CLAUDE 12/24 ROUND 2
-It's time for us to take a step back and look at the game holistically. What is already pretty developed and what have we not even started to apply our energies towards? For example I know that the Start-Of-Stage Upgrade Buying will be a critical piece and I have discussed it but not fleshed out any beyond the initial upgrade pattern. There needs to be a whole economy here and that economy needs to be balanced against the other ways to gain upgrades, while also providing enough of a boost for the early game that players can establish an identity with their character and start to develop a strategy early on.
-I want the economy starting lower - the earliest, cheapest upgrades should cost 1 and 2 G, not 10 and 15. This will allow us to scale as we add godly powers onto the dice for a high G cost.
-Another example of something that needs a ton of work is the opening draft of dice, right now it is just a mess of options and buttons and is lacking any of the pageantry and excitement of a draft. Similarly the other upgrades should be exciting and encourage the player to keep playing to get the next upgrade or buold up a really stacked set of dice.
-We need more "intertwine" mechanics - perhaps adjust some of the current possible reward options to grant more die swaps.
-We also don't have any of the logic ready for the myriad of outcomes that could occur for using all 9 of the different abilities in any of the settings. Sometimes that will be treated more like a skills check, just like in the Gambler one where the actual EFFECT of the die doesn't matter, just the NUMBER... but that will not be ubiquitous. In situations where the player is trying to persuade but accidentally uses the wrong die and grapples, there needs to be text ready to go for those situations as well as corresponding consequences (good, bad, or otherwise).
-All 1s should come with a DOOM (let's have this inscribe the number in RED) and all 20s should come with HOPE (this should inscribe the number in GOLD). 
-Example Stage 1 Runthrough - the players draft their dice and get their initial upgrades/downgrades/intertwines. They choose the path that goes Good-Combat-Neutral-Combat-Miniboss, rather than Combat-Neutral-Good-Neutral-Miniboss, hoping to get some extra Gold to spend later in the run. On the Good encounter, they get the Priest and each adds HOPE to a die. They easily trounce the combat, earning 5 G and taking no DOOM, but having to do 1 roll on the DOOM die (with 0 DOOM accrued, they have just a 5% chance of failure). The next encounter is Neutral, the Trapper. Trapper offers 3 dice; First one is 6996, where all 6es and 9s are flipped. Second one is The Coin Flip, which is 10 20s and 10 1s. And the 3rd one is a d6 (faces 1, 2, 6, 12, 19, 20). Each die has pros and cons; the Most advantageous of these is probably the d6 because it could be manipulated into success more easily. So a player would have to trade away the die they are BEST at to get that one. Conversely, the player could trade the die they were worst with the get 6996, which is a weak effect and requires a lot of tweaking to make successful, or their middle die to get the Coin Flip. (there's a chance Coin Flip is super powerful.. we should come up with like 10 different dice, rank them, then randomly draw 3 each time Trapper encounter occurs). Anyway, 2 of the players take the trade (1 takes Coin Flip and one takes d6), and 1 doesn't. Then, the players proceed, and the next combat happens; due to these new dice, the players roll 2 1s! Oh no! This bumps the DOOM meter up to 2.. And gives them a 15% chance of losing the run on their next doom roll! Fortunately the third player rolls a 20, getting 1 HOPE (which removes 1 DOOM) and when the enemy strikes, the DOOM die doesn't roll a 1 (thankfully!). The heroes clear the combat on turn 2 and make it to the miniboss!
-Pausing my example here for now... There is a lot layered in there as far as UI, player experience, logic, etc. 
+- Explore the Oppenheimer thematic parallels further? 
