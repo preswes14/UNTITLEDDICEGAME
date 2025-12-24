@@ -358,6 +358,182 @@
             box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
         }
 
+        /* ==================== TALENT RANKING ==================== */
+        .talent-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .talent-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 35px;
+            background: rgba(30, 30, 40, 0.8);
+            border: 2px solid #444;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 150px;
+        }
+
+        .talent-btn .die-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .talent-btn .die-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .talent-btn .category-label {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .talent-btn.physical { border-color: var(--physical-primary); }
+        .talent-btn.verbal { border-color: var(--verbal-primary); }
+        .talent-btn.preventative { border-color: var(--preventative-primary); }
+
+        .talent-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .talent-btn.physical:hover { box-shadow: 0 10px 30px rgba(196, 92, 38, 0.4); }
+        .talent-btn.verbal:hover { box-shadow: 0 10px 30px rgba(41, 128, 185, 0.4); }
+        .talent-btn.preventative:hover { box-shadow: 0 10px 30px rgba(142, 68, 173, 0.4); }
+
+        .talent-btn.selected {
+            transform: translateY(-5px);
+            border-width: 3px;
+        }
+
+        .talent-btn.physical.selected { background: rgba(196, 92, 38, 0.3); }
+        .talent-btn.verbal.selected { background: rgba(41, 128, 185, 0.3); }
+        .talent-btn.preventative.selected { background: rgba(142, 68, 173, 0.3); }
+
+        .talent-hint {
+            text-align: center;
+            color: #4ade80;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        /* Intertwine Screen */
+        .intertwine-step {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(30, 30, 40, 0.5);
+            border-radius: 10px;
+        }
+
+        .intertwine-step h3 {
+            color: #c084fc;
+            margin-bottom: 15px;
+        }
+
+        .intertwine-step.hidden {
+            display: none;
+        }
+
+        .number-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .number-btn {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: rgba(50, 50, 60, 0.8);
+            border: 2px solid #666;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .number-btn:hover {
+            border-color: #c084fc;
+            transform: scale(1.1);
+        }
+
+        .number-btn.selected {
+            background: rgba(192, 132, 252, 0.3);
+            border-color: #c084fc;
+            box-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+        }
+
+        .ally-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .ally-btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            background: rgba(50, 50, 60, 0.8);
+            border: 2px solid #666;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ally-btn.player-1 { border-color: #ff6b6b; }
+        .ally-btn.player-2 { border-color: #4ecdc4; }
+        .ally-btn.player-3 { border-color: #ffe66d; }
+
+        .ally-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .ally-btn.selected {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .ally-dice-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .confirm-btn {
+            display: block;
+            margin: 20px auto 0;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .confirm-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.5);
+        }
+
         /* ==================== MAIN GAME ==================== */
         .game-container {
             display: flex;
@@ -1375,7 +1551,25 @@
                 </div>
             </div>
 
-            <button class="start-btn" onclick="startGame()">Begin Adventure</button>
+            <button class="start-btn" onclick="startTalentRanking()">Begin Adventure</button>
+        </div>
+    </div>
+
+    <!-- ==================== TALENT RANKING SCREEN ==================== -->
+    <div class="screen setup-screen hidden" id="talentScreen">
+        <h1 id="talentTitle">Talent Ranking</h1>
+        <p class="subtitle" id="talentSubtitle">You've picked the 3 things your character is good at. But which are they BEST at?</p>
+        <div class="setup-content" id="talentContent">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <!-- ==================== INTERTWINE SCREEN ==================== -->
+    <div class="screen setup-screen hidden" id="intertwineScreen">
+        <h1>Intertwine Your Fates</h1>
+        <p class="subtitle" id="intertwineSubtitle"></p>
+        <div class="setup-content" id="intertwineContent">
+            <!-- Dynamically populated -->
         </div>
     </div>
 
@@ -1671,7 +1865,7 @@
                 description: 'The innkeeper reveals his true nature - a cunning crime lord! "You\'ve meddled enough. Time to deal with you personally."',
                 icon: '👑',
                 dc: 10, reward: 100,
-                successThresholds: { physical: 2, verbal: 4, preventative: 3 },
+                successThresholds: { physical: 4, verbal: 3, preventative: 2 },
                 attacksPerRound: 1,
                 options: [
                     { text: 'Attack! (Physical)', types: ['physical'], action: 'boss_combat' },
@@ -1682,40 +1876,41 @@
         };
 
         // Boss definitions for all 5 stages
+        // Philosophy: Early = peace rewarded, Late = combat efficient against cosmic horror
         const BOSSES = {
             1: {
                 name: 'The Dirty Innkeeper',
                 description: 'The innkeeper reveals his true nature - a cunning crime lord!',
                 dc: 10,
-                successThresholds: { physical: 2, verbal: 4, preventative: 3 },
+                successThresholds: { physical: 4, verbal: 3, preventative: 2 },
                 attacksPerRound: 1
             },
             2: {
                 name: 'The Corrupt Guard',
                 description: 'The guard captain draws his blade, ATOM\'s sigil gleaming on his armor.',
                 dc: 12,
-                successThresholds: { physical: 3, verbal: 4, preventative: 3 },
+                successThresholds: { physical: 5, verbal: 4, preventative: 3 },
                 attacksPerRound: 1
             },
             3: {
                 name: 'General Heimer',
                 description: 'The General stands before his troops. "You will not pass. The King demands it."',
                 dc: 14,
-                successThresholds: { physical: 4, verbal: 4, preventative: 3 },
+                successThresholds: { physical: 6, verbal: 6, preventative: 5 },
                 attacksPerRound: 1
             },
             4: {
                 name: 'Chthonic King Robert',
                 description: 'The King rises from his throne, dark energy crackling around him. "ATOM\'s will is my will!"',
                 dc: 15,
-                successThresholds: { physical: 5, verbal: 5, preventative: 4 },
+                successThresholds: { physical: 7, verbal: 7, preventative: 7 },
                 attacksPerRound: 1
             },
             5: {
                 name: 'B.O.M.B.',
                 description: 'The Big Obvious Malicious Boss manifests. Reality bends. This is the final stand.',
                 dc: 16,
-                successThresholds: { physical: 6, verbal: 7, preventative: 5 },
+                successThresholds: { physical: 8, verbal: 10, preventative: 9 },
                 attacksPerRound: 2
             }
         };
@@ -1745,8 +1940,15 @@
             document.getElementById('titleScreen').classList.remove('hidden');
         }
 
-        // ==================== GAME INITIALIZATION ====================
-        function startGame() {
+        // ==================== TALENT RANKING SYSTEM ====================
+        const talentState = {
+            currentPlayer: 0,
+            phase: 'best', // 'best', 'worst', 'intertwine'
+            playerRankings: [] // [{best: 'physical', worst: 'verbal', middle: 'preventative'}, ...]
+        };
+
+        function startTalentRanking() {
+            // First, create the players from the setup screen
             gameState.players = [];
             gameState.gold = 0;
             gameState.doom = 0;
@@ -1772,9 +1974,291 @@
                 });
             }
 
+            // Initialize talent state
+            talentState.currentPlayer = 0;
+            talentState.phase = 'best';
+            talentState.playerRankings = [{}, {}, {}];
+
+            // Hide setup, show talent screen
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('talentScreen').classList.remove('hidden');
+
+            showTalentBestScreen();
+        }
+
+        function showTalentBestScreen() {
+            const player = gameState.players[talentState.currentPlayer];
+            document.getElementById('talentTitle').textContent = `${player.name}'s Best Talent`;
+            document.getElementById('talentSubtitle').textContent =
+                "You've picked the 3 things your character is good at. But which are they BEST at? Pick 1.";
+
+            const categories = ['physical', 'verbal', 'preventative'];
+            let html = '<div class="talent-options">';
+
+            categories.forEach(cat => {
+                const die = player.dice[cat];
+                html += `
+                    <button class="talent-btn ${cat}" onclick="selectBestTalent('${cat}')">
+                        <span class="die-icon">${die.icon}</span>
+                        <span class="die-name">${die.name}</span>
+                        <span class="category-label">${cat.toUpperCase()}</span>
+                    </button>
+                `;
+            });
+
+            html += '</div>';
+            html += '<p class="talent-hint">This die will get a powerful upgrade: replace a 2, 3, 4, or 5 with a 20!</p>';
+            document.getElementById('talentContent').innerHTML = html;
+        }
+
+        function selectBestTalent(category) {
+            talentState.playerRankings[talentState.currentPlayer].best = category;
+            talentState.phase = 'worst';
+            showTalentWorstScreen();
+        }
+
+        function showTalentWorstScreen() {
+            const player = gameState.players[talentState.currentPlayer];
+            const bestCat = talentState.playerRankings[talentState.currentPlayer].best;
+
+            document.getElementById('talentTitle').textContent = `${player.name}'s Weakest Talent`;
+            document.getElementById('talentSubtitle').textContent =
+                "And which are they WORST at?";
+
+            const categories = ['physical', 'verbal', 'preventative'].filter(c => c !== bestCat);
+            let html = '<div class="talent-options">';
+
+            categories.forEach(cat => {
+                const die = player.dice[cat];
+                html += `
+                    <button class="talent-btn ${cat}" onclick="selectWorstTalent('${cat}')">
+                        <span class="die-icon">${die.icon}</span>
+                        <span class="die-name">${die.name}</span>
+                        <span class="category-label">${cat.toUpperCase()}</span>
+                    </button>
+                `;
+            });
+
+            html += '</div>';
+            html += '<p class="talent-hint" style="color:#f87171;">This die will get a downgrade: one of 2, 3, 4, or 5 becomes a 1...</p>';
+            document.getElementById('talentContent').innerHTML = html;
+        }
+
+        function selectWorstTalent(category) {
+            const ranking = talentState.playerRankings[talentState.currentPlayer];
+            ranking.worst = category;
+
+            // The middle one is whatever's left
+            const categories = ['physical', 'verbal', 'preventative'];
+            ranking.middle = categories.find(c => c !== ranking.best && c !== ranking.worst);
+
+            // Move to next player or next phase
+            talentState.currentPlayer++;
+
+            if (talentState.currentPlayer >= 3) {
+                // All players done with best/worst, now apply upgrades and show intertwine
+                applyBestAndWorstUpgrades();
+                talentState.currentPlayer = 0;
+                talentState.phase = 'intertwine';
+                showIntertwineScreen();
+            } else {
+                talentState.phase = 'best';
+                showTalentBestScreen();
+            }
+        }
+
+        function applyBestAndWorstUpgrades() {
+            for (let i = 0; i < 3; i++) {
+                const player = gameState.players[i];
+                const ranking = talentState.playerRankings[i];
+
+                // BEST die: replace a random 2-5 with 20
+                const bestDie = player.dice[ranking.best];
+                const lowFaces = [2, 3, 4, 5];
+                const faceToUpgrade = lowFaces[Math.floor(Math.random() * lowFaces.length)];
+                const faceIndex = bestDie.faces.indexOf(faceToUpgrade);
+                if (faceIndex !== -1) {
+                    bestDie.faces[faceIndex] = 20;
+                }
+
+                // WORST die: replace a random 2-5 with 1
+                const worstDie = player.dice[ranking.worst];
+                const remainingLowFaces = lowFaces.filter(f => worstDie.faces.includes(f));
+                if (remainingLowFaces.length > 0) {
+                    const faceToDowngrade = remainingLowFaces[Math.floor(Math.random() * remainingLowFaces.length)];
+                    const downgradeIndex = worstDie.faces.indexOf(faceToDowngrade);
+                    if (downgradeIndex !== -1) {
+                        worstDie.faces[downgradeIndex] = 1;
+                    }
+                }
+            }
+        }
+
+        function showIntertwineScreen() {
+            const player = gameState.players[talentState.currentPlayer];
+            const ranking = talentState.playerRankings[talentState.currentPlayer];
+            const middleDie = player.dice[ranking.middle];
+
+            document.getElementById('talentScreen').classList.add('hidden');
+            document.getElementById('intertwineScreen').classList.remove('hidden');
+
+            document.getElementById('intertwineSubtitle').textContent =
+                `${player.name}, your ${middleDie.name} die will be intertwined with an ally's fate.`;
+
+            let html = `
+                <div class="intertwine-step" id="intertwineStep1">
+                    <h3>Step 1: Choose a number between 6 and 10</h3>
+                    <p>When you roll this number on your ${middleDie.name} die, it will trigger your ally's die instead!</p>
+                    <div class="number-options">
+            `;
+
+            for (let n = 6; n <= 10; n++) {
+                html += `<button class="number-btn" onclick="selectIntertwineNumber(${n})">${n}</button>`;
+            }
+
+            html += `
+                    </div>
+                </div>
+                <div class="intertwine-step hidden" id="intertwineStep2">
+                    <h3>Step 2: Choose which ally</h3>
+                    <div class="ally-options" id="allyOptions"></div>
+                </div>
+                <div class="intertwine-step hidden" id="intertwineStep3">
+                    <h3>Step 3: Choose which of their dice</h3>
+                    <div class="ally-dice-options" id="allyDiceOptions"></div>
+                </div>
+            `;
+
+            document.getElementById('intertwineContent').innerHTML = html;
+        }
+
+        let intertwineData = { number: null, allyIndex: null, allyDieType: null };
+
+        function selectIntertwineNumber(num) {
+            intertwineData.number = num;
+
+            // Highlight selected
+            document.querySelectorAll('.number-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+
+            // Show ally selection
+            document.getElementById('intertwineStep2').classList.remove('hidden');
+
+            const currentIdx = talentState.currentPlayer;
+            let html = '';
+
+            gameState.players.forEach((p, idx) => {
+                if (idx !== currentIdx) {
+                    html += `<button class="ally-btn player-${idx + 1}" onclick="selectIntertwineAlly(${idx})">${p.name}</button>`;
+                }
+            });
+
+            document.getElementById('allyOptions').innerHTML = html;
+        }
+
+        function selectIntertwineAlly(allyIdx) {
+            intertwineData.allyIndex = allyIdx;
+
+            // Highlight selected
+            document.querySelectorAll('.ally-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+
+            // Show dice selection
+            document.getElementById('intertwineStep3').classList.remove('hidden');
+
+            const ally = gameState.players[allyIdx];
+            let html = '';
+
+            ['physical', 'verbal', 'preventative'].forEach(cat => {
+                const die = ally.dice[cat];
+                html += `
+                    <button class="talent-btn ${cat}" onclick="selectIntertwineAllyDie('${cat}')">
+                        <span class="die-icon">${die.icon}</span>
+                        <span class="die-name">${die.name}</span>
+                    </button>
+                `;
+            });
+
+            html += `<button class="confirm-btn" id="confirmIntertwine" onclick="confirmIntertwine()" style="display:none;">Lock It In!</button>`;
+            document.getElementById('allyDiceOptions').innerHTML = html;
+        }
+
+        function selectIntertwineAllyDie(dieType) {
+            intertwineData.allyDieType = dieType;
+
+            // Highlight selected
+            document.querySelectorAll('#allyDiceOptions .talent-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.closest('.talent-btn').classList.add('selected');
+
+            // Show confirm button
+            document.getElementById('confirmIntertwine').style.display = 'block';
+        }
+
+        function confirmIntertwine() {
+            const player = gameState.players[talentState.currentPlayer];
+            const ranking = talentState.playerRankings[talentState.currentPlayer];
+            const middleDie = player.dice[ranking.middle];
+
+            // Add the swap
+            middleDie.swaps.push({
+                faceValue: intertwineData.number,
+                targetPlayer: intertwineData.allyIndex,
+                targetDieType: intertwineData.allyDieType
+            });
+
+            // Move to next player
+            talentState.currentPlayer++;
+            intertwineData = { number: null, allyIndex: null, allyDieType: null };
+
+            if (talentState.currentPlayer >= 3) {
+                // All done, start the game!
+                finishTalentRanking();
+            } else {
+                showIntertwineScreen();
+            }
+        }
+
+        function finishTalentRanking() {
+            document.getElementById('intertwineScreen').classList.add('hidden');
+            startGame();
+        }
+
+        // ==================== GAME INITIALIZATION ====================
+        function startGame() {
+            // If coming from talent ranking, players already exist with upgrades applied
+            // Only create players if they don't exist yet
+            if (gameState.players.length === 0) {
+                gameState.gold = 0;
+                gameState.doom = 0;
+                gameState.hope = 0;
+                gameState.map = [];
+
+                for (let p = 1; p <= 3; p++) {
+                    const name = document.getElementById(`p${p}name`).value || `Player ${p}`;
+                    const physical = document.querySelector(`input[name="p${p}physical"]:checked`).value;
+                    const verbal = document.querySelector(`input[name="p${p}verbal"]:checked`).value;
+                    const preventative = document.querySelector(`input[name="p${p}preventative"]:checked`).value;
+
+                    gameState.players.push({
+                        id: p,
+                        name: name,
+                        hp: 20,
+                        maxHp: 20,
+                        dice: {
+                            physical: createDie(physical),
+                            verbal: createDie(verbal),
+                            preventative: createDie(preventative)
+                        }
+                    });
+                }
+            }
+
             generateMap();
 
+            // Hide all setup screens
             document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('talentScreen').classList.add('hidden');
+            document.getElementById('intertwineScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
 
             renderMap();

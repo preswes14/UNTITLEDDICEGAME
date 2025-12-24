@@ -37,6 +37,25 @@ A player will have one die from each category.
 
 Players encounter various obstacles or combats that they must proceed through by taking turns choosing dice and rolling to see if they are successful.
 
+### Starting Talent Ranking (Tutorial)
+
+After picking their 3 dice, each player goes through a **Talent Ranking** that teaches them the upgrade system:
+
+1. **"Which are you BEST at?"** - Pick one die
+   - This die gets an upgrade: **One of 2, 3, 4, or 5 becomes a 20!**
+
+2. **"Which are you WORST at?"** - Pick from the remaining two
+   - This die gets a downgrade: **One of 2, 3, 4, or 5 becomes a 1...**
+
+3. **The middle die** - The one not picked
+   - This die gets **intertwined with an ally**: Pick a number between 6-10. When rolled, it triggers your ally's chosen die instead!
+   - Players walk through selecting which ally and which die, learning the core swap mechanic
+
+This tutorial accomplishes several things:
+- Teaches upgrading, downgrading, and dice swapping before the adventure begins
+- Creates immediate asymmetry between players (someone's Persuade is godlike, another's is cursed)
+- Establishes the cooperative bond through the intertwine mechanic
+
 ---
 
 ## The Core Innovation: Dice Swapping
@@ -199,9 +218,9 @@ The party learns of ATOM (Assemble The Others Movement) - a doomsday cult seekin
 Bosses use a **success counter system** instead of HP. Players must accumulate enough successful rolls in a chosen approach to defeat the boss:
 
 **The Three Approaches:**
-- **Physical** (Slash, Stab, Bonk) - Direct combat. Usually requires the fewest successes but may miss narrative opportunities.
-- **Verbal** (Threaten, Deceive, Persuade) - Diplomatic resolution. Requires the most successes but often yields better narrative outcomes.
-- **Preventative** (Bribe, Hide, Grapple) - Tactical approach. Middle ground in difficulty.
+- **Physical** (Slash, Stab, Bonk) - Direct combat. Harder early on, becomes more efficient against cosmic horrors.
+- **Verbal** (Threaten, Deceive, Persuade) - Diplomatic resolution. Easiest early when dealing with humans, nearly impossible against BOMB.
+- **Preventative** (Bribe, Hide, Grapple) - Tactical approach. Consistent middle ground throughout.
 
 **Combat Round Flow:**
 1. Each hero chooses a die and rolls (3 rolls per round)
@@ -213,18 +232,17 @@ Bosses use a **success counter system** instead of HP. Players must accumulate e
 
 | Boss | DC | Physical | Verbal | Preventative | Attacks/Round |
 |------|:--:|:--------:|:------:|:------------:|:-------------:|
-| **1. Dirty Innkeeper** | 10 | 2 | 4 | 3 | 1 |
-| **2. Corrupt Guard** | 12 | 3 | 4 | 3 | 1 |
-| **3. General Heimer** | 14 | 4 | 4 | 3 | 1 |
-| **4. King Robert** | 15 | 5 | 5 | 4 | 1 |
-| **5. BOMB** | 16 | 6 | 7 | 5 | 2 |
+| **1. Dirty Innkeeper** | 10 | 4 | 3 | 2 | 1 |
+| **2. Corrupt Guard** | 12 | 5 | 4 | 3 | 1 |
+| **3. General Heimer** | 14 | 6 | 6 | 5 | 1 |
+| **4. King Robert** | 15 | 7 | 7 | 7 | 1 |
+| **5. BOMB** | 16 | 8 | 10 | 9 | 2 |
 
-*Note: BOMB's 2 attacks per round means 2 DOOM Rolls if you miss. With accumulated DOOM, the final boss becomes terrifying.*
+*Design philosophy: Early bosses reward peaceful resolution (Verbal/Preventative). By King Robert, all approaches are equal - he's beyond reason. BOMB is a cosmic horror where combat becomes most efficient; you can't talk down an eldritch abomination.*
 
 **Mathematical Balance Notes:**
-- With DC 10 and average dice, ~55% hit rate. 2 Physical successes = ~2-3 rounds typical.
-- With DC 16 and accumulated DOOM debuffs, ~25% hit rate. 6 Physical successes = ~8-10 rounds.
-- Each round with 3 heroes rolling, probability of at least one miss: ~45% (DC 10) to ~80% (DC 16).
+- Innkeeper: Preventative needs only 2 successes (~1-2 rounds). Physical needs 4 (~3-4 rounds).
+- BOMB: Physical needs 8 successes, but Verbal needs 10. Combat is actually the "smart" choice against cosmic evil.
 - BOMB's 2 attacks mean roughly 1-2 DOOM Rolls per round at end game.
 
 ---
