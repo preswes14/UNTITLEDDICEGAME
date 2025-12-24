@@ -1432,6 +1432,100 @@
             gap: 15px;
             justify-content: center;
         }
+
+        /* Stage Shop Styles */
+        .shop-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .shop-container h1 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .shop-points {
+            font-size: 1.4em;
+            color: #4ade80;
+            margin: 20px 0;
+        }
+
+        .shop-points span {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .shop-players {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .shop-player-section {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #444;
+        }
+
+        .shop-player-section h3 {
+            color: #4ade80;
+            margin-bottom: 15px;
+        }
+
+        .shop-upgrades {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .shop-upgrade-btn {
+            background: rgba(50,50,70,0.8);
+            border: 2px solid #555;
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 140px;
+        }
+
+        .shop-upgrade-btn:hover:not(:disabled) {
+            background: rgba(70,70,100,0.9);
+            border-color: #ffd700;
+        }
+
+        .shop-upgrade-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .shop-upgrade-btn.purchased {
+            background: rgba(74,222,128,0.3);
+            border-color: #4ade80;
+        }
+
+        .shop-upgrade-btn .cost {
+            display: block;
+            font-size: 0.8em;
+            color: #ffd700;
+            margin-top: 5px;
+        }
+
+        .shop-upgrade-btn .tier-locked {
+            display: block;
+            font-size: 0.7em;
+            color: #f87171;
+            margin-top: 3px;
+        }
+
+        .shop-footer {
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
@@ -1761,6 +1855,24 @@
         </div>
     </div>
 
+    <!-- Stage Shop Screen -->
+    <div class="screen hidden" id="stageShopScreen">
+        <div class="shop-container">
+            <h1 id="shopStageTitle">Stage 2 Preparation</h1>
+            <p id="shopDescription">Spend your Favor to prepare for the challenges ahead.</p>
+            <p class="shop-points">Favor Remaining: <span id="shopPointsRemaining">0</span></p>
+
+            <div class="shop-players" id="shopPlayers">
+                <!-- Player shop sections will be generated here -->
+            </div>
+
+            <div class="shop-footer">
+                <p style="color:#888; font-size:0.9em;">Upgrades purchased here reset after this stage. Only your initial talents are permanent.</p>
+                <button class="menu-btn primary" onclick="confirmShopAndContinue()">Begin Stage</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Defeat Screen -->
     <div class="screen end-screen defeat hidden" id="defeatScreen">
         <div class="end-content">
@@ -1796,7 +1908,10 @@
                 votes: {}, // playerIdx -> optionIdx
                 round: 1,
                 node: null
-            }
+            },
+            // Favor (points) system - resets each stage
+            favor: 0,
+            purchasedUpgrades: [] // Track what was bought this stage [{playerIdx, upgradeId}]
         };
 
         // ==================== DEFINITIONS ====================
@@ -2009,40 +2124,46 @@
             5: { name: 'B.O.M.B.', location: 'The Warped Dimension' }
         };
 
-        // Stage-specific encounters
-        const STAGE_ENCOUNTERS = {
-            2: {
-                start: { type: 'good', name: 'City Gates', description: 'The party enters the fortified city. Guards watch from above.', icon: '🏰', options: [{ text: 'Continue', action: 'leave' }] },
-                witness: { type: 'neutral', name: 'The Witness', description: 'An old woman saw the assassination. "I saw who loosed that arrow..."', icon: '👵', vote: true, options: [{ text: 'Pay for info (20g)', cost: 20, action: 'pay_witness' }, { text: 'Intimidate her', action: 'intimidate_witness' }, { text: 'Leave', action: 'leave' }] },
-                armory: { type: 'good', name: 'Abandoned Armory', description: 'A dusty armory with old weapons. Some still look serviceable.', icon: '⚔️', options: [{ text: 'Search (+1 upgrade)', action: 'upgrade_plus2' }, { text: 'Leave', action: 'leave' }] },
-                barracks: { type: 'bad', name: 'Guard Barracks', description: 'Soldiers block your path. "No civilians past this point!"', icon: '🛡️', dc: 12, hp: 35, reward: 30, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Sneak past (Preventative)', types: ['preventative'], action: 'combat' }] },
-                informant: { type: 'neutral', name: 'Shady Informant', description: 'A hooded figure beckons from an alley. "I know things about the Guard Captain..."', icon: '🕵️', vote: true, options: [{ text: 'Pay 30g for intel', cost: 30, action: 'pay_informant' }, { text: 'Refuse', action: 'leave' }] },
-                drawbridge: { type: 'bad', name: 'Drawbridge Operator', description: 'The bridge operator refuses to lower the gate. He seems nervous.', icon: '🌉', dc: 13, hp: 45, reward: 40, options: [{ text: 'Force him (Physical)', types: ['physical'], action: 'combat' }, { text: 'Bribe him (Preventative)', types: ['preventative'], action: 'combat' }, { text: 'Convince him (Verbal)', types: ['verbal'], action: 'combat' }] }
-            },
-            3: {
-                start: { type: 'good', name: 'Army Encampment', description: 'Heimer\'s army stretches across the fields. Tents as far as the eye can see.', icon: '⛺', options: [{ text: 'Continue', action: 'leave' }] },
-                deserter: { type: 'neutral', name: 'The Deserter', description: 'A soldier hiding in the bushes. "Please, I just want to go home..."', icon: '😰', vote: true, options: [{ text: 'Help him escape (+HOPE)', action: 'help_deserter' }, { text: 'Turn him in (information)', action: 'betray_deserter' }, { text: 'Leave', action: 'leave' }] },
-                supply: { type: 'good', name: 'Supply Wagon', description: 'An unguarded supply wagon. Medical supplies and rations.', icon: '🛒', options: [{ text: 'Take supplies (heal all)', action: 'heal_all' }, { text: 'Leave', action: 'leave' }] },
-                patrol: { type: 'bad', name: 'Night Patrol', description: 'A patrol of soldiers spots you! "Halt! Intruders!"', icon: '🔦', dc: 13, hp: 50, reward: 35, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Hide (Preventative)', types: ['preventative'], action: 'combat' }] },
-                siege: { type: 'bad', name: 'Siege Equipment', description: 'You must disable the siege weapons to reach Heimer.', icon: '💣', dc: 14, hp: 40, reward: 45, options: [{ text: 'Sabotage (Preventative)', types: ['preventative'], action: 'combat' }, { text: 'Destroy (Physical)', types: ['physical'], action: 'combat' }] },
-                commander: { type: 'bad', name: 'Field Commander', description: 'Heimer\'s second-in-command blocks the command tent.', icon: '🎖️', dc: 14, hp: 55, reward: 50, options: [{ text: 'Duel (Physical)', types: ['physical'], action: 'combat' }, { text: 'Negotiate (Verbal)', types: ['verbal'], action: 'combat' }] }
-            },
-            4: {
-                start: { type: 'good', name: 'Palace Gates', description: 'The royal palace looms before you. This is it.', icon: '🏛️', options: [{ text: 'Continue', action: 'leave' }] },
-                jester: { type: 'neutral', name: 'The Royal Jester', description: 'A mad jester blocks your path. "Play my game or face my blade!"', icon: '🃏', vote: true, options: [{ text: 'Play the game (gamble)', action: 'jester_game' }, { text: 'Fight', types: ['physical'], action: 'combat' }], dc: 14, hp: 40, reward: 60 },
-                chef: { type: 'bad', name: 'The Royal Chef', description: 'The chef guards the kitchens. His cleaver drips with... something.', icon: '👨‍🍳', dc: 14, hp: 45, reward: 45, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Sneak past (Preventative)', types: ['preventative'], action: 'combat' }] },
-                counselor: { type: 'neutral', name: 'The King\'s Counselor', description: 'An elderly advisor considers you carefully. "Perhaps we can reach an... arrangement."', icon: '📜', vote: true, options: [{ text: 'Negotiate (Verbal)', types: ['verbal'], action: 'combat' }, { text: 'Bribe (100g)', cost: 100, action: 'bribe_counselor' }, { text: 'Fight', types: ['physical'], action: 'combat' }], dc: 15, hp: 35, reward: 50 },
-                throne: { type: 'good', name: 'Throne Antechamber', description: 'The door to the throne room. Dark energy pulses from within.', icon: '🚪', options: [{ text: 'Enter', action: 'leave' }] },
-                guards: { type: 'bad', name: 'Royal Guard', description: 'Elite guards in black armor. The King\'s last line of defense.', icon: '⚔️', dc: 15, hp: 60, reward: 55, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Deceive (Verbal)', types: ['verbal'], action: 'combat' }] }
-            },
-            5: {
-                start: { type: 'good', name: 'The Rift', description: 'Reality tears apart. You fall through into... somewhere else.', icon: '🌀', options: [{ text: 'Continue', action: 'leave' }] },
-                fragment: { type: 'good', name: 'Memory Fragment', description: 'A shard of your past floats before you. It pulses with warmth.', icon: '💎', options: [{ text: 'Touch it (restore die)', action: 'restore_die' }, { text: 'Leave', action: 'leave' }] },
-                echo: { type: 'bad', name: 'Echo of BOMB', description: 'A shadow of the final boss. A taste of what\'s to come.', icon: '👁️', dc: 15, hp: 50, reward: 40, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Evade (Preventative)', types: ['preventative'], action: 'combat' }] },
-                sanctuary: { type: 'good', name: 'Pocket of Reality', description: 'A small bubble of normal space. A moment to breathe.', icon: '🏝️', options: [{ text: 'Rest (heal 10 HP each)', action: 'heal_all' }, { text: 'Continue', action: 'leave' }] },
-                void: { type: 'bad', name: 'Void Creatures', description: 'Shapeless horrors from beyond reality attack!', icon: '👾', dc: 15, hp: 55, reward: 45, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Hide (Preventative)', types: ['preventative'], action: 'combat' }] },
-                prophecy: { type: 'neutral', name: 'The 19 Darkened Lines', description: 'You see the 19 failed prophecies. Only yours remains lit.', icon: '📖', options: [{ text: 'Accept your destiny (+HOPE)', action: 'accept_destiny' }, { text: 'Continue', action: 'leave' }] }
-            }
+        // Favor points per stage - increases each stage to allow stronger builds
+        const STAGE_FAVOR = {
+            1: 0,  // Stage 1 has no shop (only talent ranking)
+            2: 4,  // First shop experience
+            3: 6,  // More options
+            4: 8,  // Serious preparation
+            5: 10  // Final stand
+        };
+
+        // Available upgrades - tier determines which stage unlocks them
+        const SHOP_UPGRADES = [
+            // Tier 1 - Available from Stage 2
+            { id: 'hp_small', name: '+5 HP', description: 'Heal 5 HP', cost: 1, tier: 1, effect: 'hp', value: 5 },
+            { id: 'die_plus2', name: '+2 to Lowest', description: 'Add 2 to lowest die face', cost: 2, tier: 1, effect: 'die_upgrade', value: 2 },
+            { id: 'gold_bonus', name: '+20 Gold', description: 'Start with extra gold', cost: 1, tier: 1, effect: 'gold', value: 20 },
+
+            // Tier 2 - Available from Stage 3
+            { id: 'hp_medium', name: '+10 HP', description: 'Heal 10 HP', cost: 2, tier: 2, effect: 'hp', value: 10 },
+            { id: 'die_plus5', name: '+5 to Lowest', description: 'Add 5 to lowest die face', cost: 3, tier: 2, effect: 'die_upgrade', value: 5 },
+            { id: 'hope_start', name: '+2 HOPE', description: 'Start with HOPE', cost: 2, tier: 2, effect: 'hope', value: 2 },
+
+            // Tier 3 - Available from Stage 4
+            { id: 'hp_large', name: '+15 HP', description: 'Heal 15 HP', cost: 3, tier: 3, effect: 'hp', value: 15 },
+            { id: 'die_upgrade_all', name: '+3 All Dice', description: 'Add 3 to all lowest faces', cost: 4, tier: 3, effect: 'die_upgrade_all', value: 3 },
+            { id: 'doom_reduce', name: '-3 DOOM', description: 'Start with less DOOM', cost: 2, tier: 3, effect: 'doom_reduce', value: 3 },
+
+            // Tier 4 - Available from Stage 5
+            { id: 'hp_massive', name: '+20 HP', description: 'Full heal boost', cost: 3, tier: 4, effect: 'hp', value: 20 },
+            { id: 'die_supercharge', name: '+10 to Best', description: 'Supercharge your best die', cost: 5, tier: 4, effect: 'die_supercharge', value: 10 },
+            { id: 'hope_surge', name: '+5 HOPE', description: 'Major HOPE boost', cost: 4, tier: 4, effect: 'hope', value: 5 }
+        ];
+
+        // Stage 5 warped encounters only - Stages 1-4 use common ENCOUNTERS
+        const STAGE_5_ENCOUNTERS = {
+            start: { type: 'good', name: 'The Rift', description: 'Reality tears apart. You fall through into... somewhere else.', icon: '🌀', options: [{ text: 'Continue', action: 'leave' }] },
+            fragment: { type: 'good', name: 'Memory Fragment', description: 'A shard of your past floats before you. It pulses with warmth.', icon: '💎', options: [{ text: 'Touch it (restore die)', action: 'restore_die' }, { text: 'Leave', action: 'leave' }] },
+            echo: { type: 'bad', name: 'Echo of BOMB', description: 'A shadow of the final boss. A taste of what\'s to come.', icon: '👁️', dc: 15, hp: 50, reward: 40, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Evade (Preventative)', types: ['preventative'], action: 'combat' }] },
+            sanctuary: { type: 'good', name: 'Pocket of Reality', description: 'A small bubble of normal space. A moment to breathe.', icon: '🏝️', options: [{ text: 'Rest (heal 10 HP each)', action: 'heal_all' }, { text: 'Continue', action: 'leave' }] },
+            void: { type: 'bad', name: 'Void Creatures', description: 'Shapeless horrors from beyond reality attack!', icon: '👾', dc: 15, hp: 55, reward: 45, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Hide (Preventative)', types: ['preventative'], action: 'combat' }] },
+            prophecy: { type: 'neutral', name: 'The 19 Darkened Lines', description: 'You see the 19 failed prophecies. Only yours remains lit.', icon: '📖', options: [{ text: 'Accept your destiny (+HOPE)', action: 'accept_destiny' }, { text: 'Continue', action: 'leave' }] }
         };
 
         // ==================== SCREEN MANAGEMENT ====================
@@ -2077,14 +2198,162 @@
             // Advance stage
             gameState.currentStage++;
 
+            // Reset temporary upgrades - restore dice to permanent state
+            resetTemporaryUpgrades();
+
             // Reset DOOM for new stage
             gameState.doom = 0;
-            updateDoomHopeDisplay();
 
-            // Heal players for new stage
-            gameState.players.forEach(p => {
-                p.hp = Math.min(p.maxHp, p.hp + 10);
+            // Show the shop for the new stage
+            showStageShop();
+        }
+
+        function resetTemporaryUpgrades() {
+            // Clear purchased upgrades list
+            gameState.purchasedUpgrades = [];
+
+            // Reset dice to their permanent (talent-ranked) state
+            // The permanent upgrades are stored in each die's baseFaces
+            gameState.players.forEach(player => {
+                Object.values(player.dice).forEach(die => {
+                    if (die.baseFaces) {
+                        die.faces = [...die.baseFaces];
+                    }
+                });
             });
+        }
+
+        function showStageShop() {
+            const stage = gameState.currentStage;
+            const stageInfo = STAGE_INFO[stage];
+            const favor = STAGE_FAVOR[stage];
+
+            // Set up favor
+            gameState.favor = favor;
+            gameState.purchasedUpgrades = [];
+
+            // Update shop UI
+            document.getElementById('shopStageTitle').textContent = `Stage ${stage}: ${stageInfo.location}`;
+            document.getElementById('shopDescription').textContent = stage === 5
+                ? 'This is your final stand. Spend your Favor wisely.'
+                : 'Spend your Favor to prepare for the challenges ahead.';
+            document.getElementById('shopPointsRemaining').textContent = favor;
+
+            // Generate player shop sections
+            renderShopPlayers();
+
+            // Show shop screen
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById('stageShopScreen').classList.remove('hidden');
+        }
+
+        function renderShopPlayers() {
+            const stage = gameState.currentStage;
+            const maxTier = stage - 1; // Stage 2 = Tier 1, Stage 3 = Tier 2, etc.
+
+            const container = document.getElementById('shopPlayers');
+            container.innerHTML = '';
+
+            gameState.players.forEach((player, pIdx) => {
+                const section = document.createElement('div');
+                section.className = 'shop-player-section';
+
+                let upgradesHtml = '';
+                SHOP_UPGRADES.forEach(upgrade => {
+                    const purchased = gameState.purchasedUpgrades.some(
+                        p => p.playerIdx === pIdx && p.upgradeId === upgrade.id
+                    );
+                    const canAfford = gameState.favor >= upgrade.cost;
+                    const tierUnlocked = upgrade.tier <= maxTier;
+                    const disabled = !tierUnlocked || !canAfford || purchased;
+
+                    upgradesHtml += `
+                        <button class="shop-upgrade-btn ${purchased ? 'purchased' : ''}"
+                                onclick="purchaseUpgrade(${pIdx}, '${upgrade.id}')"
+                                ${disabled ? 'disabled' : ''}>
+                            ${upgrade.name}
+                            <span class="cost">${upgrade.cost} Favor</span>
+                            ${!tierUnlocked ? `<span class="tier-locked">Stage ${upgrade.tier + 1}+</span>` : ''}
+                        </button>
+                    `;
+                });
+
+                section.innerHTML = `
+                    <h3>${player.name}</h3>
+                    <div class="shop-upgrades">${upgradesHtml}</div>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        function purchaseUpgrade(playerIdx, upgradeId) {
+            const upgrade = SHOP_UPGRADES.find(u => u.id === upgradeId);
+            if (!upgrade || gameState.favor < upgrade.cost) return;
+
+            // Deduct favor
+            gameState.favor -= upgrade.cost;
+
+            // Track purchase
+            gameState.purchasedUpgrades.push({ playerIdx, upgradeId });
+
+            // Apply effect
+            const player = gameState.players[playerIdx];
+            switch (upgrade.effect) {
+                case 'hp':
+                    player.hp = Math.min(player.maxHp + upgrade.value, player.hp + upgrade.value);
+                    player.maxHp += Math.floor(upgrade.value / 2); // Permanent max HP boost (half)
+                    break;
+                case 'die_upgrade':
+                    // Upgrade lowest face of a random die
+                    const dieTypes = Object.keys(player.dice);
+                    const randomDie = player.dice[dieTypes[Math.floor(Math.random() * dieTypes.length)]];
+                    const minFace = Math.min(...randomDie.faces);
+                    const minIdx = randomDie.faces.indexOf(minFace);
+                    randomDie.faces[minIdx] += upgrade.value;
+                    break;
+                case 'die_upgrade_all':
+                    Object.values(player.dice).forEach(die => {
+                        const minFace = Math.min(...die.faces);
+                        const minIdx = die.faces.indexOf(minFace);
+                        die.faces[minIdx] += upgrade.value;
+                    });
+                    break;
+                case 'die_supercharge':
+                    // Upgrade best die's highest face
+                    const bestDie = Object.values(player.dice).reduce((best, die) =>
+                        Math.max(...die.faces) > Math.max(...best.faces) ? die : best
+                    );
+                    const maxFace = Math.max(...bestDie.faces);
+                    const maxIdx = bestDie.faces.indexOf(maxFace);
+                    bestDie.faces[maxIdx] += upgrade.value;
+                    break;
+                case 'gold':
+                    gameState.gold += upgrade.value;
+                    break;
+                case 'hope':
+                    gameState.hope += upgrade.value;
+                    break;
+                case 'doom_reduce':
+                    gameState.doom = Math.max(0, gameState.doom - upgrade.value);
+                    break;
+            }
+
+            // Update UI
+            document.getElementById('shopPointsRemaining').textContent = gameState.favor;
+            renderShopPlayers();
+        }
+
+        function confirmShopAndContinue() {
+            // Hide shop
+            document.getElementById('stageShopScreen').classList.add('hidden');
+
+            // Heal players slightly
+            gameState.players.forEach(p => {
+                p.hp = Math.min(p.maxHp, p.hp + 5);
+            });
+
+            // Update displays
+            updateDoomHopeDisplay();
 
             // Generate new map for new stage
             generateMap();
@@ -2428,6 +2697,15 @@
 
         function finishTalentRanking() {
             document.getElementById('intertwineScreen').classList.add('hidden');
+
+            // Save base faces for each die - these are the permanent upgrades from talent ranking
+            // Temporary shop upgrades will be reset to these values between stages
+            gameState.players.forEach(player => {
+                Object.values(player.dice).forEach(die => {
+                    die.baseFaces = [...die.faces];
+                });
+            });
+
             startGame();
         }
 
@@ -2499,51 +2777,29 @@
         function generateMap() {
             const stage = gameState.currentStage;
 
-            // Stage-specific map structures
+            // All stages use same encounter layout - players learn to strategize
+            // Only Stage 5 has unique warped encounters
+            const COMMON_MAP_STRUCTURE = [
+                { encounter: 'start', row: 0 },
+                { encounter: 'mathematician', row: 1 },
+                { encounter: 'bandits', row: 1 },
+                { encounter: 'alchemist', row: 2 },
+                { encounter: 'ferryman', row: 2 },
+                { encounter: 'priest', row: 2 },
+                { encounter: 'guards', row: 3 },
+                { encounter: 'trapper', row: 3 },
+                { encounter: 'gambler', row: 4 },
+                { encounter: 'drunkPriest', row: 4 },
+                { encounter: 'cultist', row: 4 },
+                { encounter: 'miniboss', row: 5 },
+                { encounter: 'boss', row: 6 }
+            ];
+
             const MAP_STRUCTURES = {
-                1: [
-                    { encounter: 'start', row: 0 },
-                    { encounter: 'mathematician', row: 1 },
-                    { encounter: 'bandits', row: 1 },
-                    { encounter: 'alchemist', row: 2 },
-                    { encounter: 'ferryman', row: 2 },
-                    { encounter: 'priest', row: 2 },
-                    { encounter: 'guards', row: 3 },
-                    { encounter: 'trapper', row: 3 },
-                    { encounter: 'gambler', row: 4 },
-                    { encounter: 'drunkPriest', row: 4 },
-                    { encounter: 'cultist', row: 4 },
-                    { encounter: 'miniboss', row: 5 },
-                    { encounter: 'boss', row: 6 }
-                ],
-                2: [
-                    { encounter: 'start', row: 0 },
-                    { encounter: 'witness', row: 1 },
-                    { encounter: 'armory', row: 1 },
-                    { encounter: 'barracks', row: 2 },
-                    { encounter: 'informant', row: 2 },
-                    { encounter: 'ferryman', row: 2 },
-                    { encounter: 'drawbridge', row: 3 },
-                    { encounter: 'boss', row: 4 }
-                ],
-                3: [
-                    { encounter: 'start', row: 0 },
-                    { encounter: 'deserter', row: 1 },
-                    { encounter: 'supply', row: 1 },
-                    { encounter: 'patrol', row: 2 },
-                    { encounter: 'siege', row: 2 },
-                    { encounter: 'commander', row: 3 },
-                    { encounter: 'boss', row: 4 }
-                ],
-                4: [
-                    { encounter: 'start', row: 0 },
-                    { encounter: 'jester', row: 1 },
-                    { encounter: 'chef', row: 1 },
-                    { encounter: 'counselor', row: 2 },
-                    { encounter: 'guards', row: 2 },
-                    { encounter: 'throne', row: 3 },
-                    { encounter: 'boss', row: 4 }
-                ],
+                1: COMMON_MAP_STRUCTURE,
+                2: COMMON_MAP_STRUCTURE,
+                3: COMMON_MAP_STRUCTURE,
+                4: COMMON_MAP_STRUCTURE,
                 5: [
                     { encounter: 'start', row: 0 },
                     { encounter: 'fragment', row: 1 },
@@ -2557,8 +2813,8 @@
 
             const structure = MAP_STRUCTURES[stage] || MAP_STRUCTURES[1];
 
-            // Get the appropriate encounter source
-            const encounterSource = stage === 1 ? ENCOUNTERS : (STAGE_ENCOUNTERS[stage] || ENCOUNTERS);
+            // Get the appropriate encounter source - only Stage 5 is different (warped)
+            const encounterSource = stage === 5 ? STAGE_5_ENCOUNTERS : ENCOUNTERS;
 
             // Generate boss encounter for this stage
             const bossData = BOSSES[stage];
@@ -3198,53 +3454,13 @@
                 case 'boss_combat':
                     startBossCombat(option, node);
                     break;
-                // Stage 2+ encounter actions
-                case 'pay_witness':
-                case 'pay_informant':
-                    if (spendGold(option.cost)) {
-                        log('Information acquired! The path forward becomes clearer.', 'success');
-                        addHope(1);
-                    }
-                    completeEncounter();
-                    break;
-                case 'intimidate_witness':
-                    addDoom(1, 'The witness is terrified...');
-                    log('She tells you what she saw, trembling.', 'info');
-                    completeEncounter();
-                    break;
-                case 'help_deserter':
-                    addHope(2);
-                    log('The deserter thanks you with tears in his eyes.', 'success');
-                    completeEncounter();
-                    break;
-                case 'betray_deserter':
-                    addGold(30);
-                    addDoom(2, 'Your betrayal weighs heavy...');
-                    log('The soldiers reward your "loyalty" with gold.', 'info');
-                    completeEncounter();
-                    break;
+                // Stage 5 warped encounter actions
                 case 'heal_all':
                     gameState.players.forEach(p => {
                         p.hp = Math.min(p.maxHp, p.hp + 10);
                     });
                     log('The party rests and recovers. +10 HP each!', 'success');
                     renderPlayers();
-                    completeEncounter();
-                    break;
-                case 'jester_game':
-                    // High-stakes gamble with the jester
-                    gameState.canRoll = true;
-                    gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
-                    gameState.targetDC = 12;
-                    gameState.encounterState = { type: 'gamble', wager: 50 };
-                    document.getElementById('encounterDescription').innerHTML +=
-                        '<p style="color:#ffd700;margin-top:15px;">The Jester cackles! Roll any die - beat 12 to win 100g!</p>';
-                    renderDiceTray();
-                    break;
-                case 'bribe_counselor':
-                    if (spendGold(option.cost)) {
-                        log('The Counselor pockets your gold and steps aside.', 'success');
-                    }
                     completeEncounter();
                     break;
                 case 'restore_die':
