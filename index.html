@@ -1940,22 +1940,23 @@
             mathematician: {
                 type: 'good',
                 name: 'The Mathematician',
-                description: 'A strange old man with ink-stained fingers beckons you. "Numbers are my trade. Let me improve your odds..."',
+                description: 'A strange old man with ink-stained fingers beckons you. "Numbers are my trade. Let me improve your odds... free of charge!"',
                 icon: '🔢',
                 options: [
-                    { text: 'Free Lesson (+2 to a lowest face)', action: 'upgrade_plus2' },
-                    { text: 'Advanced Lesson (-1 high face for +4 lowest)', action: 'math_tradeoff' },
+                    { text: 'Free Lesson (+2 to lowest face)', action: 'math_free' },
+                    { text: 'Trade-off (-1 from high, +4 to low)', action: 'math_tradeoff' },
                     { text: 'Leave', action: 'leave' }
                 ]
             },
             alchemist: {
                 type: 'good',
                 name: 'The Alchemist',
-                description: 'Bubbling potions fill the cramped shop. A wild-eyed woman grins at you. "I can splice your dice together! Link your fates... for science!"',
+                description: 'Bubbling potions fill the cramped shop. A wild-eyed woman grins at you. "I can splice your dice together! Link your fates... no charge for first-timers!"',
                 icon: '⚗️',
                 options: [
-                    { text: 'Basic Splice (Link a low roll to ally)', action: 'swap_low_to_ally' },
-                    { text: 'Risky Splice (Link random for +2 bonus)', action: 'alchemist_risky' },
+                    { text: 'Basic Splice (Link low roll to ally)', action: 'swap_low_to_ally' },
+                    { text: 'Risky Splice (Random link + free +2)', action: 'alchemist_risky' },
+                    { text: 'Double Link (Link to BOTH allies!)', action: 'alchemist_double' },
                     { text: 'Leave', action: 'leave' }
                 ]
             },
@@ -1966,17 +1967,18 @@
                 icon: '✨',
                 options: [
                     { text: 'Accept Blessing (+3 HOPE)', action: 'blessing_hope' },
-                    { text: 'Greater Blessing (+5 HOPE, but mark a die)', action: 'blessing_greater' },
+                    { text: 'Mark a Die (+5 HOPE, mark one face)', action: 'blessing_greater' },
+                    { text: 'Bless a Segment (+HOPE on a roll)', action: 'blessing_segment' },
                     { text: 'Leave', action: 'leave' }
                 ]
             },
             gambler: {
                 type: 'good',
                 name: 'The Gambler',
-                description: 'A shifty-eyed woman shuffles cards and gestures to a wheel. "Guess the range! Hit it and win big. Miss and still get something."',
+                description: 'A shifty-eyed woman shuffles cards and spins a wheel. "Pick IN or OUT of the range, then roll! Either way, you win something!"',
                 icon: '🎰',
                 options: [
-                    { text: 'Play the Range Game', action: 'gamble_range' },
+                    { text: 'Play the Range Game', action: 'gamble_range_choice' },
                     { text: 'Leave', action: 'leave' }
                 ]
             },
@@ -2005,48 +2007,48 @@
             ferryman: {
                 type: 'neutral',
                 name: 'The Ferryman',
-                description: 'An ancient boatman waits by dark waters. His eyes gleam with ancient wisdom. "The river knows your fate. Pay my toll - roll and let the waters judge you. Or... pay me 15 gold and I guarantee safe AND fortunate passage."',
+                description: 'An ancient boatman waits by dark waters. His eyes gleam with ancient wisdom. "The river knows your fate. Roll and let the waters judge you. Or... pay 5 gold for guaranteed safe passage."',
                 icon: '⛵',
                 vote: true,
                 options: [
-                    { text: 'Pay the Toll (Roll for fate)', action: 'ferryman_roll' },
-                    { text: 'Pay 15G (Guaranteed good outcome)', action: 'ferryman_paid', cost: 15 },
-                    { text: 'Wade the shallows (Safe but +1 DOOM)', action: 'ferryman_wade' }
+                    { text: 'Roll for Fate (Free)', action: 'ferryman_roll' },
+                    { text: 'Pay 5G (Guaranteed good)', action: 'ferryman_paid', cost: 5 },
+                    { text: 'Wade the shallows (+1 DOOM)', action: 'ferryman_wade' }
                 ]
             },
             trapper: {
                 type: 'neutral',
                 name: 'The Trapper',
-                description: 'A grizzled hunter displays strange dice covered in scratch marks and odd symbols. "Free trade: your worst for my grab bag. But for 20 gold, I\'ll let you pick from my BEST collection..."',
+                description: 'A grizzled hunter displays three strange dice covered in odd symbols. "Trade one of yours for one of mine. The stronger your sacrifice, the better the die you get..."',
                 icon: '🪤',
                 vote: true,
                 options: [
-                    { text: 'Free Trade (Random outcome)', action: 'trapper_trade' },
-                    { text: 'Pay 20G (Guaranteed +6 to +10)', action: 'trapper_paid', cost: 20 },
+                    { text: 'View the Exotic Dice', action: 'trapper_exotic' },
+                    { text: 'Pay 8G (Pick any exotic die)', action: 'trapper_paid', cost: 8 },
                     { text: 'Leave empty-handed', action: 'leave' }
                 ]
             },
             drunkPriest: {
                 type: 'neutral',
                 name: 'The Drunk Priest',
-                description: 'A priest stumbles towards you, bottle in hand. "Blessings! ...hic... The gods speak through me. For 10 gold, I\'ll sober up just enough to do it right."',
+                description: 'A priest stumbles towards you, bottle in hand. "Blessings! ...hic... The gods speak through me. For 3 gold, I\'ll sober up just enough to do it right."',
                 icon: '🍺',
                 vote: true,
                 options: [
-                    { text: 'Accept the Blessing (Random)', action: 'drunk_blessing' },
-                    { text: 'Pay 10G (Guaranteed +3 HOPE, no DOOM)', action: 'drunk_paid', cost: 10 },
+                    { text: 'Accept the Blessing (Free)', action: 'drunk_blessing' },
+                    { text: 'Pay 3G (Guaranteed +3 HOPE)', action: 'drunk_paid', cost: 3 },
                     { text: 'Decline politely', action: 'leave' }
                 ]
             },
             cultist: {
                 type: 'neutral',
                 name: 'The Cultist',
-                description: 'A robed figure offers you a goblet of strange purple liquid. "The cup shows many visions. Or... for 25 gold, I can add the sacred herb that ensures only good visions."',
+                description: 'A robed figure offers you a goblet of strange purple liquid. "The cup shows many visions. For 10 gold, I can add the sacred herb that ensures only good visions."',
                 icon: '🍷',
                 vote: true,
                 options: [
-                    { text: 'Drink from the Goblet (Random)', action: 'cultist_drink' },
-                    { text: 'Pay 25G (Guaranteed swap + upgrade)', action: 'cultist_paid', cost: 25 },
+                    { text: 'Drink from the Goblet (Free)', action: 'cultist_drink' },
+                    { text: 'Pay 10G (Guaranteed swap + upgrade)', action: 'cultist_paid', cost: 10 },
                     { text: 'Politely decline', action: 'leave' }
                 ]
             },
@@ -3413,7 +3415,10 @@
                     showUpgradeModal(1); // Free!
                     break;
                 case 'upgrade_plus2':
-                    if (spendGold(option.cost)) showUpgradeModal(2);
+                    showUpgradeModal(2); // Free!
+                    break;
+                case 'math_free':
+                    showUpgradeModal(2); // Free +2 to lowest face
                     break;
                 case 'upgrade_plus3':
                     if (spendGold(option.cost)) showUpgradeModal(3);
@@ -3478,12 +3483,12 @@
                     handleFerrymanRoll();
                     break;
                 case 'ferryman_paid':
-                    if (spendGold(15)) {
+                    if (spendGold(5)) {
                         addHope(2);
                         log('The Ferryman takes your gold and nods. "The river blesses you." +2 HOPE', 'hope');
                         completeEncounter();
                     } else {
-                        log('Not enough gold! You need 15G.', 'fail');
+                        log('Not enough gold! You need 5G.', 'fail');
                     }
                     break;
                 case 'ferryman_wade':
@@ -3494,34 +3499,46 @@
                 case 'trapper_trade':
                     showTrapperTrade();
                     break;
+                case 'trapper_exotic':
+                    showExoticDiceTrade();
+                    break;
                 case 'trapper_paid':
-                    if (spendGold(20)) {
+                    if (spendGold(8)) {
                         showTrapperPaidTrade();
                     } else {
-                        log('Not enough gold! You need 20G.', 'fail');
+                        log('Not enough gold! You need 8G.', 'fail');
                     }
                     break;
                 case 'drunk_blessing':
                     handleDrunkBlessing();
                     break;
                 case 'drunk_paid':
-                    if (spendGold(10)) {
+                    if (spendGold(3)) {
                         addHope(3);
                         log('The priest focuses intently. "BLESSINGS!" A perfect blessing lands. +3 HOPE!', 'hope');
                         completeEncounter();
                     } else {
-                        log('Not enough gold! You need 10G.', 'fail');
+                        log('Not enough gold! You need 3G.', 'fail');
                     }
                     break;
                 case 'cultist_drink':
                     handleCultistDrink();
                     break;
                 case 'cultist_paid':
-                    if (spendGold(25)) {
+                    if (spendGold(10)) {
                         handleCultistPaid();
                     } else {
-                        log('Not enough gold! You need 25G.', 'fail');
+                        log('Not enough gold! You need 10G.', 'fail');
                     }
+                    break;
+                case 'blessing_segment':
+                    showBlessSegmentModal();
+                    break;
+                case 'alchemist_double':
+                    showDoubleLinkModal();
+                    break;
+                case 'gamble_range_choice':
+                    showGambleRangeChoice();
                     break;
                 case 'boss_combat':
                     startBossCombat(option, node);
@@ -3798,24 +3815,27 @@
             if (result === 20) {
                 valueEl.classList.add('crit');
                 outcomeEl.textContent = 'NATURAL 20!';
-                // Nat 20 removes half DOOM
-                if (gameState.doom > 0) {
-                    const reduced = reduceDoom(Math.ceil(gameState.doom / 2));
-                    doomChangeEl.style.display = 'block';
-                    doomChangeEl.className = 'doom-change doom-down';
-                    doomChangeEl.textContent = `Nat 20 removed ${reduced} DOOM!`;
-                }
+                // Nat 20 adds +1 HOPE
+                addHope(1);
+                doomChangeEl.style.display = 'block';
+                doomChangeEl.className = 'doom-change hope-up';
+                doomChangeEl.textContent = '+1 HOPE from Natural 20!';
+                doomChangeEl.style.color = '#ffd700';
             } else if (result === 1) {
                 valueEl.classList.add('fail');
                 outcomeEl.textContent = 'CRITICAL FAIL!';
-                doomDelta = 2;
+                // Nat 1 adds +1 DOOM
+                addDoom(1, 'Natural 1');
+                doomChangeEl.style.display = 'block';
+                doomChangeEl.className = 'doom-change doom-up';
+                doomChangeEl.textContent = '+1 DOOM from Natural 1!';
+                doomChangeEl.style.color = '#ff6b6b';
             } else if (result >= gameState.targetDC) {
                 valueEl.classList.add('success');
                 outcomeEl.textContent = 'Success!';
             } else {
                 valueEl.classList.add('fail');
                 outcomeEl.textContent = 'Failed...';
-                doomDelta = 1;
             }
 
             // Check for HOPE on this segment
@@ -3865,15 +3885,21 @@
                     triggerDoomRoll(player, state.enemyName);
                 }
             } else if (state.type === 'gamble') {
-                // Range betting - no penalty for missing, just different rewards
-                if (result >= state.rangeMin && result <= state.rangeMax) {
-                    // In range (less likely) - better reward
-                    log(`IN RANGE! +${state.inRangeReward} to a segment of your choice!`, 'crit');
-                    showUpgradeModal(state.inRangeReward);
+                // Craps-style range betting
+                const inRange = result >= state.rangeMin && result <= state.rangeMax;
+                const betIn = state.bet === 'in';
+                const won = (inRange && betIn) || (!inRange && !betIn);
+
+                if (won) {
+                    // They won their bet! Better reward
+                    const reward = inRange ? state.inRangeReward : state.outRangeReward;
+                    log(`YOU WIN! +${reward} to a segment of your choice!`, 'crit');
+                    showUpgradeModal(reward);
                 } else {
-                    // Out of range (more likely) - lesser reward
-                    log(`Out of range. +${state.outRangeReward} to a random segment.`, 'success');
-                    applyRandomUpgrade(state.outRangeReward);
+                    // They lost their bet, but still get consolation prize
+                    const reward = inRange ? state.inRangeReward : state.outRangeReward;
+                    log(`Close! You still get +${reward} to a random segment.`, 'success');
+                    applyRandomUpgrade(reward);
                     setTimeout(completeEncounter, 1500);
                 }
                 gameState.canRoll = false;
@@ -4499,6 +4525,289 @@
 
             renderDiceTray();
             completeEncounter();
+        }
+
+        // ==================== NEW ENCOUNTER FUNCTIONS ====================
+
+        // Exotic Dice definitions for The Trapper
+        const EXOTIC_DICE = [
+            { id: 'd6', name: 'The d6', description: 'Faces: 1, 2, 6, 12, 19, 20',
+              faces: [1,1,1,2,2,2,6,6,6,6,12,12,12,12,19,19,19,20,20,20], power: 1 },
+            { id: 'lucky7', name: 'Lucky 7s', description: 'All 7s become 17s, 17s become 20s',
+              faces: [1,2,3,4,5,6,17,8,9,10,11,12,13,14,15,16,20,18,19,20], power: 2 },
+            { id: 'coin', name: 'The Coin Flip', description: '10 faces of 20, 10 faces of 1',
+              faces: [1,1,1,1,1,1,1,1,1,1,20,20,20,20,20,20,20,20,20,20], power: 3 },
+            { id: '6996', name: 'The 6996', description: 'All 6s and 9s are flipped',
+              faces: [1,2,3,4,5,9,7,8,6,10,11,12,13,14,15,9,17,18,6,20], power: 7 },
+            { id: 'cursed', name: 'The Cursed', description: 'One 1 becomes 20, one 20 becomes 1',
+              faces: [20,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,1], power: 5 },
+            { id: 'weighted', name: 'The Weighted', description: 'Only 8-15 (consistent but capped)',
+              faces: [8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,10,11,12,13], power: 6 },
+            { id: 'shifter', name: 'The Shifter', description: 'Odd +3, Even -3',
+              faces: [4,-1,6,1,8,3,10,5,12,7,14,9,16,11,18,13,20,15,22,17], power: 8 },
+            { id: 'wildcard', name: 'The Wild Card', description: 'Every roll triggers random ally die',
+              faces: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], isWildcard: true, power: 4 }
+        ];
+
+        function showExoticDiceTrade() {
+            // Pick 3 random exotic dice to offer
+            const shuffled = [...EXOTIC_DICE].sort(() => Math.random() - 0.5);
+            const offered = shuffled.slice(0, 3).sort((a, b) => a.power - b.power);
+
+            const modal = document.getElementById('upgradeModal');
+            document.getElementById('upgradeTitle').textContent = 'The Trapper\'s Exotic Dice';
+            document.getElementById('upgradeDescription').innerHTML = `
+                <p>Trade one of your dice for an exotic one. The more powerful the exotic die, the stronger YOUR die must be to trade.</p>
+                <p style="color:#ffd700; margin-top:10px;">Best die = Most powerful exotic | Middle die = Medium exotic | Worst die = Weak exotic</p>
+            `;
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            // Show the three exotic dice available
+            const diceRow = document.createElement('div');
+            diceRow.style.cssText = 'display:flex; gap:15px; margin:20px 0; justify-content:center; flex-wrap:wrap;';
+
+            offered.forEach((exotic, idx) => {
+                const tier = idx === 0 ? 'WEAK (trade worst die)' : idx === 1 ? 'MEDIUM (trade middle die)' : 'POWERFUL (trade best die)';
+                const tierColor = idx === 0 ? '#888' : idx === 1 ? '#88ccff' : '#ffd700';
+
+                const card = document.createElement('div');
+                card.style.cssText = `padding:15px; background:rgba(255,255,255,0.08); border-radius:10px; text-align:center; min-width:150px; border:2px solid ${tierColor};`;
+                card.innerHTML = `
+                    <h4 style="color:${tierColor};">${exotic.name}</h4>
+                    <p style="font-size:0.9em; color:#aaa;">${exotic.description}</p>
+                    <p style="font-size:0.8em; color:${tierColor}; margin-top:8px;">${tier}</p>
+                `;
+                diceRow.appendChild(card);
+            });
+            options.appendChild(diceRow);
+
+            // Now show which player's die they want to trade
+            gameState.players.forEach((player, pIdx) => {
+                const playerDiv = document.createElement('div');
+                playerDiv.style.cssText = 'margin-top:15px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;';
+                playerDiv.innerHTML = `<strong style="color:#88ccff;">${player.name}'s Dice:</strong>`;
+
+                // Rank player's dice by power (based on average face value)
+                const diceRanked = Object.entries(player.dice).map(([type, die]) => ({
+                    type, die,
+                    avgValue: die.faces.reduce((a,b) => a+b, 0) / die.faces.length
+                })).sort((a, b) => a.avgValue - b.avgValue); // worst to best
+
+                const btnRow = document.createElement('div');
+                btnRow.style.cssText = 'display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;';
+
+                diceRanked.forEach((ranked, rankIdx) => {
+                    const exoticToGet = offered[rankIdx]; // worst die = weak exotic, etc.
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.style.cssText = 'flex:1; min-width:120px;';
+                    btn.innerHTML = `Trade ${ranked.die.name}<br><small>→ ${exoticToGet.name}</small>`;
+                    btn.onclick = () => {
+                        // Replace the die's faces with the exotic die's faces
+                        ranked.die.faces = [...exoticToGet.faces];
+                        if (exoticToGet.isWildcard) {
+                            // Wild Card: every roll triggers random ally
+                            for (let i = 1; i <= 20; i++) {
+                                ranked.die.swaps.push({
+                                    faceValue: i,
+                                    targetPlayer: (pIdx + 1 + Math.floor(Math.random() * 2)) % 3,
+                                    targetDieType: ['physical','verbal','preventative'][Math.floor(Math.random() * 3)]
+                                });
+                            }
+                        }
+                        log(`${player.name} trades ${ranked.die.name} for ${exoticToGet.name}!`, 'success');
+                        modal.classList.remove('show');
+                        renderDiceTray();
+                        completeEncounter();
+                    };
+                    btnRow.appendChild(btn);
+                });
+
+                playerDiv.appendChild(btnRow);
+                options.appendChild(playerDiv);
+            });
+
+            // Add leave button
+            const leaveBtn = document.createElement('button');
+            leaveBtn.className = 'option-btn';
+            leaveBtn.style.marginTop = '20px';
+            leaveBtn.textContent = 'Leave without trading';
+            leaveBtn.onclick = () => {
+                modal.classList.remove('show');
+                completeEncounter();
+            };
+            options.appendChild(leaveBtn);
+
+            modal.classList.add('show');
+        }
+
+        function showBlessSegmentModal() {
+            // Bless a specific segment to grant +1 HOPE when rolled
+            const modal = document.getElementById('upgradeModal');
+            document.getElementById('upgradeTitle').textContent = 'Bless a Segment';
+            document.getElementById('upgradeDescription').textContent = 'Choose a die segment. When that number is rolled, you gain +1 HOPE!';
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            gameState.players.forEach((player, pIdx) => {
+                Object.entries(player.dice).forEach(([type, die]) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'upgrade-option';
+                    opt.innerHTML = `
+                        <h4>${player.name}'s ${die.name}</h4>
+                        <p>Add HOPE to a segment</p>
+                    `;
+                    opt.onclick = () => showSegmentPicker(player, die, modal);
+                    options.appendChild(opt);
+                });
+            });
+
+            modal.classList.add('show');
+        }
+
+        function showSegmentPicker(player, die, modal) {
+            document.getElementById('upgradeDescription').textContent = `Choose a number (6-15) on ${player.name}'s ${die.name} to bless:`;
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            const numRow = document.createElement('div');
+            numRow.style.cssText = 'display:flex; gap:8px; flex-wrap:wrap; justify-content:center;';
+
+            for (let i = 6; i <= 15; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'number-btn';
+                btn.textContent = i;
+                btn.onclick = () => {
+                    die.hopeSegments = die.hopeSegments || [];
+                    die.hopeSegments.push(i);
+                    log(`${die.name} blessed! Rolling ${i} grants +1 HOPE`, 'hope');
+                    modal.classList.remove('show');
+                    completeEncounter();
+                };
+                numRow.appendChild(btn);
+            }
+            options.appendChild(numRow);
+        }
+
+        function showDoubleLinkModal() {
+            // Link one die to BOTH allies
+            const modal = document.getElementById('upgradeModal');
+            document.getElementById('upgradeTitle').textContent = 'Double Link';
+            document.getElementById('upgradeDescription').textContent = 'Choose a die to link to BOTH allies! Pick a low number for each ally.';
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            gameState.players.forEach((player, pIdx) => {
+                Object.entries(player.dice).forEach(([type, die]) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'upgrade-option';
+                    opt.innerHTML = `
+                        <h4>${player.name}'s ${die.name}</h4>
+                        <p>Create double link</p>
+                    `;
+                    opt.onclick = () => {
+                        // Link to both other players with random low numbers
+                        const otherPlayers = gameState.players.filter((_, i) => i !== pIdx);
+                        const lowNumbers = [2, 3, 4, 5];
+
+                        otherPlayers.forEach((ally, i) => {
+                            const faceValue = lowNumbers[i * 2] || lowNumbers[0];
+                            const allyDieType = ['physical', 'verbal', 'preventative'][Math.floor(Math.random() * 3)];
+                            die.swaps.push({
+                                faceValue: faceValue,
+                                targetPlayer: gameState.players.indexOf(ally),
+                                targetDieType: allyDieType
+                            });
+                            log(`${die.name}: ${faceValue} → ${ally.name}'s ${ally.dice[allyDieType].name}`, 'swap');
+                        });
+
+                        log('Double link created! Your fates are deeply intertwined!', 'success');
+                        modal.classList.remove('show');
+                        renderDiceTray();
+                        completeEncounter();
+                    };
+                    options.appendChild(opt);
+                });
+            });
+
+            modal.classList.add('show');
+        }
+
+        function showGambleRangeChoice() {
+            // Craps-style: choose IN or OUT of range before rolling
+            const rangeStart = Math.floor(Math.random() * 8) + 5; // 5-12
+            const rangeEnd = Math.min(rangeStart + Math.floor(Math.random() * 5) + 3, 18); // +3 to +7
+
+            const modal = document.getElementById('upgradeModal');
+            document.getElementById('upgradeTitle').textContent = 'The Range Game';
+
+            const rangeSize = rangeEnd - rangeStart + 1;
+            const inRangeChance = Math.round((rangeSize / 20) * 100);
+            const outRangeChance = 100 - inRangeChance;
+
+            document.getElementById('upgradeDescription').innerHTML = `
+                <div style="padding:15px; background:rgba(255,215,0,0.15); border-radius:10px; border-left:4px solid #ffd700; margin:10px 0;">
+                    <h3 style="color:#ffd700;">Range: ${rangeStart} - ${rangeEnd}</h3>
+                    <p style="margin-top:10px;"><strong>IN RANGE</strong> (${inRangeChance}% chance): <span style="color:#4ade80;">+5 to segment of your choice!</span></p>
+                    <p><strong>OUT OF RANGE</strong> (${outRangeChance}% chance): <span style="color:#88ccff;">+3 to random segment</span></p>
+                </div>
+                <p>Choose your bet, then roll any die!</p>
+            `;
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            const betIn = document.createElement('button');
+            betIn.className = 'option-btn';
+            betIn.innerHTML = `<strong>Bet IN RANGE</strong><br>Win big if ${rangeStart}-${rangeEnd}`;
+            betIn.onclick = () => {
+                gameState.canRoll = true;
+                gameState.encounterState = {
+                    type: 'gamble',
+                    rangeMin: rangeStart,
+                    rangeMax: rangeEnd,
+                    bet: 'in',
+                    inRangeReward: 5,
+                    outRangeReward: 3
+                };
+                modal.classList.remove('show');
+                document.getElementById('encounterDescription').innerHTML = `
+                    <p>You bet <strong>IN RANGE (${rangeStart}-${rangeEnd})</strong>!</p>
+                    <p style="margin-top:15px; color:#88ccff;">Roll any die!</p>
+                `;
+                document.getElementById('encounterOptions').innerHTML = '';
+                renderDiceTray();
+            };
+            options.appendChild(betIn);
+
+            const betOut = document.createElement('button');
+            betOut.className = 'option-btn';
+            betOut.innerHTML = `<strong>Bet OUT OF RANGE</strong><br>Win if 1-${rangeStart-1} or ${rangeEnd+1}-20`;
+            betOut.onclick = () => {
+                gameState.canRoll = true;
+                gameState.encounterState = {
+                    type: 'gamble',
+                    rangeMin: rangeStart,
+                    rangeMax: rangeEnd,
+                    bet: 'out',
+                    inRangeReward: 3, // worse reward when betting out
+                    outRangeReward: 5 // better reward when betting out
+                };
+                modal.classList.remove('show');
+                document.getElementById('encounterDescription').innerHTML = `
+                    <p>You bet <strong>OUT OF RANGE</strong> (1-${rangeStart-1} or ${rangeEnd+1}-20)!</p>
+                    <p style="margin-top:15px; color:#88ccff;">Roll any die!</p>
+                `;
+                document.getElementById('encounterOptions').innerHTML = '';
+                renderDiceTray();
+            };
+            options.appendChild(betOut);
+
+            modal.classList.add('show');
         }
 
         // ==================== UTILITIES ====================
