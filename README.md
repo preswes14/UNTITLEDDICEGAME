@@ -166,10 +166,10 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 | **Bandits** | Bad | Three thugs block your path | DOOM Rolls on misses | 30G, DC 12, Thresholds: P:2/V:2/Pr:1 | *Replaced by Echo of BOMB* |
 | **Corrupt Guards** | Bad | Guards demand "peace tax" | DOOM Rolls on misses | 25G, DC 13, Thresholds: P:2/V:1/Pr:2 | *Replaced by Void Creatures* |
 | **Miniboss (Thug)** | Bad | Massive bouncer blocks stairs | DOOM Rolls on misses | 40G, DC 14, Thresholds: P:3/V:2/Pr:2 | *N/A in Stage 5* |
-| **The Ferryman** | Neutral | Ancient boatman judges your fate | 27% bad: die marked (triggers +2 DOOM once) | 47% good: +2 HOPE, 27% neutral: safe passage | *Replaced by The 19 Darkened Lines* |
-| **The Trapper** | Neutral | Hunter offers mystery dice trade | 27% bad: worse value | 47% good: +5 or more value, 27% neutral: similar value | *N/A in Stage 5* |
-| **The Drunk Priest** | Neutral | Stumbling priest offers blessing | 27% bad: more DOOM than HOPE | 47% good: +3-4 HOPE + blessing, 27% neutral: wash | *N/A in Stage 5* |
-| **The Cultist** | Neutral | Robed figure offers purple drink | 27% bad: unfavorable swap + DOOM | 47% good: swap + upgrade, 27% neutral: just swap | *N/A in Stage 5* |
+| **The Ferryman** | Neutral | Ancient boatman judges your fate | Free: 27% bad (die marked). Paid 15G: guaranteed good | Free: 47% +2 HOPE, 27% safe. Paid: +2 HOPE | *Replaced by The 19 Darkened Lines* |
+| **The Trapper** | Neutral | Hunter offers mystery dice trade | Free: 27% worse value. Paid 20G: guaranteed +6-10 | Free: 47% +5+ value. Paid: +6 to +10 | *N/A in Stage 5* |
+| **The Drunk Priest** | Neutral | Stumbling priest offers blessing | Free: 27% more DOOM. Paid 10G: guaranteed +3 HOPE | Free: 47% +3-4 HOPE. Paid: +3 HOPE, no DOOM | *N/A in Stage 5* |
+| **The Cultist** | Neutral | Robed figure offers purple drink | Free: 27% bad swap + DOOM. Paid 25G: guaranteed good | Free: 47% swap + upgrade. Paid: swap + +5 upgrade | *N/A in Stage 5* |
 
 ### Stage 5 Unique Encounters (Warped Dimension)
 
@@ -178,8 +178,10 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 | **The Rift** | Start | Reality tears apart, falling into somewhere else | None | Continue |
 | **Memory Fragment** | Good | Shard of your past pulses with warmth | None | Restore a damaged die face |
 | **Pocket of Reality** | Good | Bubble of normal space, a moment to breathe | None | +2 HOPE |
+| **Reality Tear** | Good | Another tear in reality, warmth seeps through | None | +1 HOPE |
 | **Echo of BOMB** | Bad | Shadow of the final boss | DOOM Rolls on misses | 40G, DC 15, Thresholds: P:3/V:3/Pr:2 |
 | **Void Creatures** | Bad | Shapeless horrors attack | DOOM Rolls on misses | 45G, DC 15, Thresholds: P:3/V:2/Pr:3 |
+| **The Shard of BOMB** | Miniboss | Fragment of cosmic horror blocks path | DOOM Rolls on misses | 50G, DC 15, Thresholds: P:4/V:4/Pr:3 |
 | **The 19 Darkened Lines** | Neutral | See 19 failed prophecies, yours remains lit | None | Accept destiny: +3 HOPE |
 
 ### Good Encounters
@@ -199,16 +201,16 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 - **Beasts, Monsters, Dragons** - Stage 1 has 1-2 enemy types; each new stage introduces 1-2 new ones and phases out older ones
 
 ### Neutral Encounters
-*Risk vs reward - outcomes weighted toward good but with real consequences*
+*Risk vs reward - outcomes weighted toward good but with real consequences. Gold spending removes risk.*
 
 **Probability Distribution:** ~47% good outcome, ~27% neutral outcome, ~27% bad outcome
 
-- **The Ferryman** - Pay the toll and let the river judge your fate. Good: blessing (+2 HOPE). Neutral: safe passage. Bad: one die marked (triggering +2 DOOM once). *You can also wade safely for +1 DOOM.*
-- **The Trapper** - Trade your worst die face for a mystery value from the dungeon. Good: +5 or more. Neutral: similar value. Bad: worse value. *The mystery keeps it exciting.*
-- **The Drunk Priest** - Accept a sloppy blessing. Good: +3-4 HOPE plus a blessed segment. Neutral: HOPE equals DOOM (wash). Bad: more DOOM than HOPE.
-- **The Cultist** - Drink the cosmic goblet. Good: beneficial swap + +5 to lowest face. Neutral: just the swap. Bad: unfavorable swap linking high numbers + DOOM.
+- **The Ferryman** - Pay the toll and let the river judge your fate. Free: 47% good (+2 HOPE), 27% neutral (safe), 27% bad (die marked). *Pay 15G for guaranteed good outcome. Wade for +1 DOOM.*
+- **The Trapper** - Trade your worst die face for a mystery value. Free: 47% good (+5+), 27% neutral (similar), 27% bad (worse). *Pay 20G for guaranteed +6 to +10 upgrade.*
+- **The Drunk Priest** - Accept a sloppy blessing. Free: 47% good (+3-4 HOPE), 27% neutral (wash), 27% bad (more DOOM). *Pay 10G for guaranteed +3 HOPE, no DOOM.*
+- **The Cultist** - Drink the cosmic goblet. Free: 47% good (swap + +5), 27% neutral (just swap), 27% bad (bad swap + DOOM). *Pay 25G for guaranteed good outcome.*
 
-**Design Philosophy:** Neutral encounters offer genuine choice with weighted randomness. Players should *usually* come out ahead (~47% good + ~27% neutral = ~74% non-negative), but bad outcomes create memorable moments and reinforce that choices matter.
+**Design Philosophy:** Neutral encounters offer genuine choice with weighted randomness. Players *usually* come out ahead (~74% non-negative), but bad outcomes create memorable moments. **Gold spending option** lets combat rewards translate into guaranteed safety - defeating bandits earns gold that can buy certainty at later neutrals.
 
 ---
 

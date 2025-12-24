@@ -2005,44 +2005,48 @@
             ferryman: {
                 type: 'neutral',
                 name: 'The Ferryman',
-                description: 'An ancient boatman waits by dark waters. His eyes gleam with ancient wisdom. "The river knows your fate. Pay my toll - roll and let the waters judge you. Some find fortune in the crossing... others find... less."',
+                description: 'An ancient boatman waits by dark waters. His eyes gleam with ancient wisdom. "The river knows your fate. Pay my toll - roll and let the waters judge you. Or... pay me 15 gold and I guarantee safe AND fortunate passage."',
                 icon: '⛵',
                 vote: true,
                 options: [
                     { text: 'Pay the Toll (Roll for fate)', action: 'ferryman_roll' },
+                    { text: 'Pay 15G (Guaranteed good outcome)', action: 'ferryman_paid', cost: 15 },
                     { text: 'Wade the shallows (Safe but +1 DOOM)', action: 'ferryman_wade' }
                 ]
             },
             trapper: {
                 type: 'neutral',
                 name: 'The Trapper',
-                description: 'A grizzled hunter displays strange dice covered in scratch marks and odd symbols. "Found these in the dungeon. Most are cursed junk, but some... some are special. Trade you straight up - your worst for my grab bag."',
+                description: 'A grizzled hunter displays strange dice covered in scratch marks and odd symbols. "Free trade: your worst for my grab bag. But for 20 gold, I\'ll let you pick from my BEST collection..."',
                 icon: '🪤',
                 vote: true,
                 options: [
-                    { text: 'Trade: Swap lowest for mystery die', action: 'trapper_trade' },
+                    { text: 'Free Trade (Random outcome)', action: 'trapper_trade' },
+                    { text: 'Pay 20G (Guaranteed +6 to +10)', action: 'trapper_paid', cost: 20 },
                     { text: 'Leave empty-handed', action: 'leave' }
                 ]
             },
             drunkPriest: {
                 type: 'neutral',
                 name: 'The Drunk Priest',
-                description: 'A priest stumbles towards you, bottle in hand. "Blessings! I can give you HOPE! ...hic... The gods speak through me still, even now. Sometimes louder than others..."',
+                description: 'A priest stumbles towards you, bottle in hand. "Blessings! ...hic... The gods speak through me. For 10 gold, I\'ll sober up just enough to do it right."',
                 icon: '🍺',
                 vote: true,
                 options: [
-                    { text: 'Accept the Blessing', action: 'drunk_blessing' },
+                    { text: 'Accept the Blessing (Random)', action: 'drunk_blessing' },
+                    { text: 'Pay 10G (Guaranteed +3 HOPE, no DOOM)', action: 'drunk_paid', cost: 10 },
                     { text: 'Decline politely', action: 'leave' }
                 ]
             },
             cultist: {
                 type: 'neutral',
                 name: 'The Cultist',
-                description: 'A robed figure offers you a goblet of strange purple liquid. "The cosmic bond awaits. Drink, and your fates intertwine with your companions. The cup shows many visions - some glorious, some... transformative."',
+                description: 'A robed figure offers you a goblet of strange purple liquid. "The cup shows many visions. Or... for 25 gold, I can add the sacred herb that ensures only good visions."',
                 icon: '🍷',
                 vote: true,
                 options: [
-                    { text: 'Drink from the Goblet', action: 'cultist_drink' },
+                    { text: 'Drink from the Goblet (Random)', action: 'cultist_drink' },
+                    { text: 'Pay 25G (Guaranteed swap + upgrade)', action: 'cultist_paid', cost: 25 },
                     { text: 'Politely decline', action: 'leave' }
                 ]
             },
@@ -2160,7 +2164,9 @@
             echo: { type: 'bad', name: 'Echo of BOMB', description: 'A shadow of the final boss. A taste of what\'s to come.', icon: '👁️', dc: 15, reward: 40, successThresholds: { physical: 3, verbal: 3, preventative: 2 }, options: [{ text: 'Engage!', action: 'combat' }] },
             sanctuary: { type: 'good', name: 'Pocket of Reality', description: 'A small bubble of normal space. A moment to breathe.', icon: '🏝️', options: [{ text: 'Gather strength (+2 HOPE)', action: 'sanctuary_rest' }, { text: 'Continue', action: 'leave' }] },
             void: { type: 'bad', name: 'Void Creatures', description: 'Shapeless horrors from beyond reality attack!', icon: '👾', dc: 15, reward: 45, successThresholds: { physical: 3, verbal: 2, preventative: 3 }, options: [{ text: 'Engage!', action: 'combat' }] },
-            prophecy: { type: 'neutral', name: 'The 19 Darkened Lines', description: 'You see the 19 failed prophecies. Only yours remains lit.', icon: '📖', options: [{ text: 'Accept your destiny (+HOPE)', action: 'accept_destiny' }, { text: 'Continue', action: 'leave' }] }
+            prophecy: { type: 'neutral', name: 'The 19 Darkened Lines', description: 'You see the 19 failed prophecies. Only yours remains lit.', icon: '📖', options: [{ text: 'Accept your destiny (+HOPE)', action: 'accept_destiny' }, { text: 'Continue', action: 'leave' }] },
+            miniboss: { type: 'bad', name: 'The Shard of BOMB', description: 'A fragment of the cosmic horror blocks your path. It\'s smaller, but no less deadly.', icon: '💀', dc: 15, reward: 50, successThresholds: { physical: 4, verbal: 4, preventative: 3 }, options: [{ text: 'Engage!', action: 'combat' }] },
+            rift2: { type: 'good', name: 'Reality Tear', description: 'Another tear in reality. Warmth seeps through.', icon: '✨', options: [{ text: 'Touch it (+1 HOPE)', action: 'rift_touch' }, { text: 'Continue', action: 'leave' }] }
         };
 
         // ==================== SCREEN MANAGEMENT ====================
@@ -2763,20 +2769,28 @@
 
             // All stages use same encounter layout - players learn to strategize
             // Only Stage 5 has unique warped encounters
+            // Stage structure: Intro → 3-4 encounters → Miniboss (halfway) → 3-4 encounters → Boss
             const COMMON_MAP_STRUCTURE = [
+                // Start
                 { encounter: 'start', row: 0 },
+                // First 3-4 encounters (before miniboss)
                 { encounter: 'mathematician', row: 1 },
                 { encounter: 'bandits', row: 1 },
                 { encounter: 'alchemist', row: 2 },
                 { encounter: 'ferryman', row: 2 },
-                { encounter: 'priest', row: 2 },
+                { encounter: 'priest', row: 3 },
                 { encounter: 'guards', row: 3 },
-                { encounter: 'trapper', row: 3 },
-                { encounter: 'gambler', row: 4 },
-                { encounter: 'drunkPriest', row: 4 },
-                { encounter: 'cultist', row: 4 },
-                { encounter: 'miniboss', row: 5 },
-                { encounter: 'boss', row: 6 }
+                // Miniboss (halfway point)
+                { encounter: 'miniboss', row: 4 },
+                // Second 3-4 encounters (after miniboss)
+                { encounter: 'trapper', row: 5 },
+                { encounter: 'gambler', row: 5 },
+                { encounter: 'drunkPriest', row: 6 },
+                { encounter: 'cultist', row: 6 },
+                { encounter: 'bandits', row: 7 },
+                { encounter: 'guards', row: 7 },
+                // Boss
+                { encounter: 'boss', row: 8 }
             ];
 
             const MAP_STRUCTURES = {
@@ -2784,14 +2798,25 @@
                 2: COMMON_MAP_STRUCTURE,
                 3: COMMON_MAP_STRUCTURE,
                 4: COMMON_MAP_STRUCTURE,
+                // Stage 5: Same structure - Intro → 3-4 encounters → Miniboss → 3-4 encounters → Boss
                 5: [
                     { encounter: 'start', row: 0 },
+                    // First 3 encounters (before miniboss)
                     { encounter: 'fragment', row: 1 },
                     { encounter: 'echo', row: 1 },
                     { encounter: 'sanctuary', row: 2 },
                     { encounter: 'void', row: 2 },
                     { encounter: 'prophecy', row: 3 },
-                    { encounter: 'boss', row: 4 }
+                    // Miniboss (halfway point)
+                    { encounter: 'miniboss', row: 4 },
+                    // Second 3 encounters (after miniboss)
+                    { encounter: 'rift2', row: 5 },
+                    { encounter: 'echo', row: 5 },
+                    { encounter: 'sanctuary', row: 6 },
+                    { encounter: 'void', row: 6 },
+                    { encounter: 'fragment', row: 7 },
+                    // Boss
+                    { encounter: 'boss', row: 8 }
                 ]
             };
 
@@ -3452,6 +3477,15 @@
                 case 'ferryman_roll':
                     handleFerrymanRoll();
                     break;
+                case 'ferryman_paid':
+                    if (spendGold(15)) {
+                        addHope(2);
+                        log('The Ferryman takes your gold and nods. "The river blesses you." +2 HOPE', 'hope');
+                        completeEncounter();
+                    } else {
+                        log('Not enough gold! You need 15G.', 'fail');
+                    }
+                    break;
                 case 'ferryman_wade':
                     addDoom(1, 'The cold waters chill your spirit');
                     log('You wade through the shallows safely, though the cold seeps into your bones.', 'info');
@@ -3460,11 +3494,34 @@
                 case 'trapper_trade':
                     showTrapperTrade();
                     break;
+                case 'trapper_paid':
+                    if (spendGold(20)) {
+                        showTrapperPaidTrade();
+                    } else {
+                        log('Not enough gold! You need 20G.', 'fail');
+                    }
+                    break;
                 case 'drunk_blessing':
                     handleDrunkBlessing();
                     break;
+                case 'drunk_paid':
+                    if (spendGold(10)) {
+                        addHope(3);
+                        log('The priest focuses intently. "BLESSINGS!" A perfect blessing lands. +3 HOPE!', 'hope');
+                        completeEncounter();
+                    } else {
+                        log('Not enough gold! You need 10G.', 'fail');
+                    }
+                    break;
                 case 'cultist_drink':
                     handleCultistDrink();
+                    break;
+                case 'cultist_paid':
+                    if (spendGold(25)) {
+                        handleCultistPaid();
+                    } else {
+                        log('Not enough gold! You need 25G.', 'fail');
+                    }
                     break;
                 case 'boss_combat':
                     startBossCombat(option, node);
@@ -3494,6 +3551,11 @@
                 case 'accept_destiny':
                     addHope(3);
                     log('You are the chosen ones. The 20th prophecy will succeed.', 'crit');
+                    completeEncounter();
+                    break;
+                case 'rift_touch':
+                    addHope(1);
+                    log('Warmth flows through the tear. You feel hope. +1 HOPE', 'hope');
                     completeEncounter();
                     break;
             }
@@ -4118,6 +4180,62 @@
             });
 
             modal.classList.add('show');
+        }
+
+        function showTrapperPaidTrade() {
+            // Paid version - guaranteed +6 to +10 to lowest face
+            const modal = document.getElementById('upgradeModal');
+            document.getElementById('upgradeTitle').textContent = 'The Trapper\'s Premium Collection';
+            document.getElementById('upgradeDescription').textContent = 'Choose a die - its lowest face gets +6 to +10:';
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            gameState.players.forEach((player, pIdx) => {
+                Object.entries(player.dice).forEach(([type, die]) => {
+                    const minVal = Math.min(...die.faces);
+                    const opt = document.createElement('div');
+                    opt.className = 'upgrade-option';
+                    opt.innerHTML = `
+                        <h4>${player.name}'s ${die.name}</h4>
+                        <p>Upgrade: ${minVal}</p>
+                    `;
+                    opt.onclick = () => {
+                        const minIdx = die.faces.indexOf(minVal);
+                        const bonus = Math.floor(Math.random() * 5) + 6; // +6 to +10
+                        const newVal = Math.min(20, minVal + bonus);
+                        die.faces[minIdx] = newVal;
+                        log(`Premium trade! ${die.name}: ${minVal} → ${newVal} (+${bonus})`, 'crit');
+                        modal.classList.remove('show');
+                        renderDiceTray();
+                        completeEncounter();
+                    };
+                    options.appendChild(opt);
+                });
+            });
+
+            modal.classList.add('show');
+        }
+
+        function handleCultistPaid() {
+            // Paid version - guaranteed good outcome (swap + upgrade)
+            const randomPlayer = gameState.players[Math.floor(Math.random() * gameState.players.length)];
+            const dieTypes = ['physical', 'verbal', 'preventative'];
+            const randomDieType = dieTypes[Math.floor(Math.random() * dieTypes.length)];
+            const die = randomPlayer.dice[randomDieType];
+
+            createRandomSwap(randomPlayer, die);
+
+            // Upgrade: +5 to lowest face
+            const minVal = Math.min(...die.faces);
+            const minIdx = die.faces.indexOf(minVal);
+            die.faces[minIdx] += 5;
+
+            log(`The sacred herb reveals pure visions! ${die.name} lowest face ${minVal} → ${minVal + 5}`, 'crit');
+            log('Your fates are intertwined with your allies!', 'success');
+
+            renderDiceTray();
+            completeEncounter();
         }
 
         function showTrapperTrade() {
