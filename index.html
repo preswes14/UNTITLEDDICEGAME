@@ -1945,6 +1945,7 @@
                 options: [
                     { text: 'Free Lesson (+2 to lowest face)', action: 'math_free' },
                     { text: 'Trade-off (-1 from high, +4 to low)', action: 'math_tradeoff' },
+                    { text: 'Sculpt Faces (set 3 faces to specific values)', action: 'math_sculpt' },
                     { text: 'Leave', action: 'leave' }
                 ]
             },
@@ -3451,6 +3452,10 @@
                     // -1 from highest face, +4 to lowest
                     showMathTradeoffModal();
                     break;
+                case 'math_sculpt':
+                    // Set 3 faces to specific values (d6-style customization)
+                    showSculptFacesModal();
+                    break;
                 case 'alchemist_risky':
                     // Random swap + immediate +2 bonus
                     showRiskySwapModal();
@@ -3642,9 +3647,40 @@
 
         function startCombat(option, node) {
             gameState.canRoll = true;
-            gameState.targetDC = node.dc;
             // All dice types are always available
             gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
+
+            // Generate variable DCs for each approach type
+            // Regular enemies: wide range (5-17) to make all numbers matter
+            // Bosses: minimum DC of 10
+            const isBoss = node.type === 'boss';
+            const baseDC = node.dc || 10;
+
+            // Generate 3 random DCs in different ranges
+            let dcOptions;
+            if (isBoss) {
+                // Bosses: 10-12, 13-15, 15-18 ranges (always challenging)
+                dcOptions = [
+                    Math.floor(Math.random() * 3) + 10,  // 10-12
+                    Math.floor(Math.random() * 3) + 13,  // 13-15
+                    Math.floor(Math.random() * 4) + 15   // 15-18
+                ];
+            } else {
+                // Regular enemies: 5-8, 10-13, 14-17 ranges (wide variety)
+                dcOptions = [
+                    Math.floor(Math.random() * 4) + 5,   // 5-8 (easy)
+                    Math.floor(Math.random() * 4) + 10,  // 10-13 (medium)
+                    Math.floor(Math.random() * 4) + 14   // 14-17 (hard)
+                ];
+            }
+
+            // Shuffle and assign to approaches randomly
+            const shuffled = dcOptions.sort(() => Math.random() - 0.5);
+            const approachDCs = {
+                physical: shuffled[0],
+                verbal: shuffled[1],
+                preventative: shuffled[2]
+            };
 
             // Use success thresholds like boss combat
             const thresholds = node.successThresholds || { physical: 2, verbal: 2, preventative: 2 };
@@ -3655,8 +3691,12 @@
                 reward: node.reward,
                 successThresholds: { ...thresholds },
                 successCounters: { physical: 0, verbal: 0, preventative: 0 },
-                isBoss: node.type === 'boss'
+                approachDCs: approachDCs,  // NEW: separate DC per approach
+                isBoss: isBoss
             };
+
+            // Set a default targetDC for backwards compatibility
+            gameState.targetDC = Math.min(...Object.values(approachDCs));
 
             updateCombatUI(node);
             document.getElementById('encounterOptions').innerHTML = '';
@@ -3667,23 +3707,27 @@
             const state = gameState.encounterState;
             const thresholds = state.successThresholds;
             const counters = state.successCounters;
+            const dcs = state.approachDCs || { physical: gameState.targetDC, verbal: gameState.targetDC, preventative: gameState.targetDC };
 
-            // Build "balls and strikes" style progress display
+            // Build "balls and strikes" style progress display with DC
             const buildProgress = (type, color) => {
                 const needed = thresholds[type];
                 const current = counters[type];
+                const dc = dcs[type];
                 let dots = '';
                 for (let i = 0; i < needed; i++) {
                     dots += i < current ? '●' : '○';
                 }
-                return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)}: ${dots}</span>`;
+                // Color-code DC: green if easy (<10), yellow if medium (10-13), red if hard (14+)
+                const dcColor = dc < 10 ? '#4ade80' : dc < 14 ? '#ffd700' : '#f87171';
+                return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)} <span style="color:${dcColor}; font-size:0.85em;">(DC ${dc})</span>: ${dots}</span>`;
             };
 
             document.getElementById('encounterDescription').innerHTML = `
                 <p>${node.description}</p>
                 <div style="margin-top:20px; padding:15px; background:rgba(255,50,50,0.15); border-radius:10px; border-left:4px solid #f87171;">
                     <h3 style="color:#f87171;">${node.name}</h3>
-                    <p style="color:#aaa; margin-bottom:10px;">DC to hit: ${gameState.targetDC}</p>
+                    <p style="color:#aaa; margin-bottom:10px;">Each approach has a different DC! Choose wisely.</p>
                     <div id="combatProgress" style="font-size:1.1rem; display:flex; flex-direction:column; gap:8px;">
                         ${buildProgress('physical', '#c45c26')}
                         ${buildProgress('verbal', '#2980b9')}
@@ -3700,15 +3744,19 @@
 
             const thresholds = state.successThresholds;
             const counters = state.successCounters;
+            const dcs = state.approachDCs || { physical: gameState.targetDC, verbal: gameState.targetDC, preventative: gameState.targetDC };
 
             const buildProgress = (type, color) => {
                 const needed = thresholds[type];
                 const current = counters[type];
+                const dc = dcs[type];
                 let dots = '';
                 for (let i = 0; i < needed; i++) {
                     dots += i < current ? '●' : '○';
                 }
-                return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)}: ${dots}</span>`;
+                // Color-code DC: green if easy (<10), yellow if medium (10-13), red if hard (14+)
+                const dcColor = dc < 10 ? '#4ade80' : dc < 14 ? '#ffd700' : '#f87171';
+                return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)} <span style="color:${dcColor}; font-size:0.85em;">(DC ${dc})</span>: ${dots}</span>`;
             };
 
             const progressDiv = document.getElementById('combatProgress');
@@ -3855,13 +3903,17 @@
                 const approach = die.category;
                 const threshold = state.successThresholds[approach];
 
+                // Get the DC for THIS specific approach
+                const approachDC = state.approachDCs ? state.approachDCs[approach] : gameState.targetDC;
+
                 // DOOM does NOT affect regular rolls - use raw result
-                if (result >= gameState.targetDC || result === 20) {
+                // Check against the approach-specific DC
+                if (result >= approachDC || result === 20) {
                     // Success! Track progress in that approach
                     state.successCounters[approach]++;
                     const current = state.successCounters[approach];
 
-                    log(`${player.name}'s ${die.name} scores a success! (${current}/${threshold} ${approach})`, result === 20 ? 'crit' : 'success');
+                    log(`${player.name}'s ${die.name} hits DC ${approachDC}! (${current}/${threshold} ${approach})`, result === 20 ? 'crit' : 'success');
 
                     // Update the visual progress
                     refreshCombatProgress();
@@ -3881,7 +3933,7 @@
                     }
                 } else {
                     // Miss - trigger DOOM Roll!
-                    log(`Miss! ${state.enemyName} retaliates!`, 'fail');
+                    log(`${result} misses DC ${approachDC}! ${state.enemyName} retaliates!`, 'fail');
                     triggerDoomRoll(player, state.enemyName);
                 }
             } else if (state.type === 'gamble') {
@@ -4159,6 +4211,128 @@
             });
 
             modal.classList.add('show');
+        }
+
+        function showSculptFacesModal() {
+            // d6-style customization: set 3 specific faces to chosen values
+            const modal = document.getElementById('upgradeModal');
+            document.getElementById('upgradeTitle').textContent = 'Sculpt Die Faces';
+            document.getElementById('upgradeDescription').innerHTML = `
+                <p>The Mathematician can reshape 3 faces of a die to specific values.</p>
+                <p style="color:#ffd700; margin-top:5px;">Choose a die, then pick 3 new face values!</p>
+            `;
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            gameState.players.forEach((player, pIdx) => {
+                Object.entries(player.dice).forEach(([type, die]) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'upgrade-option';
+                    opt.innerHTML = `
+                        <h4>${player.name}'s ${die.name}</h4>
+                        <p>Current range: ${Math.min(...die.faces)} - ${Math.max(...die.faces)}</p>
+                    `;
+                    opt.onclick = () => showSculptValuePicker(player, die, modal);
+                    options.appendChild(opt);
+                });
+            });
+
+            modal.classList.add('show');
+        }
+
+        function showSculptValuePicker(player, die, modal) {
+            // Let player pick 3 values to set faces to
+            document.getElementById('upgradeTitle').textContent = `Sculpting ${player.name}'s ${die.name}`;
+            document.getElementById('upgradeDescription').innerHTML = `
+                <p>Choose 3 values. The 3 lowest faces will be replaced with these values.</p>
+                <p style="color:#aaa; font-size:0.9em;">Current lowest 3: ${die.faces.slice().sort((a,b)=>a-b).slice(0,3).join(', ')}</p>
+            `;
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            // Preset sculpting options (like the d6 idea)
+            const presets = [
+                { name: 'The Climber', values: [5, 10, 15], desc: 'Consistent stepping stones' },
+                { name: 'The Gambit', values: [1, 10, 20], desc: 'High risk, high reward' },
+                { name: 'The Safe Bet', values: [8, 9, 10], desc: 'Reliably hit DC 10' },
+                { name: 'The Crit Fisher', values: [17, 18, 19], desc: 'Chase those crits!' },
+                { name: 'The d6 Special', values: [6, 12, 19], desc: 'Like the exotic d6' },
+                { name: 'Custom...', values: null, desc: 'Pick your own 3 values' }
+            ];
+
+            presets.forEach(preset => {
+                const btn = document.createElement('div');
+                btn.className = 'upgrade-option';
+                btn.innerHTML = `
+                    <h4>${preset.name}</h4>
+                    <p>${preset.values ? preset.values.join(', ') : 'Choose any 3 numbers'}</p>
+                    <p style="font-size:0.85em; color:#888;">${preset.desc}</p>
+                `;
+                btn.onclick = () => {
+                    if (preset.values) {
+                        applySculpting(die, preset.values, player.name, modal);
+                    } else {
+                        showCustomSculptPicker(player, die, modal);
+                    }
+                };
+                options.appendChild(btn);
+            });
+        }
+
+        function showCustomSculptPicker(player, die, modal) {
+            document.getElementById('upgradeTitle').textContent = 'Custom Sculpting';
+            document.getElementById('upgradeDescription').textContent = 'Pick 3 values (1-20) for the 3 lowest faces:';
+
+            const options = document.getElementById('upgradeOptions');
+            options.innerHTML = '';
+
+            const pickerDiv = document.createElement('div');
+            pickerDiv.style.cssText = 'display:flex; flex-direction:column; gap:10px; padding:10px;';
+
+            const selectedValues = [];
+
+            for (let pick = 1; pick <= 3; pick++) {
+                const row = document.createElement('div');
+                row.innerHTML = `<strong>Value ${pick}:</strong>`;
+                row.style.cssText = 'display:flex; flex-wrap:wrap; gap:5px; margin-top:5px;';
+
+                for (let i = 1; i <= 20; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = 'number-btn';
+                    btn.style.cssText = 'width:35px; height:35px; cursor:pointer;';
+                    btn.onclick = () => {
+                        selectedValues.push(i);
+                        btn.disabled = true;
+                        btn.style.background = '#4ade80';
+
+                        if (selectedValues.length === 3) {
+                            applySculpting(die, selectedValues, player.name, modal);
+                        }
+                    };
+                    row.appendChild(btn);
+                }
+                pickerDiv.appendChild(row);
+            }
+
+            options.appendChild(pickerDiv);
+        }
+
+        function applySculpting(die, newValues, playerName, modal) {
+            // Replace the 3 lowest faces with the new values
+            const sortedWithIdx = die.faces.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
+            const lowestThreeIdx = sortedWithIdx.slice(0, 3).map(x => x.i);
+
+            lowestThreeIdx.forEach((faceIdx, i) => {
+                die.faces[faceIdx] = newValues[i];
+            });
+
+            log(`${die.name} sculpted! New faces: ${newValues.join(', ')}`, 'success');
+            modal.classList.remove('show');
+            renderDiceTray();
+            completeEncounter();
         }
 
         function showRiskySwapModal() {

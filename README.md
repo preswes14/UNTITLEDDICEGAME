@@ -115,7 +115,10 @@ Players permanently improve their dice, allowing them to progressively clear mor
 ## DOOM & HOPE System
 
 ### Damage Mechanic
-Instead of traditional health, when a player takes a "hit", one or more numbers on their die are reduced (for that battle, or longer in some instances). CLAUDE - only sometimes.  It is more frequently EITHER MORE DOOM OR A DOOM CHECK WHEN PLAYERS TAKE A HIT.. I think smaller enemies or possibly effects that only hit one hero will do this. But when the whole party gets hit it should be doom related. 
+Instead of traditional health, hits work differently based on the situation:
+- **Single-target hits** (smaller enemies, individual effects): Often just add +1 DOOM to the meter
+- **Party-wide hits** (big attacks, boss abilities): Trigger DOOM Rolls for affected players
+- **Rare permanent damage**: Some effects reduce die faces for the battle or longer (special enemy abilities only) 
 
 ### The DOOM Meter
 The party has a shared DOOM meter that fills as bad things happen:
@@ -159,7 +162,7 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 
 | Encounter | Type | Situation | Risks | Rewards | Stage 5 Modification |
 |-----------|------|-----------|-------|---------|---------------------|
-| **The Mathematician** | Good | Old man offers dice adjustments | None (all free) | FREE: +2 to lowest face, or -1 high/+4 low trade | *Replaced by Memory Fragment* |
+| **The Mathematician** | Good | Old man offers dice adjustments | None (all free) | FREE: +2 to lowest, -1 high/+4 low, or SCULPT 3 faces | *Replaced by Memory Fragment* |
 | **The Alchemist** | Good | Wild-eyed woman splices dice | None (all free) | Basic: Link low roll. Risky: Random link +2. Double: Link to BOTH allies! | *Replaced by Pocket of Reality* |
 | **The Priest** | Good | Serene figure offers blessing | None | +3 HOPE, or +5 HOPE (mark die), or bless a segment | *N/A in Stage 5* |
 | **The Gambler** | Good | Craps-style range betting | None | Pick IN/OUT of range, roll. Win = +5 choice, Lose = +3 random | *N/A in Stage 5* |
@@ -194,6 +197,12 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 
 ### Bad Encounters
 *Fight or overcome obstacles to earn Gold*
+
+**Variable DCs:** Each combat encounter has **different DCs for each approach** (Physical, Verbal, Preventative). DCs are randomized within ranges:
+- **Regular enemies:** DC 5-8 (easy), DC 10-13 (medium), DC 14-17 (hard) - randomly assigned to approaches
+- **Bosses:** DC 10-12, DC 13-15, DC 15-18 - always challenging but still varied
+
+This encourages strategic die selection: a low DC 5 for Physical might make your weak Stab die worth using!
 
 - **Bandits** - Can be killed, mugged, or persuaded
 - **Evil People** - Best rewards for killing them
@@ -388,14 +397,13 @@ Ranked from most to least powerful:
 - [ ] Start-of-Stage Upgrade Shop - balanced economy for early identity building
 - [ ] Dice Draft pageantry - make it exciting and dramatic
 - [ ] Ability-specific outcomes - text/consequences for each die type in each situation
-- [ ] More intertwine rewards throughout encounters
-- [ ] Visual flourishes for 1s (red) and 20s (gold)
+- [x] Variable DCs per approach - encourages using all dice strategically
+- [x] Dice Sculpting - set specific face values (d6-style customization)
+- [x] More intertwine rewards (Double Link, Exotic Dice trades)
+- [ ] Visual flourishes for 1s (red) and 20s (gold) on dice display
 
 ### Open Questions
 
 - Should the players have gotten their prophecy from a beloved figure who left them notes?
 - Why were there 20 prophecies? This needs to tie in better with the narrative
 - Explore the Oppenheimer thematic parallels further?
-
-- CLAUDE NEW NOTES
-- Hi Claude! I like the d6 idea enough that I want to have other ways to do that to dice... Also, this is important and will add variety to the game, the various thresholds/ DCs should not be static. Like maybe the first time you encounter a goblin (or whatever) to get a success on each of the 3 different types of success could be DC 5, DC 12, and DC 17. These should be assigned randomly (within specified ranges) like lightly-randomized DND or Pokemon stat blocks; so sometimes enemies can be easily cleared with certain types of moves. This encourages players to sometimes use their worst die - you might be better off trying to get a 5 on your worst die, than a 17 on your best. It is important to have a WIDE range of success DCs so that it doesn't feel like "1s and 20s are the only things that matter". Bosses can be a little bit more presribed, like no boss should have any DC below 10 ever, but you should get the gist here and implement.
