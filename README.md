@@ -155,6 +155,33 @@ HOPE offsets accumulated DOOM:
 
 Encounters are set up similar to **Slay the Spire** or **Inscryption** - players advance through a basic overworld, following a generally linear path but making choices at forks. Simple icons indicate encounter types.
 
+### Encounter Reference Chart
+
+| Encounter | Type | Situation | Risks | Rewards | Stage 5 Modification |
+|-----------|------|-----------|-------|---------|---------------------|
+| **The Mathematician** | Good | Old man offers to adjust dice numbers | None (free) or 20G cost | FREE: +1 to lowest face, PAID: +3 to lowest | *Replaced by Memory Fragment* |
+| **The Alchemist** | Good | Wild-eyed woman offers to splice dice together | None (free) or 25G cost | FREE: Link a low roll to ally, PAID: Link a high roll | *Replaced by Pocket of Reality* |
+| **The Priest** | Good | Serene figure offers blessing | None | +3 HOPE | *N/A in Stage 5* |
+| **The Gambler** | Good | Shifty woman offers a wager | Lose 20G + 1 DOOM on fail | Roll ≥15: Double your 20G wager | *N/A in Stage 5* |
+| **Bandits** | Bad | Three thugs block your path | DOOM Rolls on misses | 30G, DC 12, Thresholds: P:2/V:2/Pr:1 | *Replaced by Echo of BOMB* |
+| **Corrupt Guards** | Bad | Guards demand "peace tax" | DOOM Rolls on misses | 25G, DC 13, Thresholds: P:2/V:1/Pr:2 | *Replaced by Void Creatures* |
+| **Miniboss (Thug)** | Bad | Massive bouncer blocks stairs | DOOM Rolls on misses | 40G, DC 14, Thresholds: P:3/V:2/Pr:2 | *N/A in Stage 5* |
+| **The Ferryman** | Neutral | Ancient boatman offers passage | Crossed face on die (triggers +2 DOOM once) OR +3 DOOM to swim | Safe passage | *Replaced by The 19 Darkened Lines* |
+| **The Trapper** | Neutral | Hunter offers strange dice for trade | Random die quality | Swap worst die for random dungeon die | *N/A in Stage 5* |
+| **The Drunk Priest** | Neutral | Stumbling priest offers sloppy blessing | May add DOOM to segments | Adds HOPE to segments | *N/A in Stage 5* |
+| **The Cultist** | Neutral | Robed figure offers purple drink | Random swap OR +2 DOOM if refused | Random swap + bonus effect | *N/A in Stage 5* |
+
+### Stage 5 Unique Encounters (Warped Dimension)
+
+| Encounter | Type | Situation | Risks | Rewards |
+|-----------|------|-----------|-------|---------|
+| **The Rift** | Start | Reality tears apart, falling into somewhere else | None | Continue |
+| **Memory Fragment** | Good | Shard of your past pulses with warmth | None | Restore a damaged die face |
+| **Pocket of Reality** | Good | Bubble of normal space, a moment to breathe | None | +2 HOPE |
+| **Echo of BOMB** | Bad | Shadow of the final boss | DOOM Rolls on misses | 40G, DC 15, Thresholds: P:3/V:3/Pr:2 |
+| **Void Creatures** | Bad | Shapeless horrors attack | DOOM Rolls on misses | 45G, DC 15, Thresholds: P:3/V:2/Pr:3 |
+| **The 19 Darkened Lines** | Neutral | See 19 failed prophecies, yours remains lit | None | Accept destiny: +3 HOPE |
+
 ### Good Encounters
 *Little to no risk (gifts, upgrades, games, etc.)*
 
