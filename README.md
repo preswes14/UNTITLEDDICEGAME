@@ -97,17 +97,29 @@ Players permanently improve their dice, allowing them to progressively clear mor
 Instead of traditional health, when a player takes a "hit", one or more numbers on their die are reduced (for that battle, or longer in some instances).
 
 ### The DOOM Meter
-The party has a shared DOOM meter that fills as they fail actions or take hits:
-- Normal fail or hit: 1 notch
-- Critical hit, massive flub, or Nat 1: 2-3 notches
+The party has a shared DOOM meter that fills as bad things happen:
+- Failed non-combat rolls: +1 DOOM
+- Bad encounter choices: +1-2 DOOM
+- Ferryman's crossed marks triggering: +2 DOOM
+- Other misfortunes and curses
 
-The DOOM meter indicates that the heroes are unable to overcome the forces of darkness and avoid the prophesied danger.
+The DOOM meter indicates that the heroes are unable to overcome the forces of darkness and avoid the prophesied danger. **The DOOM meter affects all rolls** - every point of DOOM subtracts 1 from each roll result (except natural 20s).
 
-### The DOOM Die
-- Every point of DOOM subtracts 1 from each number on the die (except 20)
-- When a 1 (natural or DOOM-modified) is rolled, the journey ends
-- When a 20 is rolled, it removes HALF of the current DOOM
+### The DOOM Roll (Enemy Attacks)
+When an **enemy lands a hit** on a player, they must make a **DOOM Roll** - a special d20 roll that determines their fate:
+
+- Roll a d20, subtract current DOOM from the result (except natural 20)
+- **Roll a 1** (natural or DOOM-modified): **The journey ends.** The prophecy has failed.
+- **Roll a 20** (natural): Remove HALF of the current DOOM - a moment of divine favor!
+- Any other result: You survive the hit but feel the weight of DOOM
+
+This is where the tension lies, especially in boss battles. A boss with multiple attacks means multiple DOOM Rolls per turn - each hit is a brush with oblivion. With high DOOM, even rolling a 5 or 6 becomes deadly.
+
+**Note:** DOOM Rolls are reserved specifically for enemy attacks. Other bad outcomes simply add to the DOOM meter, making future DOOM Rolls more dangerous.
+
+### DOOM Resets
 - DOOM resets between Stages
+- Players can strategically reduce DOOM through natural 20s on DOOM Rolls
 
 ### HOPE
 HOPE offsets accumulated DOOM:
@@ -181,6 +193,39 @@ The party learns of ATOM (Assemble The Others Movement) - a doomsday cult seekin
 | 3 | **General Heimer** | Heroes arrive at the Capitol but face Heimer's army outside. They must fight through to confront him. *Miniboss: The Daytime (soldiers) OR The Nighttime (infiltration).* Heimer declares he was following the King's orders. |
 | 4 | **Chthonic King Robert** | Only the capital streets and Royal Guard remain. *Royal Guard: The Jester (games of chance), The Chef (cooking DOOM), The Counselor (persuasion).* Upon defeating the King, a fake "you did it!" screen appears - then the pentagram on the floor activates. |
 | 5 | **BOMB (Big Obvious Malicious Boss)** | The portal pulls players into a warped dimension. *Miniboss: Early BOMB encounter that brutally changes player dice.* ~3 neutral encounters to restore functionality before the final fight. The stage shows 19 "darkened" prophecy lines and heroes on the single lit one - this is the last chance to save the world. |
+
+### Boss Combat Mechanics
+
+Bosses use a **success counter system** instead of HP. Players must accumulate enough successful rolls in a chosen approach to defeat the boss:
+
+**The Three Approaches:**
+- **Physical** (Slash, Stab, Bonk) - Direct combat. Usually requires the fewest successes but may miss narrative opportunities.
+- **Verbal** (Threaten, Deceive, Persuade) - Diplomatic resolution. Requires the most successes but often yields better narrative outcomes.
+- **Preventative** (Bribe, Hide, Grapple) - Tactical approach. Middle ground in difficulty.
+
+**Combat Round Flow:**
+1. Each hero chooses a die and rolls (3 rolls per round)
+2. Successful rolls add to the approach's success counter
+3. If any hero **misses**, the boss attacks and that hero must make a **DOOM Roll**
+4. Repeat until one approach reaches its threshold
+
+**Boss Thresholds (by Stage):**
+
+| Boss | DC | Physical | Verbal | Preventative | Attacks/Round |
+|------|:--:|:--------:|:------:|:------------:|:-------------:|
+| **1. Dirty Innkeeper** | 8 | 2 | 4 | 3 | 1 |
+| **2. Corrupt Guard** | 10 | 3 | 4 | 3 | 1-2 |
+| **3. General Heimer** | 12 | 4 | 4 | 3 | 2 |
+| **4. King Robert** | 14 | 5 | 5 | 4 | 2-3 |
+| **5. BOMB** | 15 | 6 | 7 | 5 | 3 |
+
+*Note: Multiple attacks per round means multiple DOOM Rolls. With accumulated DOOM, later bosses become terrifying.*
+
+**Mathematical Balance Notes:**
+- With DC 8 and average dice, ~60% hit rate. 2 Physical successes = ~3-4 rounds typical.
+- With DC 15 and accumulated DOOM debuffs, ~35% hit rate. 6 Physical successes = ~6-8 rounds.
+- Each round with 3 heroes rolling, probability of at least one miss: ~40% (DC 8) to ~77% (DC 15).
+- This means 1-3 DOOM Rolls per round at high difficulty, creating genuine tension.
 
 ---
 

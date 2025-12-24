@@ -964,6 +964,29 @@
             font-size: 1.2rem;
             margin-bottom: 25px;
             color: #ccc;
+            white-space: pre-line;
+        }
+
+        /* DOOM Roll styling */
+        .roll-result .outcome.doom-death {
+            color: #ff3333;
+            text-shadow: 0 0 20px #ff0000;
+            animation: doomPulse 0.5s infinite alternate;
+        }
+        .roll-result .outcome.doom-saved {
+            color: #ffd700;
+            text-shadow: 0 0 20px #ffd700;
+        }
+        .roll-result .outcome.doom-close {
+            color: #ff8800;
+        }
+        .roll-result .outcome.doom-safe {
+            color: #88ccff;
+        }
+
+        @keyframes doomPulse {
+            from { text-shadow: 0 0 10px #ff0000; transform: scale(1); }
+            to { text-shadow: 0 0 30px #ff0000, 0 0 50px #880000; transform: scale(1.02); }
         }
 
         .roll-result .doom-change {
@@ -1478,6 +1501,7 @@
             doom: 0,
             hope: 0,
             currentNode: 0,
+            currentStage: 1, // Stage 1-5, determines which boss to use
             players: [],
             map: [],
             currentEncounter: null,
@@ -1646,12 +1670,53 @@
                 name: 'The Dirty Innkeeper',
                 description: 'The innkeeper reveals his true nature - a cunning crime lord! "You\'ve meddled enough. Time to deal with you personally."',
                 icon: '👑',
-                dc: 15, hp: 60, reward: 100,
+                dc: 8, reward: 100,
+                successThresholds: { physical: 2, verbal: 4, preventative: 3 },
+                attacksPerRound: 1,
                 options: [
-                    { text: 'Attack! (Physical)', types: ['physical'], action: 'combat' },
-                    { text: 'Expose crimes (Verbal)', types: ['verbal'], action: 'combat' },
-                    { text: 'Defend (Preventative)', types: ['preventative'], action: 'combat' }
+                    { text: 'Attack! (Physical)', types: ['physical'], action: 'boss_combat' },
+                    { text: 'Expose crimes (Verbal)', types: ['verbal'], action: 'boss_combat' },
+                    { text: 'Outmaneuver (Preventative)', types: ['preventative'], action: 'boss_combat' }
                 ]
+            }
+        };
+
+        // Boss definitions for all 5 stages
+        const BOSSES = {
+            1: {
+                name: 'The Dirty Innkeeper',
+                description: 'The innkeeper reveals his true nature - a cunning crime lord!',
+                dc: 8,
+                successThresholds: { physical: 2, verbal: 4, preventative: 3 },
+                attacksPerRound: 1
+            },
+            2: {
+                name: 'The Corrupt Guard',
+                description: 'The guard captain draws his blade, ATOM\'s sigil gleaming on his armor.',
+                dc: 10,
+                successThresholds: { physical: 3, verbal: 4, preventative: 3 },
+                attacksPerRound: [1, 2] // Random 1-2
+            },
+            3: {
+                name: 'General Heimer',
+                description: 'The General stands before his troops. "You will not pass. The King demands it."',
+                dc: 12,
+                successThresholds: { physical: 4, verbal: 4, preventative: 3 },
+                attacksPerRound: 2
+            },
+            4: {
+                name: 'Chthonic King Robert',
+                description: 'The King rises from his throne, dark energy crackling around him. "ATOM\'s will is my will!"',
+                dc: 14,
+                successThresholds: { physical: 5, verbal: 5, preventative: 4 },
+                attacksPerRound: [2, 3]
+            },
+            5: {
+                name: 'B.O.M.B.',
+                description: 'The Big Obvious Malicious Boss manifests. Reality bends. This is the final stand.',
+                dc: 15,
+                successThresholds: { physical: 6, verbal: 7, preventative: 5 },
+                attacksPerRound: 3
             }
         };
 
@@ -1933,6 +1998,179 @@
             return effective;
         }
 
+        function triggerDoomRoll(player, enemyName) {
+            // DOOM Roll - the tension mechanic for enemy attacks
+            const naturalRoll = Math.floor(Math.random() * 20) + 1;
+            const effectiveRoll = getEffectiveRoll(naturalRoll);
+
+            // Disable rolling during DOOM roll resolution
+            gameState.canRoll = false;
+
+            // Show the DOOM roll result with dramatic effect
+            const doomRollResult = document.getElementById('rollResult');
+            doomRollResult.classList.add('show');
+
+            let outcomeText = '';
+            let outcomeClass = '';
+
+            if (effectiveRoll === 1) {
+                // Journey ends
+                outcomeText = `💀 DOOM ROLL: ${naturalRoll}${naturalRoll !== effectiveRoll ? ` - ${gameState.doom} DOOM = ${effectiveRoll}` : ''}\n\nThe darkness claims you...`;
+                outcomeClass = 'doom-death';
+                document.getElementById('rollOutcome').innerHTML = outcomeText;
+                document.getElementById('rollOutcome').className = outcomeClass;
+
+                setTimeout(() => {
+                    document.getElementById('defeatReason').textContent = `${player.name} succumbed to DOOM. The prophecy failed.`;
+                    document.getElementById('defeatScreen').classList.remove('hidden');
+                }, 2000);
+                return;
+            } else if (naturalRoll === 20) {
+                // Divine favor - remove half DOOM
+                const doomRemoved = Math.floor(gameState.doom / 2);
+                reduceDoom(doomRemoved);
+                outcomeText = `✨ DOOM ROLL: NAT 20!\n\nDivine favor! -${doomRemoved} DOOM`;
+                outcomeClass = 'doom-saved';
+                log(`${player.name} rolled a NAT 20 on DOOM Roll! Removed ${doomRemoved} DOOM!`, 'crit');
+            } else {
+                // Survived but take damage
+                const damage = Math.floor(Math.random() * 5) + 3;
+                player.hp -= damage;
+                outcomeText = `⚔️ DOOM ROLL: ${naturalRoll}${naturalRoll !== effectiveRoll ? ` - ${gameState.doom} DOOM = ${effectiveRoll}` : ''}\n\n${enemyName} deals ${damage} damage!`;
+                outcomeClass = effectiveRoll <= 5 ? 'doom-close' : 'doom-safe';
+                log(`${player.name} survived DOOM Roll (${effectiveRoll}), took ${damage} damage.`, effectiveRoll <= 5 ? 'warn' : 'info');
+
+                if (player.hp <= 0) {
+                    player.hp = 0;
+                    log(`${player.name} has fallen!`, 'fail');
+                }
+
+                if (gameState.players.every(p => p.hp <= 0)) {
+                    setTimeout(() => {
+                        document.getElementById('defeatScreen').classList.remove('hidden');
+                    }, 1500);
+                    return;
+                }
+            }
+
+            document.getElementById('rollOutcome').innerHTML = outcomeText;
+            document.getElementById('rollOutcome').className = outcomeClass;
+
+            // Re-enable rolling after DOOM roll display
+            setTimeout(() => {
+                gameState.canRoll = true;
+                renderPlayers();
+                renderDiceTray();
+            }, 1500);
+        }
+
+        function processBossRoundEnd(state) {
+            // Determine number of attacks
+            let numAttacks = state.attacksPerRound;
+            if (Array.isArray(numAttacks)) {
+                // Random range like [2, 3]
+                numAttacks = Math.floor(Math.random() * (numAttacks[1] - numAttacks[0] + 1)) + numAttacks[0];
+            }
+
+            // Boss attacks based on misses (capped by numAttacks)
+            const attacksToMake = Math.min(state.roundMisses, numAttacks);
+
+            if (attacksToMake > 0) {
+                log(`${state.enemyName} strikes ${attacksToMake} time(s)!`, 'doom');
+                gameState.canRoll = false;
+
+                // Execute DOOM rolls sequentially
+                let attackIndex = 0;
+                function executeNextAttack() {
+                    if (attackIndex >= attacksToMake) {
+                        // All attacks done, start next round
+                        state.rollsThisRound = 0;
+                        state.roundMisses = 0;
+                        gameState.canRoll = true;
+                        renderDiceTray();
+                        return;
+                    }
+
+                    // Pick a random player who is still alive
+                    const alivePlayers = gameState.players.filter(p => p.hp > 0);
+                    if (alivePlayers.length === 0) return;
+
+                    const targetPlayer = alivePlayers[Math.floor(Math.random() * alivePlayers.length)];
+
+                    // Override the normal DOOM roll callback to chain attacks
+                    const originalTimeout = 1500;
+                    triggerDoomRollForBoss(targetPlayer, state.enemyName, () => {
+                        attackIndex++;
+                        setTimeout(executeNextAttack, 500);
+                    });
+                }
+
+                setTimeout(executeNextAttack, 1000);
+            } else {
+                // No misses, start next round
+                log('All attacks landed! The boss staggers!', 'success');
+                state.rollsThisRound = 0;
+                state.roundMisses = 0;
+            }
+        }
+
+        function triggerDoomRollForBoss(player, enemyName, callback) {
+            // DOOM Roll variant that calls a callback when done
+            const naturalRoll = Math.floor(Math.random() * 20) + 1;
+            const effectiveRoll = getEffectiveRoll(naturalRoll);
+
+            const doomRollResult = document.getElementById('rollResult');
+            doomRollResult.classList.add('show');
+
+            let outcomeText = '';
+            let outcomeClass = '';
+
+            if (effectiveRoll === 1) {
+                outcomeText = `💀 DOOM ROLL: ${naturalRoll}${naturalRoll !== effectiveRoll ? ` - ${gameState.doom} DOOM = ${effectiveRoll}` : ''}\n\nThe darkness claims ${player.name}...`;
+                outcomeClass = 'doom-death';
+                document.getElementById('rollOutcome').innerHTML = outcomeText;
+                document.getElementById('rollOutcome').className = outcomeClass;
+
+                setTimeout(() => {
+                    document.getElementById('defeatReason').textContent = `${player.name} succumbed to DOOM. The prophecy failed.`;
+                    document.getElementById('defeatScreen').classList.remove('hidden');
+                }, 2000);
+                return;
+            } else if (naturalRoll === 20) {
+                const doomRemoved = Math.floor(gameState.doom / 2);
+                reduceDoom(doomRemoved);
+                outcomeText = `✨ DOOM ROLL: NAT 20!\n\nDivine favor! -${doomRemoved} DOOM`;
+                outcomeClass = 'doom-saved';
+                log(`${player.name} rolled NAT 20 on DOOM Roll! -${doomRemoved} DOOM!`, 'crit');
+            } else {
+                const damage = Math.floor(Math.random() * 5) + 3;
+                player.hp -= damage;
+                outcomeText = `⚔️ DOOM ROLL: ${naturalRoll}${naturalRoll !== effectiveRoll ? ` - ${gameState.doom} DOOM = ${effectiveRoll}` : ''}\n\n${enemyName} deals ${damage} to ${player.name}!`;
+                outcomeClass = effectiveRoll <= 5 ? 'doom-close' : 'doom-safe';
+                log(`${player.name} survived (${effectiveRoll}), took ${damage} damage.`, effectiveRoll <= 5 ? 'warn' : 'info');
+
+                if (player.hp <= 0) {
+                    player.hp = 0;
+                    log(`${player.name} has fallen!`, 'fail');
+                }
+
+                if (gameState.players.every(p => p.hp <= 0)) {
+                    setTimeout(() => {
+                        document.getElementById('defeatScreen').classList.remove('hidden');
+                    }, 1500);
+                    return;
+                }
+            }
+
+            document.getElementById('rollOutcome').innerHTML = outcomeText;
+            document.getElementById('rollOutcome').className = outcomeClass;
+
+            setTimeout(() => {
+                renderPlayers();
+                if (callback) callback();
+            }, 1500);
+        }
+
         // ==================== ENCOUNTERS ====================
         function selectNode(nodeId) {
             const node = gameState.map[nodeId];
@@ -2164,7 +2402,52 @@
                     addDoom(2, 'The cultist\'s curse follows you...');
                     completeEncounter();
                     break;
+                case 'boss_combat':
+                    startBossCombat(option, node);
+                    break;
             }
+        }
+
+        function startBossCombat(option, node) {
+            const stage = gameState.currentStage || 1;
+            const bossData = BOSSES[stage];
+
+            gameState.canRoll = true;
+            gameState.targetDC = bossData.dc;
+            gameState.allowedDiceTypes = option.types;
+            gameState.encounterState = {
+                type: 'boss_combat',
+                enemyName: bossData.name,
+                reward: node.reward,
+                successThresholds: { ...bossData.successThresholds },
+                successCounters: { physical: 0, verbal: 0, preventative: 0 },
+                attacksPerRound: bossData.attacksPerRound,
+                chosenApproach: option.types[0], // physical, verbal, or preventative
+                roundMisses: 0,
+                rollsThisRound: 0
+            };
+
+            const state = gameState.encounterState;
+            const threshold = state.successThresholds[state.chosenApproach];
+
+            document.getElementById('encounterDescription').innerHTML = `
+                <p>${bossData.description}</p>
+                <div style="margin-top:20px; padding:15px; background:rgba(139,0,139,0.2); border-radius:10px; border-left:4px solid #9333ea;">
+                    <h3 style="color:#c084fc;">👑 ${bossData.name}</h3>
+                    <div id="bossSuccessDisplay" style="margin:15px 0;">
+                        <p style="font-size:1.1rem;">
+                            <span style="color:#4ade80;">✓</span> <strong>${state.chosenApproach.toUpperCase()}</strong> Progress:
+                            <span id="successCounter" style="color:#4ade80; font-size:1.3rem;">0</span> / ${threshold}
+                        </p>
+                    </div>
+                    <p style="color:#aaa;">DC to succeed: ${bossData.dc}</p>
+                    <p style="color:#ff8888; font-size:0.9rem;">Each miss triggers a DOOM Roll!</p>
+                </div>
+                <p style="margin-top:15px; color:#88ccff;">Each hero rolls! Roll <strong>${state.chosenApproach}</strong> dice!</p>
+            `;
+
+            document.getElementById('encounterOptions').innerHTML = '';
+            renderDiceTray();
         }
 
         function startCombat(option, node) {
@@ -2349,35 +2632,11 @@
                         document.getElementById('enemyHp').textContent = state.enemyHp;
                     }
                 } else {
-                    // Miss - take damage and add DOOM
-                    const damage = Math.floor(Math.random() * 5) + 3;
-                    player.hp -= damage;
-                    addDoom(doomDelta, 'Combat failure');
-                    log(`Miss! ${state.enemyName} hits ${player.name} for ${damage}!`, 'fail');
+                    // Miss - enemy hits player, trigger DOOM Roll!
+                    log(`Miss! ${state.enemyName} attacks ${player.name}!`, 'fail');
 
-                    // Check for DOOM death
-                    if (effectiveResult === 1 && gameState.doom >= 10) {
-                        gameState.canRoll = false;
-                        document.getElementById('defeatReason').textContent = 'DOOM consumed your party... The prophecy failed.';
-                        setTimeout(() => {
-                            document.getElementById('defeatScreen').classList.remove('hidden');
-                        }, 1500);
-                        return;
-                    }
-
-                    if (player.hp <= 0) {
-                        player.hp = 0;
-                        log(`${player.name} has fallen!`, 'fail');
-                    }
-
-                    if (gameState.players.every(p => p.hp <= 0)) {
-                        gameState.canRoll = false;
-                        setTimeout(() => {
-                            document.getElementById('defeatScreen').classList.remove('hidden');
-                        }, 1500);
-                    }
-
-                    renderPlayers();
+                    // Trigger DOOM Roll
+                    triggerDoomRoll(player, state.enemyName);
                 }
             } else if (state.type === 'gamble') {
                 if (effectiveResult >= gameState.targetDC) {
@@ -2389,6 +2648,44 @@
                 }
                 gameState.canRoll = false;
                 setTimeout(completeEncounter, 1500);
+            } else if (state.type === 'boss_combat') {
+                state.rollsThisRound++;
+                const threshold = state.successThresholds[state.chosenApproach];
+
+                if (effectiveResult >= gameState.targetDC || naturalResult === 20) {
+                    // Success!
+                    state.successCounters[state.chosenApproach]++;
+                    const current = state.successCounters[state.chosenApproach];
+
+                    log(`${player.name}'s ${die.name} scores a success! (${current}/${threshold})`, naturalResult === 20 ? 'crit' : 'success');
+
+                    // Update the display
+                    const counterEl = document.getElementById('successCounter');
+                    if (counterEl) counterEl.textContent = current;
+
+                    // Check for victory
+                    if (current >= threshold) {
+                        gameState.canRoll = false;
+                        document.getElementById('rollOutcome').textContent += ' VICTORY!';
+                        log(`The party defeats ${state.enemyName}!`, 'crit');
+                        addGold(state.reward);
+
+                        setTimeout(() => {
+                            document.getElementById('victoryScreen').classList.remove('hidden');
+                        }, 1500);
+                        return;
+                    }
+                } else {
+                    // Miss - track for DOOM rolls at end of round
+                    state.roundMisses++;
+                    log(`${player.name} misses! (${state.roundMisses} miss this round)`, 'fail');
+                }
+
+                // Check if all 3 players have rolled this round
+                if (state.rollsThisRound >= 3) {
+                    // End of round - process boss attacks for misses
+                    processBossRoundEnd(state);
+                }
             } else if (state.type === 'ferryman') {
                 let narrative = '';
                 if (naturalResult >= 15) {
