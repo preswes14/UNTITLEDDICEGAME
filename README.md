@@ -166,10 +166,10 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 | **Bandits** | Bad | Three thugs block your path | DOOM Rolls on misses | 30G, DC 12, Thresholds: P:2/V:2/Pr:1 | *Replaced by Echo of BOMB* |
 | **Corrupt Guards** | Bad | Guards demand "peace tax" | DOOM Rolls on misses | 25G, DC 13, Thresholds: P:2/V:1/Pr:2 | *Replaced by Void Creatures* |
 | **Miniboss (Thug)** | Bad | Massive bouncer blocks stairs | DOOM Rolls on misses | 40G, DC 14, Thresholds: P:3/V:2/Pr:2 | *N/A in Stage 5* |
-| **The Ferryman** | Neutral | Ancient boatman offers passage | Crossed face on die (triggers +2 DOOM once) OR +3 DOOM to swim | Safe passage | *Replaced by The 19 Darkened Lines* |
-| **The Trapper** | Neutral | Hunter offers strange dice for trade | Random die quality | Swap worst die for random dungeon die | *N/A in Stage 5* |
-| **The Drunk Priest** | Neutral | Stumbling priest offers sloppy blessing | May add DOOM to segments | Adds HOPE to segments | *N/A in Stage 5* |
-| **The Cultist** | Neutral | Robed figure offers purple drink | Random swap OR +2 DOOM if refused | Random swap + bonus effect | *N/A in Stage 5* |
+| **The Ferryman** | Neutral | Ancient boatman judges your fate | 27% bad: die marked (triggers +2 DOOM once) | 47% good: +2 HOPE, 27% neutral: safe passage | *Replaced by The 19 Darkened Lines* |
+| **The Trapper** | Neutral | Hunter offers mystery dice trade | 27% bad: worse value | 47% good: +5 or more value, 27% neutral: similar value | *N/A in Stage 5* |
+| **The Drunk Priest** | Neutral | Stumbling priest offers blessing | 27% bad: more DOOM than HOPE | 47% good: +3-4 HOPE + blessing, 27% neutral: wash | *N/A in Stage 5* |
+| **The Cultist** | Neutral | Robed figure offers purple drink | 27% bad: unfavorable swap + DOOM | 47% good: swap + upgrade, 27% neutral: just swap | *N/A in Stage 5* |
 
 ### Stage 5 Unique Encounters (Warped Dimension)
 
@@ -199,16 +199,16 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 - **Beasts, Monsters, Dragons** - Stage 1 has 1-2 enemy types; each new stage introduces 1-2 new ones and phases out older ones
 
 ### Neutral Encounters
-*Can be approached multiple ways - dice swapping often occurs as reward OR punishment*
+*Risk vs reward - outcomes weighted toward good but with real consequences*
 
-- **The Ferryman** - Offers passage but you must roll a gambit; whatever you roll happens to him. *May force a temporary swap as "payment" - your Persuade die links to your friend's Stab for this crossing. Hope you don't need to talk your way out of anything on the other side.*
-- **The Trapper** - Has mismatched hodgepodge dice for trade (dice from previous sessions or pre-generated "funny" dice). *Can also offer to "splice" segments between party members' dice for a price - high risk, potentially high reward.*
-- **The Shopkeep** - Buy the effect of a Good Encounter
-- **Drunk Priest** - Lets you choose segments to add HOPE to, but messes up and adds DOOM to some segments too
-- **The "Tree"** - Clearly a man in a tree costume spying on someone. Expose him or let him be - right answer is 50/50; correct choice grants a decent bonus
-- **The Cultist** - Drink the fruit punch for a negative + positive effect, or refuse and risk the cultist's ire (likely DOOM increase). *Drinking may randomly swap a segment with a teammate - you're both in this now, for better or worse.*
+**Probability Distribution:** ~47% good outcome, ~27% neutral outcome, ~27% bad outcome
 
-**Note on Neutral Encounters:** A botched neutral encounter can *force* an unfavorable swap - suddenly your nat 20 triggers your teammate's worst die. This creates real consequences while reinforcing cooperation: even punishments tie you closer together.
+- **The Ferryman** - Pay the toll and let the river judge your fate. Good: blessing (+2 HOPE). Neutral: safe passage. Bad: one die marked (triggering +2 DOOM once). *You can also wade safely for +1 DOOM.*
+- **The Trapper** - Trade your worst die face for a mystery value from the dungeon. Good: +5 or more. Neutral: similar value. Bad: worse value. *The mystery keeps it exciting.*
+- **The Drunk Priest** - Accept a sloppy blessing. Good: +3-4 HOPE plus a blessed segment. Neutral: HOPE equals DOOM (wash). Bad: more DOOM than HOPE.
+- **The Cultist** - Drink the cosmic goblet. Good: beneficial swap + +5 to lowest face. Neutral: just the swap. Bad: unfavorable swap linking high numbers + DOOM.
+
+**Design Philosophy:** Neutral encounters offer genuine choice with weighted randomness. Players should *usually* come out ahead (~47% good + ~27% neutral = ~74% non-negative), but bad outcomes create memorable moments and reinforce that choices matter.
 
 ---
 
