@@ -1738,8 +1738,22 @@
     <div class="screen end-screen victory hidden" id="victoryScreen">
         <div class="end-content">
             <h1>VICTORY!</h1>
-            <p>You have defeated the Dirty Innkeeper!</p>
-            <p style="color:#ffd700;">Floor 2 awaits your party...</p>
+            <p id="victoryMessage">You have defeated the boss!</p>
+            <p id="victoryNextStage" style="color:#ffd700;"></p>
+            <div class="end-buttons">
+                <button class="menu-btn primary" id="continueBtn" onclick="advanceToNextStage()" style="display:none;">Continue to Next Stage</button>
+                <button class="menu-btn primary" id="finalVictoryBtn" onclick="location.reload()" style="display:none;">Play Again</button>
+                <button class="menu-btn" onclick="quitToMenu()">Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Victory Screen -->
+    <div class="screen end-screen victory hidden" id="finalVictoryScreen">
+        <div class="end-content">
+            <h1 style="color:#ffd700;">THE PROPHECY IS FULFILLED!</h1>
+            <p>You have defeated B.O.M.B. and saved the world!</p>
+            <p style="color:#4ade80;">The 20th prophecy was true. The heroes prevailed.</p>
             <div class="end-buttons">
                 <button class="menu-btn primary" onclick="location.reload()">Play Again</button>
                 <button class="menu-btn" onclick="quitToMenu()">Main Menu</button>
@@ -1986,6 +2000,51 @@
             }
         };
 
+        // Stage info for floor names and theming
+        const STAGE_INFO = {
+            1: { name: 'The Dirty Innkeeper', location: 'The Crossroads Inn' },
+            2: { name: 'The Corrupt Guard', location: 'The Castle Gates' },
+            3: { name: 'General Heimer', location: 'The Capitol Siege' },
+            4: { name: 'King Robert', location: 'The Throne Room' },
+            5: { name: 'B.O.M.B.', location: 'The Warped Dimension' }
+        };
+
+        // Stage-specific encounters
+        const STAGE_ENCOUNTERS = {
+            2: {
+                start: { type: 'good', name: 'City Gates', description: 'The party enters the fortified city. Guards watch from above.', icon: '🏰', options: [{ text: 'Continue', action: 'leave' }] },
+                witness: { type: 'neutral', name: 'The Witness', description: 'An old woman saw the assassination. "I saw who loosed that arrow..."', icon: '👵', vote: true, options: [{ text: 'Pay for info (20g)', cost: 20, action: 'pay_witness' }, { text: 'Intimidate her', action: 'intimidate_witness' }, { text: 'Leave', action: 'leave' }] },
+                armory: { type: 'good', name: 'Abandoned Armory', description: 'A dusty armory with old weapons. Some still look serviceable.', icon: '⚔️', options: [{ text: 'Search (+1 upgrade)', action: 'upgrade_plus2' }, { text: 'Leave', action: 'leave' }] },
+                barracks: { type: 'bad', name: 'Guard Barracks', description: 'Soldiers block your path. "No civilians past this point!"', icon: '🛡️', dc: 12, hp: 35, reward: 30, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Sneak past (Preventative)', types: ['preventative'], action: 'combat' }] },
+                informant: { type: 'neutral', name: 'Shady Informant', description: 'A hooded figure beckons from an alley. "I know things about the Guard Captain..."', icon: '🕵️', vote: true, options: [{ text: 'Pay 30g for intel', cost: 30, action: 'pay_informant' }, { text: 'Refuse', action: 'leave' }] },
+                drawbridge: { type: 'bad', name: 'Drawbridge Operator', description: 'The bridge operator refuses to lower the gate. He seems nervous.', icon: '🌉', dc: 13, hp: 45, reward: 40, options: [{ text: 'Force him (Physical)', types: ['physical'], action: 'combat' }, { text: 'Bribe him (Preventative)', types: ['preventative'], action: 'combat' }, { text: 'Convince him (Verbal)', types: ['verbal'], action: 'combat' }] }
+            },
+            3: {
+                start: { type: 'good', name: 'Army Encampment', description: 'Heimer\'s army stretches across the fields. Tents as far as the eye can see.', icon: '⛺', options: [{ text: 'Continue', action: 'leave' }] },
+                deserter: { type: 'neutral', name: 'The Deserter', description: 'A soldier hiding in the bushes. "Please, I just want to go home..."', icon: '😰', vote: true, options: [{ text: 'Help him escape (+HOPE)', action: 'help_deserter' }, { text: 'Turn him in (information)', action: 'betray_deserter' }, { text: 'Leave', action: 'leave' }] },
+                supply: { type: 'good', name: 'Supply Wagon', description: 'An unguarded supply wagon. Medical supplies and rations.', icon: '🛒', options: [{ text: 'Take supplies (heal all)', action: 'heal_all' }, { text: 'Leave', action: 'leave' }] },
+                patrol: { type: 'bad', name: 'Night Patrol', description: 'A patrol of soldiers spots you! "Halt! Intruders!"', icon: '🔦', dc: 13, hp: 50, reward: 35, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Hide (Preventative)', types: ['preventative'], action: 'combat' }] },
+                siege: { type: 'bad', name: 'Siege Equipment', description: 'You must disable the siege weapons to reach Heimer.', icon: '💣', dc: 14, hp: 40, reward: 45, options: [{ text: 'Sabotage (Preventative)', types: ['preventative'], action: 'combat' }, { text: 'Destroy (Physical)', types: ['physical'], action: 'combat' }] },
+                commander: { type: 'bad', name: 'Field Commander', description: 'Heimer\'s second-in-command blocks the command tent.', icon: '🎖️', dc: 14, hp: 55, reward: 50, options: [{ text: 'Duel (Physical)', types: ['physical'], action: 'combat' }, { text: 'Negotiate (Verbal)', types: ['verbal'], action: 'combat' }] }
+            },
+            4: {
+                start: { type: 'good', name: 'Palace Gates', description: 'The royal palace looms before you. This is it.', icon: '🏛️', options: [{ text: 'Continue', action: 'leave' }] },
+                jester: { type: 'neutral', name: 'The Royal Jester', description: 'A mad jester blocks your path. "Play my game or face my blade!"', icon: '🃏', vote: true, options: [{ text: 'Play the game (gamble)', action: 'jester_game' }, { text: 'Fight', types: ['physical'], action: 'combat' }], dc: 14, hp: 40, reward: 60 },
+                chef: { type: 'bad', name: 'The Royal Chef', description: 'The chef guards the kitchens. His cleaver drips with... something.', icon: '👨‍🍳', dc: 14, hp: 45, reward: 45, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Sneak past (Preventative)', types: ['preventative'], action: 'combat' }] },
+                counselor: { type: 'neutral', name: 'The King\'s Counselor', description: 'An elderly advisor considers you carefully. "Perhaps we can reach an... arrangement."', icon: '📜', vote: true, options: [{ text: 'Negotiate (Verbal)', types: ['verbal'], action: 'combat' }, { text: 'Bribe (100g)', cost: 100, action: 'bribe_counselor' }, { text: 'Fight', types: ['physical'], action: 'combat' }], dc: 15, hp: 35, reward: 50 },
+                throne: { type: 'good', name: 'Throne Antechamber', description: 'The door to the throne room. Dark energy pulses from within.', icon: '🚪', options: [{ text: 'Enter', action: 'leave' }] },
+                guards: { type: 'bad', name: 'Royal Guard', description: 'Elite guards in black armor. The King\'s last line of defense.', icon: '⚔️', dc: 15, hp: 60, reward: 55, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Deceive (Verbal)', types: ['verbal'], action: 'combat' }] }
+            },
+            5: {
+                start: { type: 'good', name: 'The Rift', description: 'Reality tears apart. You fall through into... somewhere else.', icon: '🌀', options: [{ text: 'Continue', action: 'leave' }] },
+                fragment: { type: 'good', name: 'Memory Fragment', description: 'A shard of your past floats before you. It pulses with warmth.', icon: '💎', options: [{ text: 'Touch it (restore die)', action: 'restore_die' }, { text: 'Leave', action: 'leave' }] },
+                echo: { type: 'bad', name: 'Echo of BOMB', description: 'A shadow of the final boss. A taste of what\'s to come.', icon: '👁️', dc: 15, hp: 50, reward: 40, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Evade (Preventative)', types: ['preventative'], action: 'combat' }] },
+                sanctuary: { type: 'good', name: 'Pocket of Reality', description: 'A small bubble of normal space. A moment to breathe.', icon: '🏝️', options: [{ text: 'Rest (heal 10 HP each)', action: 'heal_all' }, { text: 'Continue', action: 'leave' }] },
+                void: { type: 'bad', name: 'Void Creatures', description: 'Shapeless horrors from beyond reality attack!', icon: '👾', dc: 15, hp: 55, reward: 45, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Hide (Preventative)', types: ['preventative'], action: 'combat' }] },
+                prophecy: { type: 'neutral', name: 'The 19 Darkened Lines', description: 'You see the 19 failed prophecies. Only yours remains lit.', icon: '📖', options: [{ text: 'Accept your destiny (+HOPE)', action: 'accept_destiny' }, { text: 'Continue', action: 'leave' }] }
+            }
+        };
+
         // ==================== SCREEN MANAGEMENT ====================
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
@@ -2009,6 +2068,79 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('titleScreen').classList.remove('hidden');
+        }
+
+        function advanceToNextStage() {
+            // Hide victory screen
+            document.getElementById('victoryScreen').classList.add('hidden');
+
+            // Advance stage
+            gameState.currentStage++;
+
+            // Reset DOOM for new stage
+            gameState.doom = 0;
+            updateDoomHopeDisplay();
+
+            // Heal players for new stage
+            gameState.players.forEach(p => {
+                p.hp = Math.min(p.maxHp, p.hp + 10);
+            });
+
+            // Generate new map for new stage
+            generateMap();
+
+            // Update floor display
+            updateFloorDisplay();
+
+            // Show game screen
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+            // Render everything
+            renderMap();
+            renderPlayers();
+            renderDiceTray();
+
+            // Make first node available
+            gameState.map[0].status = 'available';
+            renderMap();
+
+            // Log
+            const stageInfo = STAGE_INFO[gameState.currentStage];
+            document.getElementById('gameLog').innerHTML = '<h4>Log</h4>';
+            log(`Stage ${gameState.currentStage}: ${stageInfo.name}`, 'info');
+            log(`Welcome to ${stageInfo.location}...`, 'info');
+        }
+
+        function updateFloorDisplay() {
+            const stage = gameState.currentStage;
+            const stageInfo = STAGE_INFO[stage];
+            const floorText = `Stage ${stage}: ${stageInfo.name}`;
+
+            // Update header
+            const floorSpan = document.querySelector('.floor-info span');
+            if (floorSpan) {
+                floorSpan.textContent = floorText;
+            }
+        }
+
+        function showBossVictory() {
+            const stage = gameState.currentStage;
+            const bossName = BOSSES[stage].name;
+
+            document.getElementById('victoryMessage').textContent = `You have defeated ${bossName}!`;
+
+            if (stage >= 5) {
+                // Final victory!
+                document.getElementById('victoryScreen').classList.add('hidden');
+                document.getElementById('finalVictoryScreen').classList.remove('hidden');
+            } else {
+                // More stages to go
+                const nextStageInfo = STAGE_INFO[stage + 1];
+                document.getElementById('victoryNextStage').textContent = `Stage ${stage + 1}: ${nextStageInfo.location} awaits...`;
+                document.getElementById('continueBtn').style.display = 'block';
+                document.getElementById('finalVictoryBtn').style.display = 'none';
+                document.getElementById('victoryScreen').classList.remove('hidden');
+            }
         }
 
         // ==================== TALENT RANKING SYSTEM ====================
@@ -2341,12 +2473,15 @@
             renderPlayers();
             renderDiceTray();
             updateDoomHopeDisplay();
+            updateFloorDisplay();
 
             gameState.map[0].status = 'available';
             renderMap();
 
+            const stageInfo = STAGE_INFO[gameState.currentStage];
             document.getElementById('gameLog').innerHTML = '<h4>Log</h4>';
-            log('Click the inn to begin...', 'info');
+            log(`Stage ${gameState.currentStage}: ${stageInfo.name}`, 'info');
+            log('Click to begin your journey...', 'info');
         }
 
         function createDie(type) {
@@ -2362,44 +2497,128 @@
         }
 
         function generateMap() {
-            const structure = [
-                { encounter: 'start', row: 0 },
-                { encounter: 'mathematician', row: 1 },
-                { encounter: 'bandits', row: 1 },
-                { encounter: 'alchemist', row: 2 },
-                { encounter: 'ferryman', row: 2 },
-                { encounter: 'priest', row: 2 },
-                { encounter: 'guards', row: 3 },
-                { encounter: 'trapper', row: 3 },
-                { encounter: 'gambler', row: 4 },
-                { encounter: 'drunkPriest', row: 4 },
-                { encounter: 'cultist', row: 4 },
-                { encounter: 'miniboss', row: 5 },
-                { encounter: 'boss', row: 6 }
-            ];
+            const stage = gameState.currentStage;
 
-            gameState.map = structure.map((node, index) => ({
-                id: index,
-                ...ENCOUNTERS[node.encounter],
-                encounterKey: node.encounter,
-                row: node.row,
-                status: index === 0 ? 'current' : 'locked',
-                connections: []
-            }));
+            // Stage-specific map structures
+            const MAP_STRUCTURES = {
+                1: [
+                    { encounter: 'start', row: 0 },
+                    { encounter: 'mathematician', row: 1 },
+                    { encounter: 'bandits', row: 1 },
+                    { encounter: 'alchemist', row: 2 },
+                    { encounter: 'ferryman', row: 2 },
+                    { encounter: 'priest', row: 2 },
+                    { encounter: 'guards', row: 3 },
+                    { encounter: 'trapper', row: 3 },
+                    { encounter: 'gambler', row: 4 },
+                    { encounter: 'drunkPriest', row: 4 },
+                    { encounter: 'cultist', row: 4 },
+                    { encounter: 'miniboss', row: 5 },
+                    { encounter: 'boss', row: 6 }
+                ],
+                2: [
+                    { encounter: 'start', row: 0 },
+                    { encounter: 'witness', row: 1 },
+                    { encounter: 'armory', row: 1 },
+                    { encounter: 'barracks', row: 2 },
+                    { encounter: 'informant', row: 2 },
+                    { encounter: 'ferryman', row: 2 },
+                    { encounter: 'drawbridge', row: 3 },
+                    { encounter: 'boss', row: 4 }
+                ],
+                3: [
+                    { encounter: 'start', row: 0 },
+                    { encounter: 'deserter', row: 1 },
+                    { encounter: 'supply', row: 1 },
+                    { encounter: 'patrol', row: 2 },
+                    { encounter: 'siege', row: 2 },
+                    { encounter: 'commander', row: 3 },
+                    { encounter: 'boss', row: 4 }
+                ],
+                4: [
+                    { encounter: 'start', row: 0 },
+                    { encounter: 'jester', row: 1 },
+                    { encounter: 'chef', row: 1 },
+                    { encounter: 'counselor', row: 2 },
+                    { encounter: 'guards', row: 2 },
+                    { encounter: 'throne', row: 3 },
+                    { encounter: 'boss', row: 4 }
+                ],
+                5: [
+                    { encounter: 'start', row: 0 },
+                    { encounter: 'fragment', row: 1 },
+                    { encounter: 'echo', row: 1 },
+                    { encounter: 'sanctuary', row: 2 },
+                    { encounter: 'void', row: 2 },
+                    { encounter: 'prophecy', row: 3 },
+                    { encounter: 'boss', row: 4 }
+                ]
+            };
 
-            // Build connections
-            gameState.map[0].connections = [1, 2];
-            gameState.map[1].connections = [3, 4, 5];
-            gameState.map[2].connections = [3, 4, 5];
-            gameState.map[3].connections = [6, 7];
-            gameState.map[4].connections = [6, 7];
-            gameState.map[5].connections = [6, 7];
-            gameState.map[6].connections = [8, 9, 10];
-            gameState.map[7].connections = [8, 9, 10];
-            gameState.map[8].connections = [11];
-            gameState.map[9].connections = [11];
-            gameState.map[10].connections = [11];
-            gameState.map[11].connections = [12];
+            const structure = MAP_STRUCTURES[stage] || MAP_STRUCTURES[1];
+
+            // Get the appropriate encounter source
+            const encounterSource = stage === 1 ? ENCOUNTERS : (STAGE_ENCOUNTERS[stage] || ENCOUNTERS);
+
+            // Generate boss encounter for this stage
+            const bossData = BOSSES[stage];
+            const stageBoss = {
+                type: 'boss',
+                name: bossData.name,
+                description: bossData.description,
+                icon: '👑',
+                dc: bossData.dc,
+                reward: 50 + (stage * 25),
+                successThresholds: bossData.successThresholds,
+                attacksPerRound: bossData.attacksPerRound,
+                options: [
+                    { text: 'Attack! (Physical)', types: ['physical'], action: 'boss_combat' },
+                    { text: 'Negotiate (Verbal)', types: ['verbal'], action: 'boss_combat' },
+                    { text: 'Outmaneuver (Preventative)', types: ['preventative'], action: 'boss_combat' }
+                ]
+            };
+
+            gameState.map = structure.map((node, index) => {
+                let encounterData;
+                if (node.encounter === 'boss') {
+                    encounterData = stageBoss;
+                } else {
+                    encounterData = encounterSource[node.encounter] || ENCOUNTERS[node.encounter] || ENCOUNTERS.start;
+                }
+
+                return {
+                    id: index,
+                    ...encounterData,
+                    encounterKey: node.encounter,
+                    row: node.row,
+                    status: index === 0 ? 'current' : 'locked',
+                    connections: []
+                };
+            });
+
+            // Build connections based on structure
+            buildMapConnections(structure);
+        }
+
+        function buildMapConnections(structure) {
+            // Group nodes by row
+            const rowGroups = {};
+            structure.forEach((node, idx) => {
+                if (!rowGroups[node.row]) rowGroups[node.row] = [];
+                rowGroups[node.row].push(idx);
+            });
+
+            const rows = Object.keys(rowGroups).sort((a, b) => a - b);
+
+            // Connect each row to the next row
+            for (let i = 0; i < rows.length - 1; i++) {
+                const currentRow = rowGroups[rows[i]];
+                const nextRow = rowGroups[rows[i + 1]];
+
+                currentRow.forEach(nodeIdx => {
+                    gameState.map[nodeIdx].connections = [...nextRow];
+                });
+            }
         }
 
         // ==================== RENDERING ====================
@@ -2979,6 +3198,76 @@
                 case 'boss_combat':
                     startBossCombat(option, node);
                     break;
+                // Stage 2+ encounter actions
+                case 'pay_witness':
+                case 'pay_informant':
+                    if (spendGold(option.cost)) {
+                        log('Information acquired! The path forward becomes clearer.', 'success');
+                        addHope(1);
+                    }
+                    completeEncounter();
+                    break;
+                case 'intimidate_witness':
+                    addDoom(1, 'The witness is terrified...');
+                    log('She tells you what she saw, trembling.', 'info');
+                    completeEncounter();
+                    break;
+                case 'help_deserter':
+                    addHope(2);
+                    log('The deserter thanks you with tears in his eyes.', 'success');
+                    completeEncounter();
+                    break;
+                case 'betray_deserter':
+                    addGold(30);
+                    addDoom(2, 'Your betrayal weighs heavy...');
+                    log('The soldiers reward your "loyalty" with gold.', 'info');
+                    completeEncounter();
+                    break;
+                case 'heal_all':
+                    gameState.players.forEach(p => {
+                        p.hp = Math.min(p.maxHp, p.hp + 10);
+                    });
+                    log('The party rests and recovers. +10 HP each!', 'success');
+                    renderPlayers();
+                    completeEncounter();
+                    break;
+                case 'jester_game':
+                    // High-stakes gamble with the jester
+                    gameState.canRoll = true;
+                    gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
+                    gameState.targetDC = 12;
+                    gameState.encounterState = { type: 'gamble', wager: 50 };
+                    document.getElementById('encounterDescription').innerHTML +=
+                        '<p style="color:#ffd700;margin-top:15px;">The Jester cackles! Roll any die - beat 12 to win 100g!</p>';
+                    renderDiceTray();
+                    break;
+                case 'bribe_counselor':
+                    if (spendGold(option.cost)) {
+                        log('The Counselor pockets your gold and steps aside.', 'success');
+                    }
+                    completeEncounter();
+                    break;
+                case 'restore_die':
+                    // Reset a random damaged face on a random die
+                    const randomPlayer = gameState.players[Math.floor(Math.random() * 3)];
+                    const dieTypes = ['physical', 'verbal', 'preventative'];
+                    const randomDieType = dieTypes[Math.floor(Math.random() * 3)];
+                    const randomDie = randomPlayer.dice[randomDieType];
+                    // Find a face that's been reduced to 1 and restore it
+                    const oneIdx = randomDie.faces.indexOf(1);
+                    if (oneIdx > 0) {
+                        randomDie.faces[oneIdx] = oneIdx + 1;
+                        log(`${randomPlayer.name}'s ${randomDie.name} is partially restored!`, 'success');
+                    } else {
+                        log('The fragment pulses but finds nothing to heal.', 'info');
+                    }
+                    completeEncounter();
+                    break;
+                case 'accept_destiny':
+                    addHope(3);
+                    log('You are the chosen ones. The 20th prophecy will succeed.', 'crit');
+                    completeEncounter();
+                    break;
             }
         }
 
@@ -3219,9 +3508,7 @@
                         log(`${state.enemyName} defeated! +${state.reward} gold`, 'crit');
 
                         if (state.isBoss) {
-                            setTimeout(() => {
-                                document.getElementById('victoryScreen').classList.remove('hidden');
-                            }, 1500);
+                            setTimeout(showBossVictory, 1500);
                         } else {
                             // Non-boss combat: complete the encounter so player can continue
                             setTimeout(completeEncounter, 1500);
@@ -3265,9 +3552,7 @@
                         log(`The party defeats ${state.enemyName}!`, 'crit');
                         addGold(state.reward);
 
-                        setTimeout(() => {
-                            document.getElementById('victoryScreen').classList.remove('hidden');
-                        }, 1500);
+                        setTimeout(showBossVictory, 1500);
                         return;
                     }
                 } else {
