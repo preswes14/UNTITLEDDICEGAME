@@ -534,6 +534,53 @@
             box-shadow: 0 0 30px rgba(74, 222, 128, 0.5);
         }
 
+        /* Intertwine Progress */
+        .intertwine-progress {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(30, 30, 40, 0.6);
+            border-radius: 10px;
+        }
+
+        .intertwine-progress span {
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .intertwine-progress span.active {
+            background: rgba(192, 132, 252, 0.3);
+            border: 2px solid #c084fc;
+            color: #c084fc;
+            font-weight: bold;
+        }
+
+        .intertwine-progress span.done {
+            background: rgba(74, 222, 128, 0.2);
+            border: 2px solid #4ade80;
+            color: #4ade80;
+        }
+
+        .intertwine-progress .arrow {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .number-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        .number-btn.disabled:hover {
+            transform: none;
+            border-color: #666;
+        }
+
         /* ==================== MAIN GAME ==================== */
         .game-container {
             display: flex;
@@ -2102,29 +2149,40 @@
             document.getElementById('talentScreen').classList.add('hidden');
             document.getElementById('intertwineScreen').classList.remove('hidden');
 
+            // Get allies (the two players who aren't the current player)
+            const allies = gameState.players
+                .map((p, idx) => ({ player: p, index: idx }))
+                .filter(a => a.index !== talentState.currentPlayer);
+
+            const currentAlly = allies[intertwineData.round - 1];
+            const isFirstRound = intertwineData.round === 1;
+
             document.getElementById('intertwineSubtitle').textContent =
-                `${player.name}, your ${middleDie.name} die will be intertwined with an ally's fate.`;
+                `${player.name}, your ${middleDie.name} die will be intertwined with BOTH allies!`;
 
             let html = `
+                <div class="intertwine-progress">
+                    <span class="${isFirstRound ? 'active' : 'done'}">Link 1: ${isFirstRound ? currentAlly.player.name : allies[0].player.name}</span>
+                    <span class="arrow">→</span>
+                    <span class="${!isFirstRound ? 'active' : ''}">Link 2: ${allies[1].player.name}</span>
+                </div>
                 <div class="intertwine-step" id="intertwineStep1">
-                    <h3>Step 1: Choose a number between 6 and 10</h3>
-                    <p>When you roll this number on your ${middleDie.name} die, it will trigger your ally's die instead!</p>
+                    <h3>Choose a number between 6 and 10 for ${currentAlly.player.name}</h3>
+                    <p>When you roll this number on your ${middleDie.name} die, it will trigger ${currentAlly.player.name}'s die instead!</p>
                     <div class="number-options">
             `;
 
+            // Show available numbers (exclude already used ones)
             for (let n = 6; n <= 10; n++) {
-                html += `<button class="number-btn" onclick="selectIntertwineNumber(${n})">${n}</button>`;
+                const used = intertwineData.usedNumbers.includes(n);
+                html += `<button class="number-btn ${used ? 'disabled' : ''}" ${used ? 'disabled' : ''} onclick="selectIntertwineNumber(${n})">${n}</button>`;
             }
 
             html += `
                     </div>
                 </div>
                 <div class="intertwine-step hidden" id="intertwineStep2">
-                    <h3>Step 2: Choose which ally</h3>
-                    <div class="ally-options" id="allyOptions"></div>
-                </div>
-                <div class="intertwine-step hidden" id="intertwineStep3">
-                    <h3>Step 3: Choose which of their dice</h3>
+                    <h3>Choose which of ${currentAlly.player.name}'s dice</h3>
                     <div class="ally-dice-options" id="allyDiceOptions"></div>
                 </div>
             `;
@@ -2132,7 +2190,7 @@
             document.getElementById('intertwineContent').innerHTML = html;
         }
 
-        let intertwineData = { number: null, allyIndex: null, allyDieType: null };
+        let intertwineData = { number: null, allyIndex: null, allyDieType: null, round: 1, usedNumbers: [] };
 
         function selectIntertwineNumber(num) {
             intertwineData.number = num;
@@ -2141,36 +2199,19 @@
             document.querySelectorAll('.number-btn').forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
 
-            // Show ally selection
+            // Show dice selection (skip ally selection since it's predetermined)
             document.getElementById('intertwineStep2').classList.remove('hidden');
 
-            const currentIdx = talentState.currentPlayer;
+            // Get the current ally based on round
+            const allies = gameState.players
+                .map((p, idx) => ({ player: p, index: idx }))
+                .filter(a => a.index !== talentState.currentPlayer);
+            const currentAlly = allies[intertwineData.round - 1];
+            intertwineData.allyIndex = currentAlly.index;
+
             let html = '';
-
-            gameState.players.forEach((p, idx) => {
-                if (idx !== currentIdx) {
-                    html += `<button class="ally-btn player-${idx + 1}" onclick="selectIntertwineAlly(${idx})">${p.name}</button>`;
-                }
-            });
-
-            document.getElementById('allyOptions').innerHTML = html;
-        }
-
-        function selectIntertwineAlly(allyIdx) {
-            intertwineData.allyIndex = allyIdx;
-
-            // Highlight selected
-            document.querySelectorAll('.ally-btn').forEach(btn => btn.classList.remove('selected'));
-            event.target.classList.add('selected');
-
-            // Show dice selection
-            document.getElementById('intertwineStep3').classList.remove('hidden');
-
-            const ally = gameState.players[allyIdx];
-            let html = '';
-
             ['physical', 'verbal', 'preventative'].forEach(cat => {
-                const die = ally.dice[cat];
+                const die = currentAlly.player.dice[cat];
                 html += `
                     <button class="talent-btn ${cat}" onclick="selectIntertwineAllyDie('${cat}')">
                         <span class="die-icon">${die.icon}</span>
@@ -2206,15 +2247,26 @@
                 targetDieType: intertwineData.allyDieType
             });
 
-            // Move to next player
-            talentState.currentPlayer++;
-            intertwineData = { number: null, allyIndex: null, allyDieType: null };
+            // Track used number
+            intertwineData.usedNumbers.push(intertwineData.number);
 
-            if (talentState.currentPlayer >= 3) {
-                // All done, start the game!
-                finishTalentRanking();
-            } else {
+            if (intertwineData.round === 1) {
+                // Move to second intertwine (other ally)
+                intertwineData.round = 2;
+                intertwineData.number = null;
+                intertwineData.allyDieType = null;
                 showIntertwineScreen();
+            } else {
+                // Both allies done, move to next player
+                talentState.currentPlayer++;
+                intertwineData = { number: null, allyIndex: null, allyDieType: null, round: 1, usedNumbers: [] };
+
+                if (talentState.currentPlayer >= 3) {
+                    // All done, start the game!
+                    finishTalentRanking();
+                } else {
+                    showIntertwineScreen();
+                }
             }
         }
 

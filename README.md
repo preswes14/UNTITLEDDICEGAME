@@ -48,13 +48,15 @@ After picking their 3 dice, each player goes through a **Talent Ranking** that t
    - This die gets a downgrade: **One of 2, 3, 4, or 5 becomes a 1...**
 
 3. **The middle die** - The one not picked
-   - This die gets **intertwined with an ally**: Pick a number between 6-10. When rolled, it triggers your ally's chosen die instead!
-   - Players walk through selecting which ally and which die, learning the core swap mechanic
+   - This die gets **double-intertwined with BOTH allies**!
+   - Pick a number (6-10) for Ally 1, then a different number for Ally 2
+   - Each number triggers that ally's chosen die when rolled
+   - Players walk through the full process, learning the core swap mechanic
 
 This tutorial accomplishes several things:
 - Teaches upgrading, downgrading, and dice swapping before the adventure begins
 - Creates immediate asymmetry between players (someone's Persuade is godlike, another's is cursed)
-- Establishes the cooperative bond through the intertwine mechanic
+- Establishes the cooperative bond through double-intertwining: every player is connected to every other player, creating an irrevocable team
 
 ---
 
