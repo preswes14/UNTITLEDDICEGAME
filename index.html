@@ -3216,11 +3216,15 @@
                         gameState.canRoll = false;
                         document.getElementById('rollOutcome').textContent += ' DEFEATED!';
                         addGold(state.reward);
+                        log(`${state.enemyName} defeated! +${state.reward} gold`, 'crit');
 
                         if (state.isBoss) {
                             setTimeout(() => {
                                 document.getElementById('victoryScreen').classList.remove('hidden');
                             }, 1500);
+                        } else {
+                            // Non-boss combat: complete the encounter so player can continue
+                            setTimeout(completeEncounter, 1500);
                         }
                     } else {
                         document.getElementById('enemyHp').textContent = state.enemyHp;
