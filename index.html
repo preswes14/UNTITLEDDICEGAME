@@ -1940,11 +1940,11 @@
             mathematician: {
                 type: 'good',
                 name: 'The Mathematician',
-                description: 'A strange old man with ink-stained fingers beckons you. "Numbers are my trade. For a small fee, I can... adjust your dice."',
+                description: 'A strange old man with ink-stained fingers beckons you. "Numbers are my trade. I offer you a free lesson... or for gold, true power."',
                 icon: '🔢',
                 options: [
-                    { text: '10G: +2 to lowest face', cost: 10, action: 'upgrade_plus2' },
-                    { text: '25G: +5 to lowest face', cost: 25, action: 'upgrade_plus5' },
+                    { text: 'Free Lesson (+1 to a lowest face)', action: 'upgrade_plus1' },
+                    { text: '20G: +3 to lowest face', cost: 20, action: 'upgrade_plus3' },
                     { text: 'Leave', action: 'leave' }
                 ]
             },
@@ -1954,8 +1954,8 @@
                 description: 'Bubbling potions fill the cramped shop. A wild-eyed woman grins at you. "I can splice your dice together! Link your fates... for science!"',
                 icon: '⚗️',
                 options: [
-                    { text: '15G: Link a low roll to ally\'s die', cost: 15, action: 'swap_low_to_ally' },
-                    { text: '30G: Link a high roll to ally\'s die', cost: 30, action: 'swap_high_to_ally' },
+                    { text: 'Free Sample (Link a low roll)', action: 'swap_low_to_ally' },
+                    { text: '25G: Link a high roll', cost: 25, action: 'swap_high_to_ally' },
                     { text: 'Leave', action: 'leave' }
                 ]
             },
@@ -1984,11 +1984,10 @@
                 name: 'Bandit Ambush!',
                 description: 'Three rough-looking thugs block your path! "Your gold or your lives!"',
                 icon: '⚔️',
-                dc: 12, hp: 30, reward: 30,
+                dc: 12, reward: 30,
+                successThresholds: { physical: 2, verbal: 2, preventative: 1 },
                 options: [
-                    { text: 'Fight! (Physical)', types: ['physical'], action: 'combat' },
-                    { text: 'Intimidate (Verbal)', types: ['verbal'], action: 'combat' },
-                    { text: 'Slip away (Preventative)', types: ['preventative'], action: 'combat' }
+                    { text: 'Engage!', action: 'combat' }
                 ]
             },
             guards: {
@@ -1996,11 +1995,10 @@
                 name: 'Corrupt Guards',
                 description: 'Two city guards eye you suspiciously. "Pay the \'peace tax\' or face justice."',
                 icon: '🛡️',
-                dc: 13, hp: 25, reward: 25,
+                dc: 13, reward: 25,
+                successThresholds: { physical: 2, verbal: 1, preventative: 2 },
                 options: [
-                    { text: 'Resist! (Physical)', types: ['physical'], action: 'combat' },
-                    { text: 'Talk out (Verbal)', types: ['verbal'], action: 'combat' },
-                    { text: 'Bribe/Hide (Preventative)', types: ['preventative'], action: 'combat' }
+                    { text: 'Engage!', action: 'combat' }
                 ]
             },
             ferryman: {
@@ -2052,11 +2050,10 @@
                 name: 'The Innkeeper\'s Thug',
                 description: 'A massive bouncer blocks the stairs. "Boss don\'t want visitors." His fists look like hammers.',
                 icon: '💪',
-                dc: 14, hp: 40, reward: 40,
+                dc: 14, reward: 40,
+                successThresholds: { physical: 3, verbal: 2, preventative: 2 },
                 options: [
-                    { text: 'Overpower (Physical)', types: ['physical'], action: 'combat' },
-                    { text: 'Convince (Verbal)', types: ['verbal'], action: 'combat' },
-                    { text: 'Distract (Preventative)', types: ['preventative'], action: 'combat' }
+                    { text: 'Engage!', action: 'combat' }
                 ]
             },
             boss: {
@@ -2068,9 +2065,7 @@
                 successThresholds: { physical: 4, verbal: 3, preventative: 2 },
                 attacksPerRound: 1,
                 options: [
-                    { text: 'Attack! (Physical)', types: ['physical'], action: 'boss_combat' },
-                    { text: 'Expose crimes (Verbal)', types: ['verbal'], action: 'boss_combat' },
-                    { text: 'Outmaneuver (Preventative)', types: ['preventative'], action: 'boss_combat' }
+                    { text: 'Engage!', action: 'combat' }
                 ]
             }
         };
@@ -2134,35 +2129,36 @@
         };
 
         // Available upgrades - tier determines which stage unlocks them
+        // No HP upgrades - game uses success thresholds, not health
         const SHOP_UPGRADES = [
             // Tier 1 - Available from Stage 2
-            { id: 'hp_small', name: '+5 HP', description: 'Heal 5 HP', cost: 1, tier: 1, effect: 'hp', value: 5 },
-            { id: 'die_plus2', name: '+2 to Lowest', description: 'Add 2 to lowest die face', cost: 2, tier: 1, effect: 'die_upgrade', value: 2 },
-            { id: 'gold_bonus', name: '+20 Gold', description: 'Start with extra gold', cost: 1, tier: 1, effect: 'gold', value: 20 },
+            { id: 'die_plus2', name: '+2 to Lowest', description: 'Add 2 to lowest die face', cost: 1, tier: 1, effect: 'die_upgrade', value: 2 },
+            { id: 'gold_bonus', name: '+25 Gold', description: 'Start with extra gold', cost: 1, tier: 1, effect: 'gold', value: 25 },
+            { id: 'hope_small', name: '+1 HOPE', description: 'Start with HOPE', cost: 1, tier: 1, effect: 'hope', value: 1 },
 
             // Tier 2 - Available from Stage 3
-            { id: 'hp_medium', name: '+10 HP', description: 'Heal 10 HP', cost: 2, tier: 2, effect: 'hp', value: 10 },
-            { id: 'die_plus5', name: '+5 to Lowest', description: 'Add 5 to lowest die face', cost: 3, tier: 2, effect: 'die_upgrade', value: 5 },
-            { id: 'hope_start', name: '+2 HOPE', description: 'Start with HOPE', cost: 2, tier: 2, effect: 'hope', value: 2 },
+            { id: 'die_plus5', name: '+5 to Lowest', description: 'Add 5 to lowest die face', cost: 2, tier: 2, effect: 'die_upgrade', value: 5 },
+            { id: 'hope_start', name: '+2 HOPE', description: 'More starting HOPE', cost: 2, tier: 2, effect: 'hope', value: 2 },
+            { id: 'doom_reduce', name: '-2 DOOM', description: 'Reduce starting DOOM', cost: 2, tier: 2, effect: 'doom_reduce', value: 2 },
 
             // Tier 3 - Available from Stage 4
-            { id: 'hp_large', name: '+15 HP', description: 'Heal 15 HP', cost: 3, tier: 3, effect: 'hp', value: 15 },
-            { id: 'die_upgrade_all', name: '+3 All Dice', description: 'Add 3 to all lowest faces', cost: 4, tier: 3, effect: 'die_upgrade_all', value: 3 },
-            { id: 'doom_reduce', name: '-3 DOOM', description: 'Start with less DOOM', cost: 2, tier: 3, effect: 'doom_reduce', value: 3 },
+            { id: 'die_upgrade_all', name: '+3 All Dice', description: 'Add 3 to all lowest faces', cost: 3, tier: 3, effect: 'die_upgrade_all', value: 3 },
+            { id: 'hope_medium', name: '+3 HOPE', description: 'Significant HOPE boost', cost: 3, tier: 3, effect: 'hope', value: 3 },
+            { id: 'gold_large', name: '+50 Gold', description: 'Major gold bonus', cost: 2, tier: 3, effect: 'gold', value: 50 },
 
             // Tier 4 - Available from Stage 5
-            { id: 'hp_massive', name: '+20 HP', description: 'Full heal boost', cost: 3, tier: 4, effect: 'hp', value: 20 },
-            { id: 'die_supercharge', name: '+10 to Best', description: 'Supercharge your best die', cost: 5, tier: 4, effect: 'die_supercharge', value: 10 },
-            { id: 'hope_surge', name: '+5 HOPE', description: 'Major HOPE boost', cost: 4, tier: 4, effect: 'hope', value: 5 }
+            { id: 'die_supercharge', name: '+10 to Best', description: 'Supercharge your best die', cost: 4, tier: 4, effect: 'die_supercharge', value: 10 },
+            { id: 'hope_surge', name: '+5 HOPE', description: 'Maximum HOPE boost', cost: 4, tier: 4, effect: 'hope', value: 5 },
+            { id: 'doom_purge', name: '-5 DOOM', description: 'Major DOOM reduction', cost: 3, tier: 4, effect: 'doom_reduce', value: 5 }
         ];
 
         // Stage 5 warped encounters only - Stages 1-4 use common ENCOUNTERS
         const STAGE_5_ENCOUNTERS = {
             start: { type: 'good', name: 'The Rift', description: 'Reality tears apart. You fall through into... somewhere else.', icon: '🌀', options: [{ text: 'Continue', action: 'leave' }] },
             fragment: { type: 'good', name: 'Memory Fragment', description: 'A shard of your past floats before you. It pulses with warmth.', icon: '💎', options: [{ text: 'Touch it (restore die)', action: 'restore_die' }, { text: 'Leave', action: 'leave' }] },
-            echo: { type: 'bad', name: 'Echo of BOMB', description: 'A shadow of the final boss. A taste of what\'s to come.', icon: '👁️', dc: 15, hp: 50, reward: 40, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Evade (Preventative)', types: ['preventative'], action: 'combat' }] },
-            sanctuary: { type: 'good', name: 'Pocket of Reality', description: 'A small bubble of normal space. A moment to breathe.', icon: '🏝️', options: [{ text: 'Rest (heal 10 HP each)', action: 'heal_all' }, { text: 'Continue', action: 'leave' }] },
-            void: { type: 'bad', name: 'Void Creatures', description: 'Shapeless horrors from beyond reality attack!', icon: '👾', dc: 15, hp: 55, reward: 45, options: [{ text: 'Fight (Physical)', types: ['physical'], action: 'combat' }, { text: 'Hide (Preventative)', types: ['preventative'], action: 'combat' }] },
+            echo: { type: 'bad', name: 'Echo of BOMB', description: 'A shadow of the final boss. A taste of what\'s to come.', icon: '👁️', dc: 15, reward: 40, successThresholds: { physical: 3, verbal: 3, preventative: 2 }, options: [{ text: 'Engage!', action: 'combat' }] },
+            sanctuary: { type: 'good', name: 'Pocket of Reality', description: 'A small bubble of normal space. A moment to breathe.', icon: '🏝️', options: [{ text: 'Gather strength (+2 HOPE)', action: 'sanctuary_rest' }, { text: 'Continue', action: 'leave' }] },
+            void: { type: 'bad', name: 'Void Creatures', description: 'Shapeless horrors from beyond reality attack!', icon: '👾', dc: 15, reward: 45, successThresholds: { physical: 3, verbal: 2, preventative: 3 }, options: [{ text: 'Engage!', action: 'combat' }] },
             prophecy: { type: 'neutral', name: 'The 19 Darkened Lines', description: 'You see the 19 failed prophecies. Only yours remains lit.', icon: '📖', options: [{ text: 'Accept your destiny (+HOPE)', action: 'accept_destiny' }, { text: 'Continue', action: 'leave' }] }
         };
 
@@ -2299,10 +2295,6 @@
             // Apply effect
             const player = gameState.players[playerIdx];
             switch (upgrade.effect) {
-                case 'hp':
-                    player.hp = Math.min(player.maxHp + upgrade.value, player.hp + upgrade.value);
-                    player.maxHp += Math.floor(upgrade.value / 2); // Permanent max HP boost (half)
-                    break;
                 case 'die_upgrade':
                     // Upgrade lowest face of a random die
                     const dieTypes = Object.keys(player.dice);
@@ -2346,11 +2338,6 @@
         function confirmShopAndContinue() {
             // Hide shop
             document.getElementById('stageShopScreen').classList.add('hidden');
-
-            // Heal players slightly
-            gameState.players.forEach(p => {
-                p.hp = Math.min(p.maxHp, p.hp + 5);
-            });
 
             // Update displays
             updateDoomHopeDisplay();
@@ -2436,8 +2423,6 @@
                 gameState.players.push({
                     id: p,
                     name: name,
-                    hp: 20,
-                    maxHp: 20,
                     dice: {
                         physical: createDie(physical),
                         verbal: createDie(verbal),
@@ -2728,8 +2713,6 @@
                     gameState.players.push({
                         id: p,
                         name: name,
-                        hp: 20,
-                        maxHp: 20,
                         dice: {
                             physical: createDie(physical),
                             verbal: createDie(verbal),
@@ -2925,11 +2908,8 @@
                 const card = document.createElement('div');
                 card.className = `player-card player-${player.id}`;
 
-                const hpPercent = (player.hp / player.maxHp) * 100;
-                const hpColor = hpPercent > 50 ? '#4ade80' : hpPercent > 25 ? '#ffd700' : '#f87171';
-
                 card.innerHTML = `
-                    <h3>${player.name} <span class="player-hp" style="color:${hpColor}">${player.hp}HP</span></h3>
+                    <h3>${player.name}</h3>
                     <div class="player-dice-mini">
                         ${Object.entries(player.dice).map(([type, die]) => {
                             const hasSwaps = die.swaps && die.swaps.length > 0;
@@ -3279,7 +3259,7 @@
                 });
             }
 
-            gameState.encounterState = { enemyHp: node.hp || 0 };
+            gameState.encounterState = {};
             gameState.canRoll = false;
             gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
             renderDiceTray();
@@ -3403,14 +3383,20 @@
                 case 'combat':
                     startCombat(option, node);
                     break;
+                case 'upgrade_plus1':
+                    showUpgradeModal(1); // Free!
+                    break;
                 case 'upgrade_plus2':
                     if (spendGold(option.cost)) showUpgradeModal(2);
+                    break;
+                case 'upgrade_plus3':
+                    if (spendGold(option.cost)) showUpgradeModal(3);
                     break;
                 case 'upgrade_plus5':
                     if (spendGold(option.cost)) showUpgradeModal(5);
                     break;
                 case 'swap_low_to_ally':
-                    if (spendGold(option.cost)) showSwapModal('low');
+                    showSwapModal('low'); // Free!
                     break;
                 case 'swap_high_to_ally':
                     if (spendGold(option.cost)) showSwapModal('high');
@@ -3455,14 +3441,6 @@
                     startBossCombat(option, node);
                     break;
                 // Stage 5 warped encounter actions
-                case 'heal_all':
-                    gameState.players.forEach(p => {
-                        p.hp = Math.min(p.maxHp, p.hp + 10);
-                    });
-                    log('The party rests and recovers. +10 HP each!', 'success');
-                    renderPlayers();
-                    completeEncounter();
-                    break;
                 case 'restore_die':
                     // Reset a random damaged face on a random die
                     const randomPlayer = gameState.players[Math.floor(Math.random() * 3)];
@@ -3477,6 +3455,11 @@
                     } else {
                         log('The fragment pulses but finds nothing to heal.', 'info');
                     }
+                    completeEncounter();
+                    break;
+                case 'sanctuary_rest':
+                    addHope(2);
+                    log('A moment of peace in the chaos. The party gathers strength. +2 HOPE', 'success');
                     completeEncounter();
                     break;
                 case 'accept_destiny':
@@ -3552,27 +3535,82 @@
         function startCombat(option, node) {
             gameState.canRoll = true;
             gameState.targetDC = node.dc;
-            gameState.allowedDiceTypes = option.types;
+            // All dice types are always available
+            gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
+
+            // Use success thresholds like boss combat
+            const thresholds = node.successThresholds || { physical: 2, verbal: 2, preventative: 2 };
+
             gameState.encounterState = {
                 type: 'combat',
-                enemyHp: node.hp,
                 enemyName: node.name,
                 reward: node.reward,
+                successThresholds: { ...thresholds },
+                successCounters: { physical: 0, verbal: 0, preventative: 0 },
                 isBoss: node.type === 'boss'
+            };
+
+            updateCombatUI(node);
+            document.getElementById('encounterOptions').innerHTML = '';
+            renderDiceTray();
+        }
+
+        function updateCombatUI(node) {
+            const state = gameState.encounterState;
+            const thresholds = state.successThresholds;
+            const counters = state.successCounters;
+
+            // Build "balls and strikes" style progress display
+            const buildProgress = (type, color) => {
+                const needed = thresholds[type];
+                const current = counters[type];
+                let dots = '';
+                for (let i = 0; i < needed; i++) {
+                    dots += i < current ? '●' : '○';
+                }
+                return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)}: ${dots}</span>`;
             };
 
             document.getElementById('encounterDescription').innerHTML = `
                 <p>${node.description}</p>
                 <div style="margin-top:20px; padding:15px; background:rgba(255,50,50,0.15); border-radius:10px; border-left:4px solid #f87171;">
                     <h3 style="color:#f87171;">${node.name}</h3>
-                    <p style="font-size:1.2rem;"><span id="enemyHp">${node.hp}</span> / ${node.hp} HP</p>
-                    <p style="color:#aaa;">DC to hit: ${node.dc}</p>
+                    <p style="color:#aaa; margin-bottom:10px;">DC to hit: ${gameState.targetDC}</p>
+                    <div id="combatProgress" style="font-size:1.1rem; display:flex; flex-direction:column; gap:8px;">
+                        ${buildProgress('physical', '#c45c26')}
+                        ${buildProgress('verbal', '#2980b9')}
+                        ${buildProgress('preventative', '#8e44ad')}
+                    </div>
                 </div>
-                <p style="margin-top:15px; color:#88ccff;">Roll <strong>${option.types.join(' or ')}</strong> dice!</p>
+                <p style="margin-top:15px; color:#88ccff;">Roll any die to make progress! Fill a bar to win!</p>
             `;
+        }
 
-            document.getElementById('encounterOptions').innerHTML = '';
-            renderDiceTray();
+        function refreshCombatProgress() {
+            const state = gameState.encounterState;
+            if (!state || state.type !== 'combat') return;
+
+            const thresholds = state.successThresholds;
+            const counters = state.successCounters;
+
+            const buildProgress = (type, color) => {
+                const needed = thresholds[type];
+                const current = counters[type];
+                let dots = '';
+                for (let i = 0; i < needed; i++) {
+                    dots += i < current ? '●' : '○';
+                }
+                return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)}: ${dots}</span>`;
+            };
+
+            const progressDiv = document.getElementById('combatProgress');
+            if (progressDiv) {
+                progressDiv.innerHTML = `
+                    ${buildProgress('physical', '#c45c26')}
+                    ${buildProgress('verbal', '#2980b9')}
+                    ${buildProgress('preventative', '#8e44ad')}
+                `;
+            }
         }
 
         // ==================== DICE ROLLING ====================
@@ -3710,33 +3748,36 @@
             const state = gameState.encounterState;
 
             if (state.type === 'combat') {
+                // Which approach did they use? Based on the die category
+                const approach = die.category;
+                const threshold = state.successThresholds[approach];
+
                 if (effectiveResult >= gameState.targetDC || naturalResult === 20) {
-                    let damage = effectiveResult;
-                    if (naturalResult === 20) damage = 40;
+                    // Success! Track progress in that approach
+                    state.successCounters[approach]++;
+                    const current = state.successCounters[approach];
 
-                    state.enemyHp -= damage;
-                    log(`${player.name}'s ${die.name} deals ${damage}!`, naturalResult === 20 ? 'crit' : 'success');
+                    log(`${player.name}'s ${die.name} scores a success! (${current}/${threshold} ${approach})`, naturalResult === 20 ? 'crit' : 'success');
 
-                    if (state.enemyHp <= 0) {
+                    // Update the visual progress
+                    refreshCombatProgress();
+
+                    // Check for victory - any approach reaching its threshold wins
+                    if (current >= threshold) {
                         gameState.canRoll = false;
-                        document.getElementById('rollOutcome').textContent += ' DEFEATED!';
+                        document.getElementById('rollOutcome').textContent += ' VICTORY!';
                         addGold(state.reward);
                         log(`${state.enemyName} defeated! +${state.reward} gold`, 'crit');
 
                         if (state.isBoss) {
                             setTimeout(showBossVictory, 1500);
                         } else {
-                            // Non-boss combat: complete the encounter so player can continue
                             setTimeout(completeEncounter, 1500);
                         }
-                    } else {
-                        document.getElementById('enemyHp').textContent = state.enemyHp;
                     }
                 } else {
-                    // Miss - enemy hits player, trigger DOOM Roll!
-                    log(`Miss! ${state.enemyName} attacks ${player.name}!`, 'fail');
-
-                    // Trigger DOOM Roll
+                    // Miss - trigger DOOM Roll!
+                    log(`Miss! ${state.enemyName} retaliates!`, 'fail');
                     triggerDoomRoll(player, state.enemyName);
                 }
             } else if (state.type === 'gamble') {
