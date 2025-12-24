@@ -213,19 +213,19 @@ Bosses use a **success counter system** instead of HP. Players must accumulate e
 
 | Boss | DC | Physical | Verbal | Preventative | Attacks/Round |
 |------|:--:|:--------:|:------:|:------------:|:-------------:|
-| **1. Dirty Innkeeper** | 8 | 2 | 4 | 3 | 1 |
-| **2. Corrupt Guard** | 10 | 3 | 4 | 3 | 1-2 |
-| **3. General Heimer** | 12 | 4 | 4 | 3 | 2 |
-| **4. King Robert** | 14 | 5 | 5 | 4 | 2-3 |
-| **5. BOMB** | 15 | 6 | 7 | 5 | 3 |
+| **1. Dirty Innkeeper** | 10 | 2 | 4 | 3 | 1 |
+| **2. Corrupt Guard** | 12 | 3 | 4 | 3 | 1 |
+| **3. General Heimer** | 14 | 4 | 4 | 3 | 1 |
+| **4. King Robert** | 15 | 5 | 5 | 4 | 1 |
+| **5. BOMB** | 16 | 6 | 7 | 5 | 2 |
 
-*Note: Multiple attacks per round means multiple DOOM Rolls. With accumulated DOOM, later bosses become terrifying.*
+*Note: BOMB's 2 attacks per round means 2 DOOM Rolls if you miss. With accumulated DOOM, the final boss becomes terrifying.*
 
 **Mathematical Balance Notes:**
-- With DC 8 and average dice, ~60% hit rate. 2 Physical successes = ~3-4 rounds typical.
-- With DC 15 and accumulated DOOM debuffs, ~35% hit rate. 6 Physical successes = ~6-8 rounds.
-- Each round with 3 heroes rolling, probability of at least one miss: ~40% (DC 8) to ~77% (DC 15).
-- This means 1-3 DOOM Rolls per round at high difficulty, creating genuine tension.
+- With DC 10 and average dice, ~55% hit rate. 2 Physical successes = ~2-3 rounds typical.
+- With DC 16 and accumulated DOOM debuffs, ~25% hit rate. 6 Physical successes = ~8-10 rounds.
+- Each round with 3 heroes rolling, probability of at least one miss: ~45% (DC 10) to ~80% (DC 16).
+- BOMB's 2 attacks mean roughly 1-2 DOOM Rolls per round at end game.
 
 ---
 
