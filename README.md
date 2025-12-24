@@ -80,8 +80,8 @@ I swap out any fail (1-9) on my die with the WORSE of my teammate's rolls on the
 
 ### Strategic Possibilities
 Teammates could strategize around specific builds:
-- *"Let's soup up the Paladin's persuade ability, then replace as many segments on our dice with that one supercharged Persuade die!"*
-- *"Let's stack all of our bad numbers onto Stab - we're trying to play pacifist."*
+- *"Let's soup up Player 1's persuade ability die, then scratch out as many of our other dice numbers as we can, and replace as many segments on our dice with that one supercharged Persuade die!"*
+- *"Let's stack all of our bad numbers onto Stab, Slash, and Bash - we're trying to play pacifist and want to resolve things, even combat, nonviolently if possible."*
 
 ---
 
@@ -115,19 +115,19 @@ Players permanently improve their dice, allowing them to progressively clear mor
 ## DOOM & HOPE System
 
 ### Damage Mechanic
-Instead of traditional health, when a player takes a "hit", one or more numbers on their die are reduced (for that battle, or longer in some instances).
+Instead of traditional health, when a player takes a "hit", one or more numbers on their die are reduced (for that battle, or longer in some instances). CLAUDE - only sometimes.  It is more frequently EITHER MORE DOOM OR A DOOM CHECK WHEN PLAYERS TAKE A HIT.. I think smaller enemies or possibly effects that only hit one hero will do this. But when the whole party gets hit it should be doom related. 
 
 ### The DOOM Meter
 The party has a shared DOOM meter that fills as bad things happen:
-- Failed non-combat rolls: +1 DOOM
+- Any time a 1 is rolled: +1 DOOM
 - Bad encounter choices: +1-2 DOOM
 - Ferryman's crossed marks triggering: +2 DOOM
 - Other misfortunes and curses
 
-The DOOM meter indicates that the heroes are unable to overcome the forces of darkness and avoid the prophesied danger. **The DOOM meter affects all rolls** - every point of DOOM subtracts 1 from each roll result (except natural 20s).
+The DOOM meter indicates that the heroes are unable to overcome the forces of darkness and avoid the prophesied danger. **The DOOM meter affects all DOOM rolls but NOT ANY standard rolls** - every point of DOOM subtracts 1 from each roll result (except natural 20s).
 
 ### The DOOM Roll (Enemy Attacks)
-When an **enemy lands a hit** on a player, they must make a **DOOM Roll** - a special d20 roll that determines their fate:
+When an **enemy lands a hit** on a player, they will sometimes be required to make a **DOOM Roll** - a special d20 roll that determines their fate:
 
 - Roll a d20, subtract current DOOM from the result (except natural 20)
 - **Roll a 1** (natural or DOOM-modified): **The journey ends.** The prophecy has failed.
@@ -147,7 +147,7 @@ HOPE offsets accumulated DOOM:
 - Players can accrue HOPE to offset existing DOOM
 - HOPE cannot be "banked" - any HOPE gained when at 0 DOOM is wasted
 - Some dice upgrades add HOPE to specific rolls
-- Example upgrade: "Choose 2 segments between 7 and 15. Reduce both by 5 and add +1 HOPE to both segments"
+- Example upgrade: "Choose 2 segments between 7 and 15. Reduce both by 5, and add +1 HOPE to both segments"
 
 ---
 
@@ -395,4 +395,7 @@ Ranked from most to least powerful:
 
 - Should the players have gotten their prophecy from a beloved figure who left them notes?
 - Why were there 20 prophecies? This needs to tie in better with the narrative
-- Explore the Oppenheimer thematic parallels further? 
+- Explore the Oppenheimer thematic parallels further?
+
+- CLAUDE NEW NOTES
+- Hi Claude! I like the d6 idea enough that I want to have other ways to do that to dice... Also, this is important and will add variety to the game, the various thresholds/ DCs should not be static. Like maybe the first time you encounter a goblin (or whatever) to get a success on each of the 3 different types of success could be DC 5, DC 12, and DC 17. These should be assigned randomly (within specified ranges) like lightly-randomized DND or Pokemon stat blocks; so sometimes enemies can be easily cleared with certain types of moves. This encourages players to sometimes use their worst die - you might be better off trying to get a 5 on your worst die, than a 17 on your best. It is important to have a WIDE range of success DCs so that it doesn't feel like "1s and 20s are the only things that matter". Bosses can be a little bit more presribed, like no boss should have any DC below 10 ever, but you should get the gist here and implement.
