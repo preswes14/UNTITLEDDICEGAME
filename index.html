@@ -3438,7 +3438,7 @@
                     log('The priest\'s blessing fills you with HOPE!', 'hope');
                     completeEncounter();
                     break;
-                case 'blessing_greater':
+                case 'blessing_greater': {
                     addHope(5);
                     // Mark a random die with a crossed face
                     const randomP = gameState.players[Math.floor(Math.random() * 3)];
@@ -3448,6 +3448,7 @@
                     log(`Greater blessing! +5 HOPE, but ${randomP.name}'s ${randomDie.name} is marked.`, 'hope');
                     completeEncounter();
                     break;
+                }
                 case 'math_tradeoff':
                     // -1 from highest face, +4 to lowest
                     showMathTradeoffModal();
@@ -3460,7 +3461,7 @@
                     // Random swap + immediate +2 bonus
                     showRiskySwapModal();
                     break;
-                case 'gamble_range':
+                case 'gamble_range': {
                     // Range betting - generate random range, roll to see if in/out
                     const rangeStart = Math.floor(Math.random() * 8) + 5; // 5-12
                     const rangeEnd = rangeStart + Math.floor(Math.random() * 5) + 3; // +3 to +7
@@ -3484,6 +3485,7 @@
                     document.getElementById('encounterOptions').innerHTML = '';
                     renderDiceTray();
                     break;
+                }
                 case 'ferryman_roll':
                     handleFerrymanRoll();
                     break;
@@ -3549,7 +3551,7 @@
                     startBossCombat(option, node);
                     break;
                 // Stage 5 warped encounter actions
-                case 'restore_die':
+                case 'restore_die': {
                     // Reset a random damaged face on a random die
                     const randomPlayer = gameState.players[Math.floor(Math.random() * 3)];
                     const dieTypes = ['physical', 'verbal', 'preventative'];
@@ -3565,6 +3567,7 @@
                     }
                     completeEncounter();
                     break;
+                }
                 case 'sanctuary_rest':
                     addHope(2);
                     log('A moment of peace in the chaos. The party gathers strength. +2 HOPE', 'success');
