@@ -31,9 +31,18 @@
             --preventative-secondary: #5b2c6f;
             --preventative-glow: rgba(142, 68, 173, 0.6);
 
-            /* DOOM/HOPE Colors */
+            /* DOOM/HOPE/SHIELD Colors */
             --doom-color: #8b0000;
             --hope-color: #4ade80;
+            --shield-color: #60a5fa;
+
+            /* Player Colors (The Colors) */
+            --player-blue: #4a90d9;
+            --player-blue-dark: #2d5a8a;
+            --player-red: #d94a4a;
+            --player-red-dark: #8a2d2d;
+            --player-green: #4ad94a;
+            --player-green-dark: #2d8a2d;
 
             /* Player Fonts */
             --font-player1: 'Cinzel', serif;
@@ -257,9 +266,9 @@
             border-left: 4px solid #555;
         }
 
-        .player-setup.player-1 { border-left-color: #ffd700; }
-        .player-setup.player-2 { border-left-color: #88ccff; }
-        .player-setup.player-3 { border-left-color: #ff88cc; }
+        .player-setup.player-1 { border-left-color: var(--player-blue); }
+        .player-setup.player-2 { border-left-color: var(--player-red); }
+        .player-setup.player-3 { border-left-color: var(--player-green); }
 
         .player-setup h3 {
             margin-bottom: 15px;
@@ -652,6 +661,30 @@
             color: var(--hope-color);
         }
 
+        .shield-meter {
+            background: rgba(96, 165, 250, 0.2);
+            border: 2px solid var(--shield-color);
+            color: var(--shield-color);
+        }
+
+        .hope-charge, .shield-charge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .charge-pip {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid currentColor;
+        }
+
+        .charge-pip.filled {
+            background: currentColor;
+        }
+
         .header-buttons {
             display: flex;
             gap: 10px;
@@ -892,9 +925,37 @@
             border-left: 4px solid #555;
         }
 
-        .player-card.player-1 { border-left-color: #ffd700; }
-        .player-card.player-2 { border-left-color: #88ccff; }
-        .player-card.player-3 { border-left-color: #ff88cc; }
+        .player-card.player-1 { border-left-color: var(--player-blue); }
+        .player-card.player-2 { border-left-color: var(--player-red); }
+        .player-card.player-3 { border-left-color: var(--player-green); }
+
+        /* Character Avatar Styles */
+        .character-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: contain;
+            background: rgba(0,0,0,0.3);
+            margin-right: 10px;
+        }
+
+        .character-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: contain;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-info {
+            flex: 1;
+        }
 
         .player-card h3 {
             margin-bottom: 8px;
@@ -1633,12 +1694,13 @@
     <!-- ==================== SETUP SCREEN ==================== -->
     <div class="screen setup-screen hidden" id="setupScreen">
         <h1>Party Setup</h1>
-        <p class="subtitle">Floor 1: The Dirty Innkeeper</p>
+        <p class="subtitle">The Colors gather for an adventure...</p>
         <div class="setup-content">
             <div class="player-setup player-1">
                 <h3>
-                    <span>Player 1:</span>
-                    <input type="text" class="player-name-input" id="p1name" value="Hero" maxlength="12">
+                    <img src="assets/blue-wizard.png" alt="Blue" class="character-avatar">
+                    <span>Blue (Wizard):</span>
+                    <input type="text" class="player-name-input" id="p1name" value="Blue" maxlength="12">
                 </h3>
                 <div class="dice-selection">
                     <div class="dice-category">
@@ -1664,8 +1726,9 @@
 
             <div class="player-setup player-2">
                 <h3>
-                    <span>Player 2:</span>
-                    <input type="text" class="player-name-input" id="p2name" value="Rogue" maxlength="12">
+                    <img src="assets/red-ranger.png" alt="Red" class="character-avatar">
+                    <span>Red (Ranger):</span>
+                    <input type="text" class="player-name-input" id="p2name" value="Red" maxlength="12">
                 </h3>
                 <div class="dice-selection">
                     <div class="dice-category">
@@ -1691,8 +1754,9 @@
 
             <div class="player-setup player-3">
                 <h3>
-                    <span>Player 3:</span>
-                    <input type="text" class="player-name-input" id="p3name" value="Bard" maxlength="12">
+                    <img src="assets/green-pirate.png" alt="Green" class="character-avatar">
+                    <span>Green (Pirate):</span>
+                    <input type="text" class="player-name-input" id="p3name" value="Green" maxlength="12">
                 </h3>
                 <div class="dice-selection">
                     <div class="dice-category">
@@ -1748,7 +1812,8 @@
                     <span class="gold" id="goldDisplay">0G</span>
                     <div class="doom-hope-display">
                         <div class="doom-meter"><span id="doomDisplay">0</span> DOOM</div>
-                        <div class="hope-meter"><span id="hopeDisplay">0</span> HOPE</div>
+                        <div class="hope-meter">HOPE <span id="hopeDisplay" class="hope-charge"></span></div>
+                        <div class="shield-meter">SHIELD <span id="shieldDisplay" class="shield-charge"></span></div>
                     </div>
                 </div>
                 <div class="header-buttons">
@@ -1890,9 +1955,14 @@
         const gameState = {
             gold: 0,
             doom: 0,
+            // New HOPE system: banked charges that prevent fatal DOOM rolls
             hope: 0,
+            maxHope: 1, // Team starts with max 1 HOPE charge
+            // New SHIELDS system: prevent DOOM rolls before they happen
+            shields: 0,
+            maxShields: 1, // Team starts with max 1 SHIELD charge
             currentNode: 0,
-            currentStage: 1, // Stage 1-5, determines which boss to use
+            currentStage: 0, // Stage 0 = tutorial, 1-5 = main stages
             players: [],
             map: [],
             currentEncounter: null,
@@ -1901,6 +1971,13 @@
             canRoll: false,
             allowedDiceTypes: ['physical', 'verbal', 'preventative'],
             pendingSwapResult: null,
+            // Tutorial state
+            tutorial: {
+                active: false,
+                step: 0,
+                scriptedRolls: [],
+                palDialogue: []
+            },
             // Voting system
             voting: {
                 active: false,
@@ -1912,6 +1989,13 @@
             // Favor (points) system - resets each stage
             favor: 0,
             purchasedUpgrades: [] // Track what was bought this stage [{playerIdx, upgradeId}]
+        };
+
+        // Character avatar mapping (Player 1=Blue/Wizard, 2=Red/Ranger, 3=Green/Pirate)
+        const CHARACTER_AVATARS = {
+            1: { color: 'Blue', feature: 'Wizard', image: 'assets/blue-wizard.png' },
+            2: { color: 'Red', feature: 'Ranger', image: 'assets/red-ranger.png' },
+            3: { color: 'Green', feature: 'Pirate', image: 'assets/green-pirate.png' }
         };
 
         // ==================== DEFINITIONS ====================
@@ -2118,8 +2202,89 @@
             }
         };
 
+        // Tutorial (Stage 0) encounters
+        const TUTORIAL_ENCOUNTERS = {
+            pal_intro: {
+                type: 'story',
+                name: 'A Dream Begins',
+                description: '"Chosen ones... can you hear me?" A warm, ethereal voice echoes through swirling colors. An ancient figure made of shifting hues materializes before you. "I am Palette - call me Pal. The prophecy brought you to me, and now I must prepare you for what lies ahead..."',
+                icon: '🎨',
+                options: [
+                    { text: '"Who are you?"', action: 'pal_explain' },
+                    { text: '"What prophecy?"', action: 'pal_prophecy' },
+                    { text: '"Let\'s begin!"', action: 'tutorial_obstacle1' }
+                ]
+            },
+            tutorial_obstacle1: {
+                type: 'tutorial',
+                name: 'The Boulder with a Face',
+                description: 'A massive boulder blocks your path. Strangely, it has a grumpy face carved into it. "You shall not pass!" it grumbles. "Unless... you can prove your worth!"',
+                icon: '🪨',
+                dc: 5,
+                successThresholds: { physical: 1, verbal: 1, preventative: 1 },
+                tutorialPhase: 'strong_die',
+                options: [
+                    { text: 'Use your strongest skill!', action: 'tutorial_combat1' }
+                ]
+            },
+            tutorial_obstacle2: {
+                type: 'tutorial',
+                name: 'The Stubborn Shadow',
+                description: 'A shadowy figure rises, mimicking your movements mockingly. Pal whispers: "Even heroes have weaknesses. Face yours now - use the skill you\'re WORST at..."',
+                icon: '👤',
+                dc: 15,
+                successThresholds: { physical: 2, verbal: 2, preventative: 2 },
+                tutorialPhase: 'weak_die',
+                forceFailure: true,
+                options: [
+                    { text: 'Face your weakness...', action: 'tutorial_combat2' }
+                ]
+            },
+            tutorial_intertwine: {
+                type: 'story',
+                name: 'The Binding',
+                description: 'Pal\'s form glows brighter. "Now comes the most important lesson. You are not alone. Your fates are INTERTWINED! This power is unique to you - the Chosen Ones. Link your dice together, and when one stumbles, another may rise!"',
+                icon: '🔗',
+                options: [
+                    { text: 'Intertwine our fates!', action: 'start_intertwine' }
+                ]
+            },
+            tutorial_final_battle: {
+                type: 'tutorial',
+                name: 'The Final Test',
+                description: 'The dreamscape shifts into an arena. Pal stands across from you, but his form darkens. "One final test! Show me what the Chosen Ones can do together!" This battle will teach you about DOOM.',
+                icon: '⚔️',
+                dc: 8,
+                successThresholds: { physical: 3, verbal: 3, preventative: 3 },
+                tutorialPhase: 'full_combat',
+                attacksPerRound: 1,
+                options: [
+                    { text: 'Begin the final test!', action: 'tutorial_combat_final' }
+                ]
+            },
+            pal_farewell: {
+                type: 'story',
+                name: 'The Awakening',
+                description: 'Pal\'s form flickers. "You are ready. The prophecy speaks of 20 visions... only one remains true. Find the Dirty Innkeeper. He knows more than he lets on." Pal begins to fade. "Remember... HOPE is your shield against DOOM. I have given you what I can. Now... wake up."',
+                icon: '🌅',
+                options: [
+                    { text: 'Wake up...', action: 'end_tutorial' }
+                ]
+            }
+        };
+
+        // Pal's dialogue for tutorial moments
+        const PAL_DIALOGUE = {
+            doom_appears: "Oh dear... that's the DOOM meter. It grows when things go wrong. Be careful - if it gets too high, even small failures become catastrophic!",
+            hope_granted: "Here, take this! HOPE can save you from the darkest moments. When DOOM would claim you, HOPE can intervene... but use it wisely!",
+            hope_used: "Your HOPE saved you! But notice - the brush with death still leaves its mark. The DOOM meter grows...",
+            nat20_hope: "Magnificent! A natural 20 on a DOOM roll! Such fortune restores HOPE!",
+            intertwine_explain: "When you intertwine your dice, rolling certain numbers on YOUR die will trigger your ALLY'S die instead! This creates a web of fate - you protect each other!"
+        };
+
         // Stage info for floor names and theming
         const STAGE_INFO = {
+            0: { name: 'The Awakening', location: 'A Dream of Training' },
             1: { name: 'The Dirty Innkeeper', location: 'The Crossroads Inn' },
             2: { name: 'The Corrupt Guard', location: 'The Castle Gates' },
             3: { name: 'General Heimer', location: 'The Capitol Siege' },
@@ -2701,7 +2866,17 @@
                 });
             });
 
-            startGame();
+            // Check if we're in tutorial (Stage 0)
+            if (gameState.currentStage === 0 && gameState.tutorial.active) {
+                // Return to tutorial flow - show final battle
+                document.getElementById('gameScreen').classList.remove('hidden');
+                showPalDialogue(PAL_DIALOGUE.intertwine_explain);
+                setTimeout(() => {
+                    showTutorialEncounter('tutorial_final_battle');
+                }, 2000);
+            } else {
+                startGame();
+            }
         }
 
         // ==================== GAME INITIALIZATION ====================
@@ -2712,6 +2887,7 @@
                 gameState.gold = 0;
                 gameState.doom = 0;
                 gameState.hope = 0;
+                gameState.shields = 0;
                 gameState.map = [];
 
                 for (let p = 1; p <= 3; p++) {
@@ -2751,8 +2927,182 @@
 
             const stageInfo = STAGE_INFO[gameState.currentStage];
             document.getElementById('gameLog').innerHTML = '<h4>Log</h4>';
-            log(`Stage ${gameState.currentStage}: ${stageInfo.name}`, 'info');
-            log('Click to begin your journey...', 'info');
+
+            // Check if this is the tutorial (Stage 0)
+            if (gameState.currentStage === 0) {
+                log(`${stageInfo.name}`, 'info');
+                log('A dream begins...', 'info');
+                // Start tutorial with Pal's introduction
+                setTimeout(() => showTutorialEncounter('pal_intro'), 500);
+            } else {
+                log(`Stage ${gameState.currentStage}: ${stageInfo.name}`, 'info');
+                log('Click to begin your journey...', 'info');
+            }
+        }
+
+        // ==================== TUTORIAL SYSTEM ====================
+        function showTutorialEncounter(encounterId) {
+            const encounter = TUTORIAL_ENCOUNTERS[encounterId];
+            if (!encounter) return;
+
+            gameState.tutorial.active = true;
+            gameState.tutorial.currentEncounter = encounterId;
+
+            const encounterContent = document.getElementById('encounterContent');
+            document.getElementById('encounterTitle').textContent = encounter.name;
+            document.getElementById('encounterIcon').textContent = encounter.icon;
+            document.getElementById('encounterDesc').textContent = encounter.description;
+
+            // Generate options
+            const optionsHtml = encounter.options.map(opt =>
+                `<button class="encounter-btn" onclick="handleTutorialAction('${opt.action}')">${opt.text}</button>`
+            ).join('');
+            document.getElementById('encounterOptions').innerHTML = optionsHtml;
+
+            // Show encounter panel
+            document.getElementById('encounterContent').style.display = 'block';
+        }
+
+        function handleTutorialAction(action) {
+            switch(action) {
+                case 'pal_explain':
+                    showPalDialogue("I am an echo of the ancients who first received the prophecy. For twenty years, charlatans and treasure hunters chased these visions. But YOU are different. The prophecy chose you.");
+                    setTimeout(() => showTutorialEncounter('pal_intro'), 2000);
+                    break;
+                case 'pal_prophecy':
+                    showPalDialogue("Twenty prophecies appeared overnight, twenty years ago. Nineteen have faded into darkness. Yours... yours still glows. You must find out why.");
+                    setTimeout(() => showTutorialEncounter('pal_intro'), 2000);
+                    break;
+                case 'tutorial_obstacle1':
+                    showTutorialEncounter('tutorial_obstacle1');
+                    break;
+                case 'tutorial_combat1':
+                    startTutorialCombat('tutorial_obstacle1');
+                    break;
+                case 'tutorial_combat2':
+                    startTutorialCombat('tutorial_obstacle2');
+                    break;
+                case 'start_intertwine':
+                    // Go to the intertwine screen
+                    gameState.tutorial.active = false;
+                    talentState.currentPlayer = 0;
+                    talentState.phase = 'intertwine';
+                    showIntertwineScreen();
+                    break;
+                case 'tutorial_combat_final':
+                    startTutorialFinalCombat();
+                    break;
+                case 'end_tutorial':
+                    endTutorial();
+                    break;
+                default:
+                    log(`Unknown tutorial action: ${action}`, 'warn');
+            }
+        }
+
+        function showPalDialogue(text) {
+            const logDiv = document.getElementById('gameLog');
+            const palMsg = document.createElement('div');
+            palMsg.className = 'log-entry pal-dialogue';
+            palMsg.innerHTML = `<strong>🎨 Pal:</strong> "${text}"`;
+            palMsg.style.cssText = 'background: rgba(147, 51, 234, 0.2); border-left: 3px solid #a855f7; padding: 8px; margin: 5px 0; border-radius: 5px;';
+            logDiv.appendChild(palMsg);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function startTutorialCombat(encounterId) {
+            const encounter = TUTORIAL_ENCOUNTERS[encounterId];
+
+            // For tutorial obstacle 1 - only allow strong die
+            if (encounter.tutorialPhase === 'strong_die') {
+                gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
+                showPalDialogue("Show me your strongest skill! Roll the die you're BEST at!");
+            }
+            // For tutorial obstacle 2 - only allow weak die, force failure
+            else if (encounter.tutorialPhase === 'weak_die') {
+                gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
+                showPalDialogue("Now face your weakness. Sometimes we must struggle to learn...");
+            }
+
+            // Set up combat state
+            gameState.encounterState = {
+                type: 'tutorial_combat',
+                encounter: encounter,
+                encounterId: encounterId,
+                successes: { physical: 0, verbal: 0, preventative: 0 },
+                dc: encounter.dc,
+                tutorialPhase: encounter.tutorialPhase,
+                forceFailure: encounter.forceFailure
+            };
+
+            gameState.targetDC = encounter.dc;
+            gameState.canRoll = true;
+            renderDiceTray();
+
+            document.getElementById('encounterOptions').innerHTML = `
+                <div class="combat-status">
+                    <p>DC: ${encounter.dc} | Goal: 1 success of any type</p>
+                    <p>Select a die to roll!</p>
+                </div>
+            `;
+        }
+
+        function startTutorialFinalCombat() {
+            const encounter = TUTORIAL_ENCOUNTERS['tutorial_final_battle'];
+
+            // Grant HOPE before battle
+            showPalDialogue(PAL_DIALOGUE.hope_granted);
+            gameState.hope = 1;
+            updateDoomHopeDisplay();
+
+            // Set up full combat with doom rolls
+            gameState.encounterState = {
+                type: 'boss_combat',
+                encounter: encounter,
+                enemyName: 'Shadow Pal',
+                successes: { physical: 0, verbal: 0, preventative: 0 },
+                dc: encounter.dc,
+                successThresholds: encounter.successThresholds,
+                attacksPerRound: encounter.attacksPerRound,
+                rollsThisRound: 0,
+                roundMisses: 0,
+                playersRolledThisRound: [],
+                roundNumber: 1,
+                isTutorial: true
+            };
+
+            gameState.targetDC = encounter.dc;
+            gameState.canRoll = true;
+            gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
+            renderDiceTray();
+            updateBossCombatUI();
+        }
+
+        function endTutorial() {
+            // Advance to Stage 1
+            gameState.currentStage = 1;
+            gameState.tutorial.active = false;
+            gameState.doom = 0; // Reset doom for Stage 1
+            // Keep HOPE if they earned it
+
+            showPalDialogue("Farewell, Chosen Ones. May HOPE light your path...");
+
+            setTimeout(() => {
+                // Generate Stage 1 map
+                generateMap();
+                renderMap();
+                updateFloorDisplay();
+
+                const stageInfo = STAGE_INFO[gameState.currentStage];
+                log(`--- STAGE 1: ${stageInfo.name} ---`, 'info');
+                log(`You awaken at ${stageInfo.location}...`, 'info');
+
+                gameState.map[0].status = 'available';
+                renderMap();
+
+                // Show starting encounter
+                selectNode(0);
+            }, 2000);
         }
 
         function createDie(type) {
@@ -2796,7 +3146,13 @@
                 { encounter: 'boss', row: 8 }
             ];
 
+            // Tutorial map (Stage 0) - simple linear structure
+            const TUTORIAL_MAP_STRUCTURE = [
+                { encounter: 'start', row: 0 }, // Pal's intro handled separately
+            ];
+
             const MAP_STRUCTURES = {
+                0: TUTORIAL_MAP_STRUCTURE, // Tutorial uses special flow
                 1: COMMON_MAP_STRUCTURE,
                 2: COMMON_MAP_STRUCTURE,
                 3: COMMON_MAP_STRUCTURE,
@@ -2936,21 +3292,27 @@
             gameState.players.forEach((player, idx) => {
                 const card = document.createElement('div');
                 card.className = `player-card player-${player.id}`;
+                const avatar = CHARACTER_AVATARS[player.id];
 
                 card.innerHTML = `
-                    <h3>${player.name}</h3>
-                    <div class="player-dice-mini">
-                        ${Object.entries(player.dice).map(([type, die]) => {
-                            const hasSwaps = die.swaps && die.swaps.length > 0;
-                            const hasCrossed = die.crossedSegments && die.crossedSegments.length > 0;
-                            return `
-                                <div class="mini-die ${die.category}" title="${die.name}${hasSwaps ? ' (linked)' : ''}${hasCrossed ? ' (marked)' : ''}">
-                                    ${die.icon}
-                                    ${hasSwaps ? '<span class="swap-indicator">⟷</span>' : ''}
-                                    ${hasCrossed ? '<span class="swap-indicator" style="background:#8b0000;">⨂</span>' : ''}
-                                </div>
-                            `;
-                        }).join('')}
+                    <div class="player-header">
+                        <img src="${avatar.image}" alt="${avatar.color}" class="character-avatar">
+                        <div class="player-info">
+                            <h3>${player.name}</h3>
+                            <div class="player-dice-mini">
+                                ${Object.entries(player.dice).map(([type, die]) => {
+                                    const hasSwaps = die.swaps && die.swaps.length > 0;
+                                    const hasCrossed = die.crossedSegments && die.crossedSegments.length > 0;
+                                    return `
+                                        <div class="mini-die ${die.category}" title="${die.name}${hasSwaps ? ' (linked)' : ''}${hasCrossed ? ' (marked)' : ''}">
+                                            ${die.icon}
+                                            ${hasSwaps ? '<span class="swap-indicator">⟷</span>' : ''}
+                                            ${hasCrossed ? '<span class="swap-indicator" style="background:#8b0000;">⨂</span>' : ''}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -3013,8 +3375,21 @@
 
         function updateDoomHopeDisplay() {
             document.getElementById('doomDisplay').textContent = gameState.doom;
-            document.getElementById('hopeDisplay').textContent = gameState.hope;
             document.getElementById('goldDisplay').textContent = `${gameState.gold}G`;
+
+            // Render HOPE charges as pips
+            let hopePips = '';
+            for (let i = 0; i < gameState.maxHope; i++) {
+                hopePips += `<span class="charge-pip ${i < gameState.hope ? 'filled' : ''}"></span>`;
+            }
+            document.getElementById('hopeDisplay').innerHTML = hopePips;
+
+            // Render SHIELD charges as pips
+            let shieldPips = '';
+            for (let i = 0; i < gameState.maxShields; i++) {
+                shieldPips += `<span class="charge-pip ${i < gameState.shields ? 'filled' : ''}"></span>`;
+            }
+            document.getElementById('shieldDisplay').innerHTML = shieldPips;
         }
 
         // ==================== DOOM/HOPE SYSTEM ====================
@@ -3033,15 +3408,48 @@
             return reduced;
         }
 
-        function addHope(amount) {
-            if (gameState.doom > 0) {
-                const reduced = Math.min(gameState.doom, amount);
-                gameState.doom -= reduced;
-                log(`HOPE offset ${reduced} DOOM!`, 'hope');
+        // New HOPE system: bankable charges that prevent fatal team DOOM rolls
+        function addHope(amount = 1) {
+            const added = Math.min(amount, gameState.maxHope - gameState.hope);
+            if (added > 0) {
+                gameState.hope += added;
+                log(`+${added} HOPE charge!`, 'hope');
                 updateDoomHopeDisplay();
             } else {
-                log(`HOPE wasted (no DOOM to offset)`, 'info');
+                log(`HOPE at max capacity`, 'info');
             }
+        }
+
+        function useHope() {
+            if (gameState.hope > 0) {
+                gameState.hope--;
+                log(`HOPE charge used to prevent doom!`, 'hope');
+                updateDoomHopeDisplay();
+                return true;
+            }
+            return false;
+        }
+
+        // New SHIELD system: prevents DOOM rolls before they happen
+        function addShield(amount = 1) {
+            const added = Math.min(amount, gameState.maxShields - gameState.shields);
+            if (added > 0) {
+                gameState.shields += added;
+                log(`+${added} SHIELD charge!`, 'info');
+                updateDoomHopeDisplay();
+            } else {
+                log(`SHIELD at max capacity`, 'info');
+            }
+        }
+
+        function useShield() {
+            if (gameState.shields > 0) {
+                gameState.shields--;
+                log(`SHIELD charge used - DOOM roll prevented!`, 'info');
+                updateDoomHopeDisplay();
+                return true;
+            }
+            return false;
         }
 
         function getEffectiveRoll(baseRoll) {
@@ -3051,59 +3459,80 @@
             return effective;
         }
 
-        function triggerDoomRoll(player, enemyName) {
-            // DOOM Roll - the tension mechanic for enemy attacks
-            const naturalRoll = Math.floor(Math.random() * 20) + 1;
-            const effectiveRoll = getEffectiveRoll(naturalRoll);
+        // New team DOOM roll: ALL 3 players roll, if ANY roll a 1, it's fatal (unless HOPE saves)
+        function triggerTeamDoomRoll(enemyName, callback) {
+            // Check if SHIELD can prevent this
+            if (useShield()) {
+                const doomRollResult = document.getElementById('rollResult');
+                doomRollResult.classList.add('show');
+                document.getElementById('rollOutcome').innerHTML = `🛡️ SHIELD ACTIVATED!\n\nThe attack is deflected!`;
+                document.getElementById('rollOutcome').className = 'doom-saved';
+                setTimeout(() => {
+                    if (callback) callback();
+                }, 1500);
+                return;
+            }
 
-            // Disable rolling during DOOM roll resolution
             gameState.canRoll = false;
-
-            // Show the DOOM roll result with dramatic effect
             const doomRollResult = document.getElementById('rollResult');
             doomRollResult.classList.add('show');
 
-            let outcomeText = '';
+            // All 3 players roll
+            const rolls = gameState.players.map(p => ({
+                player: p,
+                natural: Math.floor(Math.random() * 20) + 1,
+            }));
+            rolls.forEach(r => r.effective = getEffectiveRoll(r.natural));
+
+            // Check for any 1s (fatal) or any 20s (gain HOPE)
+            const hasOne = rolls.some(r => r.effective === 1);
+            const hasNat20 = rolls.some(r => r.natural === 20);
+
+            let outcomeText = `⚔️ TEAM DOOM ROLL vs ${enemyName}!\n\n`;
+            rolls.forEach(r => {
+                const avatar = CHARACTER_AVATARS[r.player.id];
+                outcomeText += `${avatar.color}: ${r.natural}${r.natural !== r.effective ? ` (→${r.effective})` : ''}\n`;
+            });
+            outcomeText += '\n';
+
             let outcomeClass = '';
 
-            if (effectiveRoll === 1) {
-                // Journey ends
-                outcomeText = `💀 DOOM ROLL: ${naturalRoll}${naturalRoll !== effectiveRoll ? ` - ${gameState.doom} DOOM = ${effectiveRoll}` : ''}\n\nThe darkness claims you...`;
-                outcomeClass = 'doom-death';
-                document.getElementById('rollOutcome').innerHTML = outcomeText;
-                document.getElementById('rollOutcome').className = outcomeClass;
+            if (hasOne) {
+                // Check if HOPE can save them
+                if (gameState.hope > 0) {
+                    useHope();
+                    outcomeText += `💀 A 1 was rolled... but HOPE saves the day!\n`;
+                    outcomeText += `The party narrowly escapes doom.`;
+                    outcomeClass = 'doom-close';
+                    // Still add DOOM for the close call
+                    addDoom(1, 'Narrow escape from doom');
+                    log(`Team survived DOOM roll by using HOPE!`, 'hope');
+                } else {
+                    // Game over
+                    outcomeText += `💀 THE DARKNESS CLAIMS YOU...\n`;
+                    outcomeText += `The prophecy has failed.`;
+                    outcomeClass = 'doom-death';
+                    document.getElementById('rollOutcome').innerHTML = outcomeText;
+                    document.getElementById('rollOutcome').className = outcomeClass;
 
-                setTimeout(() => {
-                    document.getElementById('defeatReason').textContent = `${player.name} succumbed to DOOM. The prophecy failed.`;
-                    document.getElementById('defeatScreen').classList.remove('hidden');
-                }, 2000);
-                return;
-            } else if (naturalRoll === 20) {
-                // Divine favor - remove half DOOM
-                const doomRemoved = Math.floor(gameState.doom / 2);
-                reduceDoom(doomRemoved);
-                outcomeText = `✨ DOOM ROLL: NAT 20!\n\nDivine favor! -${doomRemoved} DOOM`;
-                outcomeClass = 'doom-saved';
-                log(`${player.name} rolled a NAT 20 on DOOM Roll! Removed ${doomRemoved} DOOM!`, 'crit');
-            } else {
-                // Survived but take damage
-                const damage = Math.floor(Math.random() * 5) + 3;
-                player.hp -= damage;
-                outcomeText = `⚔️ DOOM ROLL: ${naturalRoll}${naturalRoll !== effectiveRoll ? ` - ${gameState.doom} DOOM = ${effectiveRoll}` : ''}\n\n${enemyName} deals ${damage} damage!`;
-                outcomeClass = effectiveRoll <= 5 ? 'doom-close' : 'doom-safe';
-                log(`${player.name} survived DOOM Roll (${effectiveRoll}), took ${damage} damage.`, effectiveRoll <= 5 ? 'warn' : 'info');
-
-                if (player.hp <= 0) {
-                    player.hp = 0;
-                    log(`${player.name} has fallen!`, 'fail');
-                }
-
-                if (gameState.players.every(p => p.hp <= 0)) {
                     setTimeout(() => {
+                        document.getElementById('defeatReason').textContent = `The team succumbed to DOOM. The prophecy failed.`;
                         document.getElementById('defeatScreen').classList.remove('hidden');
-                    }, 1500);
+                    }, 2000);
                     return;
                 }
+            } else if (hasNat20) {
+                // Natural 20 grants HOPE charge
+                addHope(1);
+                outcomeText += `✨ A natural 20! HOPE restored!`;
+                outcomeClass = 'doom-saved';
+                log(`Team rolled a NAT 20 on DOOM Roll! +1 HOPE!`, 'crit');
+            } else {
+                // Survived without HOPE - add 1 DOOM (brush with death)
+                addDoom(1, 'Survived doom roll (injury)');
+                outcomeText += `The team endures... but DOOM grows.`;
+                outcomeClass = 'doom-safe';
+                log(`Team survived DOOM roll, +1 DOOM`, 'warn');
             }
 
             document.getElementById('rollOutcome').innerHTML = outcomeText;
@@ -3173,60 +3602,8 @@
         }
 
         function triggerDoomRollForBoss(player, enemyName, callback) {
-            // DOOM Roll variant that calls a callback when done
-            const naturalRoll = Math.floor(Math.random() * 20) + 1;
-            const effectiveRoll = getEffectiveRoll(naturalRoll);
-
-            const doomRollResult = document.getElementById('rollResult');
-            doomRollResult.classList.add('show');
-
-            let outcomeText = '';
-            let outcomeClass = '';
-
-            if (effectiveRoll === 1) {
-                outcomeText = `💀 DOOM ROLL: ${naturalRoll}${naturalRoll !== effectiveRoll ? ` - ${gameState.doom} DOOM = ${effectiveRoll}` : ''}\n\nThe darkness claims ${player.name}...`;
-                outcomeClass = 'doom-death';
-                document.getElementById('rollOutcome').innerHTML = outcomeText;
-                document.getElementById('rollOutcome').className = outcomeClass;
-
-                setTimeout(() => {
-                    document.getElementById('defeatReason').textContent = `${player.name} succumbed to DOOM. The prophecy failed.`;
-                    document.getElementById('defeatScreen').classList.remove('hidden');
-                }, 2000);
-                return;
-            } else if (naturalRoll === 20) {
-                const doomRemoved = Math.floor(gameState.doom / 2);
-                reduceDoom(doomRemoved);
-                outcomeText = `✨ DOOM ROLL: NAT 20!\n\nDivine favor! -${doomRemoved} DOOM`;
-                outcomeClass = 'doom-saved';
-                log(`${player.name} rolled NAT 20 on DOOM Roll! -${doomRemoved} DOOM!`, 'crit');
-            } else {
-                const damage = Math.floor(Math.random() * 5) + 3;
-                player.hp -= damage;
-                outcomeText = `⚔️ DOOM ROLL: ${naturalRoll}${naturalRoll !== effectiveRoll ? ` - ${gameState.doom} DOOM = ${effectiveRoll}` : ''}\n\n${enemyName} deals ${damage} to ${player.name}!`;
-                outcomeClass = effectiveRoll <= 5 ? 'doom-close' : 'doom-safe';
-                log(`${player.name} survived (${effectiveRoll}), took ${damage} damage.`, effectiveRoll <= 5 ? 'warn' : 'info');
-
-                if (player.hp <= 0) {
-                    player.hp = 0;
-                    log(`${player.name} has fallen!`, 'fail');
-                }
-
-                if (gameState.players.every(p => p.hp <= 0)) {
-                    setTimeout(() => {
-                        document.getElementById('defeatScreen').classList.remove('hidden');
-                    }, 1500);
-                    return;
-                }
-            }
-
-            document.getElementById('rollOutcome').innerHTML = outcomeText;
-            document.getElementById('rollOutcome').className = outcomeClass;
-
-            setTimeout(() => {
-                renderPlayers();
-                if (callback) callback();
-            }, 1500);
+            // Use the new team-based DOOM roll system
+            triggerTeamDoomRoll(enemyName, callback);
         }
 
         // ==================== ENCOUNTERS ====================
@@ -3994,6 +4371,50 @@
                 if (state.rollsThisRound >= 3) {
                     // End of round - process boss attacks for misses
                     processBossRoundEnd(state);
+                }
+
+                // Check if this is a tutorial boss victory
+                if (state.isTutorial && state.successCounters &&
+                    Object.values(state.successCounters).some((v, i) => v >= Object.values(state.successThresholds)[i])) {
+                    setTimeout(() => {
+                        showPalDialogue("Excellent! You've proven yourselves worthy. The Chosen Ones are ready.");
+                        setTimeout(() => showTutorialEncounter('pal_farewell'), 2000);
+                    }, 1500);
+                    return;
+                }
+            } else if (state.type === 'tutorial_combat') {
+                // Simple tutorial combat - any success wins
+                if (result >= state.dc || result === 20) {
+                    gameState.canRoll = false;
+                    log(`Success! The ${state.encounter.name} is overcome!`, 'success');
+
+                    setTimeout(() => {
+                        // Progress to next tutorial step
+                        if (state.encounterId === 'tutorial_obstacle1') {
+                            showPalDialogue("Well done! Your strength shines bright. But now...");
+                            setTimeout(() => showTutorialEncounter('tutorial_obstacle2'), 2000);
+                        } else if (state.encounterId === 'tutorial_obstacle2') {
+                            // This encounter is rigged to fail, but if they somehow win...
+                            showPalDialogue("Impressive! Even your weakness couldn't hold you back!");
+                            setTimeout(() => showTutorialEncounter('tutorial_intertwine'), 2000);
+                        }
+                    }, 1500);
+                } else {
+                    // Failure
+                    if (state.forceFailure || state.tutorialPhase === 'weak_die') {
+                        // This is expected in tutorial
+                        addDoom(1, 'Tutorial failure - DOOM meter introduced');
+                        log(`The attempt fails! The DOOM meter rises...`, 'doom');
+                        showPalDialogue(PAL_DIALOGUE.doom_appears);
+                        gameState.canRoll = false;
+
+                        setTimeout(() => {
+                            showTutorialEncounter('tutorial_intertwine');
+                        }, 3000);
+                    } else {
+                        // Let them try again
+                        log(`Not quite! Try again!`, 'info');
+                    }
                 }
             } else if (state.type === 'ferryman') {
                 let narrative = '';
