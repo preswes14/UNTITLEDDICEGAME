@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UNTITLED DICE GAME - Test Suite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { color: #ffd700; }
+        .test-group { margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; }
+        .test-group h2 { color: #88ccff; margin-bottom: 10px; font-size: 1.2rem; }
+        .test { padding: 8px; margin: 5px 0; border-radius: 4px; }
+        .test.pass { background: rgba(74, 222, 128, 0.2); border-left: 3px solid #4ade80; }
+        .test.fail { background: rgba(239, 68, 68, 0.2); border-left: 3px solid #ef4444; }
+        .test.warn { background: rgba(251, 191, 36, 0.2); border-left: 3px solid #fbbf24; }
+        .summary { font-size: 1.5rem; margin-top: 20px; padding: 20px; border-radius: 8px; }
+        .summary.all-pass { background: rgba(74, 222, 128, 0.3); border: 2px solid #4ade80; }
+        .summary.has-fail { background: rgba(239, 68, 68, 0.3); border: 2px solid #ef4444; }
+        pre { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <h1>UNTITLED DICE GAME - Test Suite</h1>
+    <div id="results"></div>
+    <div id="summary"></div>
+
+    <!-- Create minimal DOM elements needed for tests -->
+    <div style="display:none;">
+        <div id="encounterTitle"></div>
+        <div id="encounterDescription"></div>
+        <div id="encounterOptions"></div>
+        <div id="encounterContent"></div>
+        <div id="encounterType"></div>
+        <div id="doomDisplay"></div>
+        <div id="hopeDisplay"></div>
+        <div id="shieldDisplay"></div>
+        <div id="goldDisplay"></div>
+        <div id="gameLog"><h4>Log</h4></div>
+        <div id="rollResult"><div id="rollValue"></div><div id="rollOutcome"></div><div id="swapTriggered"></div><div id="doomChange"></div><div id="rollDieName"></div></div>
+        <div id="playersDisplay"></div>
+        <div id="diceTray"></div>
+        <div id="defeatScreen" class="hidden"></div>
+        <div id="defeatReason"></div>
+        <div id="setupScreen" class="hidden"></div>
+        <div id="talentScreen" class="hidden"></div>
+        <div id="intertwineScreen" class="hidden"></div>
+        <div id="gameScreen" class="hidden"></div>
+        <div id="mapContainer"></div>
+        <div class="floor-info"><span></span></div>
+        <input id="p1name" value="Blue">
+        <input id="p2name" value="Red">
+        <input id="p3name" value="Green">
+        <input type="radio" name="p1physical" value="slash" checked>
+        <input type="radio" name="p1verbal" value="threaten" checked>
+        <input type="radio" name="p1preventative" value="bribe" checked>
+        <input type="radio" name="p2physical" value="stab" checked>
+        <input type="radio" name="p2verbal" value="deceive" checked>
+        <input type="radio" name="p2preventative" value="hide" checked>
+        <input type="radio" name="p3physical" value="bonk" checked>
+        <input type="radio" name="p3verbal" value="persuade" checked>
+        <input type="radio" name="p3preventative" value="grapple" checked>
+    </div>
+
+    <script>
+        // Test framework
+        const tests = [];
+        let passed = 0;
+        let failed = 0;
+        let warnings = 0;
+
+        function test(name, fn) {
+            tests.push({ name, fn });
+        }
+
+        function assert(condition, message) {
+            if (!condition) throw new Error(message || 'Assertion failed');
+        }
+
+        function assertEqual(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(`${message || 'Assertion failed'}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+            }
+        }
+
+        function assertExists(value, message) {
+            if (value === undefined || value === null) {
+                throw new Error(message || 'Value does not exist');
+            }
+        }
+
+        function assertType(value, type, message) {
+            if (typeof value !== type) {
+                throw new Error(`${message || 'Type mismatch'}: expected ${type}, got ${typeof value}`);
+            }
+        }
+
+        function runTests() {
+            const resultsDiv = document.getElementById('results');
+
+            // Group tests by category
+            const groups = {};
+            tests.forEach(t => {
+                const category = t.name.split(':')[0] || 'General';
+                if (!groups[category]) groups[category] = [];
+                groups[category].push(t);
+            });
+
+            for (const [category, categoryTests] of Object.entries(groups)) {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'test-group';
+                groupDiv.innerHTML = `<h2>${category}</h2>`;
+
+                for (const t of categoryTests) {
+                    const testDiv = document.createElement('div');
+                    testDiv.className = 'test';
+
+                    try {
+                        t.fn();
+                        testDiv.classList.add('pass');
+                        testDiv.textContent = `✓ ${t.name}`;
+                        passed++;
+                    } catch (e) {
+                        testDiv.classList.add('fail');
+                        testDiv.innerHTML = `✗ ${t.name}<pre>${e.message}</pre>`;
+                        failed++;
+                    }
+
+                    groupDiv.appendChild(testDiv);
+                }
+
+                resultsDiv.appendChild(groupDiv);
+            }
+
+            // Summary
+            const summaryDiv = document.getElementById('summary');
+            summaryDiv.className = `summary ${failed > 0 ? 'has-fail' : 'all-pass'}`;
+            summaryDiv.innerHTML = `
+                <strong>Results:</strong> ${passed} passed, ${failed} failed<br>
+                ${failed === 0 ? '✓ All tests passed!' : '✗ Some tests failed - review errors above'}
+            `;
+        }
+    </script>
+
+    <!-- Load the game's script by extracting it -->
+    <script>
+        // We'll inject the game script content and then run tests
+        fetch('../index.html')
+            .then(r => r.text())
+            .then(html => {
+                // Extract script content
+                const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>\s*<\/body>/);
+                if (!scriptMatch) {
+                    document.getElementById('results').innerHTML = '<div class="test fail">Failed to extract game script</div>';
+                    return;
+                }
+
+                // Create and run the script
+                try {
+                    eval(scriptMatch[1]);
+                } catch (e) {
+                    document.getElementById('results').innerHTML = `<div class="test fail">Script parse error: ${e.message}</div>`;
+                    return;
+                }
+
+                // Now define and run tests
+                defineTests();
+                runTests();
+            })
+            .catch(e => {
+                document.getElementById('results').innerHTML = `<div class="test fail">Failed to load game: ${e.message}</div>`;
+            });
+
+        function defineTests() {
+            // ==================== CORE DATA STRUCTURES ====================
+            test('Data: gameState exists', () => {
+                assertExists(gameState, 'gameState should exist');
+                assertType(gameState, 'object', 'gameState should be an object');
+            });
+
+            test('Data: gameState has required properties', () => {
+                assertExists(gameState.doom, 'gameState.doom');
+                assertExists(gameState.maxHope, 'gameState.maxHope');
+                assertExists(gameState.maxShields, 'gameState.maxShields');
+                assert(Array.isArray(gameState.players), 'gameState.players should be an array');
+            });
+
+            test('Data: CHARACTER_AVATARS defined correctly', () => {
+                assertExists(CHARACTER_AVATARS, 'CHARACTER_AVATARS should exist');
+                assertExists(CHARACTER_AVATARS[1], 'CHARACTER_AVATARS[1] should exist');
+                assertExists(CHARACTER_AVATARS[2], 'CHARACTER_AVATARS[2] should exist');
+                assertExists(CHARACTER_AVATARS[3], 'CHARACTER_AVATARS[3] should exist');
+                assertEqual(CHARACTER_AVATARS[1].color, 'Blue', 'Player 1 should be Blue');
+                assertEqual(CHARACTER_AVATARS[2].color, 'Red', 'Player 2 should be Red');
+                assertEqual(CHARACTER_AVATARS[3].color, 'Green', 'Player 3 should be Green');
+            });
+
+            test('Data: DICE_TYPES has all 9 dice', () => {
+                assertExists(DICE_TYPES, 'DICE_TYPES should exist');
+                const expected = ['slash', 'stab', 'bonk', 'threaten', 'deceive', 'persuade', 'bribe', 'hide', 'grapple'];
+                expected.forEach(d => assertExists(DICE_TYPES[d], `DICE_TYPES.${d} should exist`));
+            });
+
+            test('Data: STAGE_INFO includes Stage 0', () => {
+                assertExists(STAGE_INFO, 'STAGE_INFO should exist');
+                assertExists(STAGE_INFO[0], 'STAGE_INFO[0] (tutorial) should exist');
+                assertExists(STAGE_INFO[1], 'STAGE_INFO[1] should exist');
+                assertExists(STAGE_INFO[5], 'STAGE_INFO[5] should exist');
+            });
+
+            test('Data: TUTORIAL_ENCOUNTERS defined', () => {
+                assertExists(TUTORIAL_ENCOUNTERS, 'TUTORIAL_ENCOUNTERS should exist');
+                assertExists(TUTORIAL_ENCOUNTERS.pal_intro, 'pal_intro encounter should exist');
+                assertExists(TUTORIAL_ENCOUNTERS.tutorial_obstacle1, 'tutorial_obstacle1 should exist');
+                assertExists(TUTORIAL_ENCOUNTERS.pal_farewell, 'pal_farewell should exist');
+            });
+
+            test('Data: PAL_DIALOGUE defined', () => {
+                assertExists(PAL_DIALOGUE, 'PAL_DIALOGUE should exist');
+                assertExists(PAL_DIALOGUE.doom_appears, 'doom_appears dialogue should exist');
+                assertExists(PAL_DIALOGUE.hope_granted, 'hope_granted dialogue should exist');
+            });
+
+            test('Data: BOSSES defined for stages 1-5', () => {
+                assertExists(BOSSES, 'BOSSES should exist');
+                for (let i = 1; i <= 5; i++) {
+                    assertExists(BOSSES[i], `BOSSES[${i}] should exist`);
+                    assertExists(BOSSES[i].name, `BOSSES[${i}].name should exist`);
+                    assertExists(BOSSES[i].dc, `BOSSES[${i}].dc should exist`);
+                }
+            });
+
+            // ==================== CORE FUNCTIONS ====================
+            test('Functions: createDie exists and works', () => {
+                assertType(createDie, 'function', 'createDie should be a function');
+                const die = createDie('slash');
+                assertExists(die, 'createDie should return a die');
+                assertEqual(die.type, 'slash', 'die.type should be slash');
+                assertEqual(die.faces.length, 20, 'die should have 20 faces');
+                assert(Array.isArray(die.swaps), 'die.swaps should be an array');
+            });
+
+            test('Functions: addDoom exists', () => {
+                assertType(addDoom, 'function', 'addDoom should be a function');
+            });
+
+            test('Functions: reduceDoom exists', () => {
+                assertType(reduceDoom, 'function', 'reduceDoom should be a function');
+            });
+
+            test('Functions: addHope exists', () => {
+                assertType(addHope, 'function', 'addHope should be a function');
+            });
+
+            test('Functions: useHope exists', () => {
+                assertType(useHope, 'function', 'useHope should be a function');
+            });
+
+            test('Functions: addShield exists', () => {
+                assertType(addShield, 'function', 'addShield should be a function');
+            });
+
+            test('Functions: useShield exists', () => {
+                assertType(useShield, 'function', 'useShield should be a function');
+            });
+
+            test('Functions: triggerTeamDoomRoll exists', () => {
+                assertType(triggerTeamDoomRoll, 'function', 'triggerTeamDoomRoll should be a function');
+            });
+
+            test('Functions: showTutorialEncounter exists', () => {
+                assertType(showTutorialEncounter, 'function', 'showTutorialEncounter should be a function');
+            });
+
+            test('Functions: handleTutorialAction exists', () => {
+                assertType(handleTutorialAction, 'function', 'handleTutorialAction should be a function');
+            });
+
+            test('Functions: showPalDialogue exists', () => {
+                assertType(showPalDialogue, 'function', 'showPalDialogue should be a function');
+            });
+
+            test('Functions: endTutorial exists', () => {
+                assertType(endTutorial, 'function', 'endTutorial should be a function');
+            });
+
+            // ==================== HOPE/SHIELD SYSTEM ====================
+            test('HOPE System: addHope caps at maxHope', () => {
+                gameState.hope = 0;
+                gameState.maxHope = 1;
+                addHope(5);
+                assertEqual(gameState.hope, 1, 'HOPE should cap at maxHope');
+            });
+
+            test('HOPE System: useHope decrements and returns true', () => {
+                gameState.hope = 1;
+                const result = useHope();
+                assertEqual(result, true, 'useHope should return true when hope available');
+                assertEqual(gameState.hope, 0, 'HOPE should be decremented');
+            });
+
+            test('HOPE System: useHope returns false when empty', () => {
+                gameState.hope = 0;
+                const result = useHope();
+                assertEqual(result, false, 'useHope should return false when no hope');
+            });
+
+            test('SHIELD System: addShield caps at maxShields', () => {
+                gameState.shields = 0;
+                gameState.maxShields = 1;
+                addShield(5);
+                assertEqual(gameState.shields, 1, 'SHIELDS should cap at maxShields');
+            });
+
+            test('SHIELD System: useShield decrements and returns true', () => {
+                gameState.shields = 1;
+                const result = useShield();
+                assertEqual(result, true, 'useShield should return true when shields available');
+                assertEqual(gameState.shields, 0, 'SHIELDS should be decremented');
+            });
+
+            // ==================== DOOM SYSTEM ====================
+            test('DOOM System: addDoom increases doom', () => {
+                gameState.doom = 0;
+                addDoom(3);
+                assertEqual(gameState.doom, 3, 'DOOM should increase by amount');
+            });
+
+            test('DOOM System: reduceDoom decreases doom', () => {
+                gameState.doom = 5;
+                const reduced = reduceDoom(3);
+                assertEqual(gameState.doom, 2, 'DOOM should decrease');
+                assertEqual(reduced, 3, 'reduceDoom should return amount reduced');
+            });
+
+            test('DOOM System: reduceDoom caps at 0', () => {
+                gameState.doom = 2;
+                const reduced = reduceDoom(5);
+                assertEqual(gameState.doom, 0, 'DOOM should not go below 0');
+                assertEqual(reduced, 2, 'reduceDoom should return actual amount reduced');
+            });
+
+            test('DOOM System: getEffectiveRoll applies DOOM penalty', () => {
+                gameState.doom = 5;
+                assertEqual(getEffectiveRoll(10), 5, 'Roll 10 with 5 DOOM should be 5');
+                assertEqual(getEffectiveRoll(20), 20, 'Natural 20 should ignore DOOM');
+                assertEqual(getEffectiveRoll(3), 1, 'Roll should floor at 1');
+            });
+
+            // ==================== TUTORIAL ENCOUNTERS ====================
+            test('Tutorial: All encounters have required properties', () => {
+                for (const [key, enc] of Object.entries(TUTORIAL_ENCOUNTERS)) {
+                    assertExists(enc.type, `${key}.type should exist`);
+                    assertExists(enc.name, `${key}.name should exist`);
+                    assertExists(enc.description, `${key}.description should exist`);
+                    assertExists(enc.icon, `${key}.icon should exist`);
+                    assert(Array.isArray(enc.options), `${key}.options should be an array`);
+                }
+            });
+
+            test('Tutorial: Combat encounters have DC and thresholds', () => {
+                const combatEncounters = ['tutorial_obstacle1', 'tutorial_obstacle2', 'tutorial_final_battle'];
+                combatEncounters.forEach(key => {
+                    const enc = TUTORIAL_ENCOUNTERS[key];
+                    assertExists(enc.dc, `${key}.dc should exist`);
+                    assertExists(enc.successThresholds, `${key}.successThresholds should exist`);
+                });
+            });
+
+            // ==================== CHARACTER AVATARS ====================
+            test('Avatars: All avatars have image paths', () => {
+                for (const [id, avatar] of Object.entries(CHARACTER_AVATARS)) {
+                    assertExists(avatar.image, `Avatar ${id} should have image path`);
+                    assert(avatar.image.startsWith('assets/'), `Avatar ${id} image should be in assets/`);
+                    assert(avatar.image.endsWith('.png'), `Avatar ${id} image should be PNG`);
+                }
+            });
+
+            // ==================== INTEGRATION ====================
+            test('Integration: Can initialize players', () => {
+                // Reset state
+                gameState.players = [];
+
+                // Simulate what startTalentRanking does
+                for (let p = 1; p <= 3; p++) {
+                    const physical = document.querySelector(`input[name="p${p}physical"]:checked`).value;
+                    const verbal = document.querySelector(`input[name="p${p}verbal"]:checked`).value;
+                    const preventative = document.querySelector(`input[name="p${p}preventative"]:checked`).value;
+
+                    gameState.players.push({
+                        id: p,
+                        name: `Player ${p}`,
+                        dice: {
+                            physical: createDie(physical),
+                            verbal: createDie(verbal),
+                            preventative: createDie(preventative)
+                        }
+                    });
+                }
+
+                assertEqual(gameState.players.length, 3, 'Should have 3 players');
+                gameState.players.forEach((p, i) => {
+                    assertExists(p.dice.physical, `Player ${i+1} should have physical die`);
+                    assertExists(p.dice.verbal, `Player ${i+1} should have verbal die`);
+                    assertExists(p.dice.preventative, `Player ${i+1} should have preventative die`);
+                });
+            });
+
+            test('Integration: renderPlayers handles CHARACTER_AVATARS', () => {
+                // Make sure players exist from previous test
+                if (gameState.players.length === 0) {
+                    throw new Error('Prerequisite: players must be initialized');
+                }
+
+                // renderPlayers should not throw
+                renderPlayers();
+
+                const display = document.getElementById('playersDisplay');
+                assert(display.children.length > 0, 'renderPlayers should create player cards');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -2948,10 +2948,11 @@
             gameState.tutorial.active = true;
             gameState.tutorial.currentEncounter = encounterId;
 
-            const encounterContent = document.getElementById('encounterContent');
             document.getElementById('encounterTitle').textContent = encounter.name;
-            document.getElementById('encounterIcon').textContent = encounter.icon;
-            document.getElementById('encounterDesc').textContent = encounter.description;
+            document.getElementById('encounterDescription').innerHTML = `
+                <p style="font-size: 2rem; margin-bottom: 15px;">${encounter.icon}</p>
+                <p>${encounter.description}</p>
+            `;
 
             // Generate options
             const optionsHtml = encounter.options.map(opt =>
