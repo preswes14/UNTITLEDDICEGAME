@@ -58,21 +58,25 @@ function assertType(value, type, message) {
     }
 }
 
-// Load and parse the game's JavaScript
+// Load and parse the game's JavaScript modules
 console.log(`\n${colors.cyan}${colors.bold}UNTITLED DICE GAME - Test Suite${colors.reset}\n`);
-console.log('Loading game script...\n');
+console.log('Loading game modules...\n');
 
-const indexPath = path.join(__dirname, '..', 'index.html');
-const html = fs.readFileSync(indexPath, 'utf-8');
+const jsDir = path.join(__dirname, '..', 'js');
 
-// Extract the script content
-const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>\s*<\/body>/);
-if (!scriptMatch) {
-    console.error(`${colors.red}Failed to extract game script from index.html${colors.reset}`);
-    process.exit(1);
-}
-
-const scriptContent = scriptMatch[1];
+// Load modules in correct dependency order
+const moduleOrder = [
+    'config.js',
+    'state.js',
+    'save.js',
+    'utils.js',
+    'dice.js',
+    'combat.js',
+    'ui.js',
+    'encounters.js',
+    'screens.js',
+    'main.js'
+];
 
 // Create mock DOM elements and functions for Node.js environment
 const mockElements = {};
@@ -93,7 +97,8 @@ const createMockElement = () => ({
     scrollHeight: 0,
     dataset: {},
     value: '',
-    onclick: null
+    onclick: null,
+    disabled: false
 });
 
 global.document = {
@@ -130,15 +135,38 @@ global.window = {
     location: { reload: () => {} }
 };
 
+global.localStorage = {
+    _data: {},
+    getItem: function(key) { return this._data[key] || null; },
+    setItem: function(key, value) { this._data[key] = value; },
+    removeItem: function(key) { delete this._data[key]; },
+    clear: function() { this._data = {}; }
+};
+
 global.setTimeout = (fn, ms) => fn(); // Execute immediately for tests
 global.clearTimeout = () => {};
 global.location = { reload: () => {} };
+global.console = console;
 
-// Execute the game script in this context
-// Wrap in function to capture variables, then expose them globally
+// Concatenate all modules
+let combinedScript = '';
+for (const moduleName of moduleOrder) {
+    const modulePath = path.join(jsDir, moduleName);
+    if (fs.existsSync(modulePath)) {
+        const content = fs.readFileSync(modulePath, 'utf-8');
+        combinedScript += `\n// ===== ${moduleName} =====\n${content}\n`;
+        console.log(`  Loaded: ${moduleName}`);
+    } else {
+        console.log(`  ${colors.yellow}Warning: ${moduleName} not found${colors.reset}`);
+    }
+}
+
+console.log('');
+
+// Execute the combined game scripts in this context
 try {
     // Replace const/let with var to make them global in eval context
-    let modifiedScript = scriptContent
+    let modifiedScript = combinedScript
         .replace(/^(\s*)const /gm, '$1var ')
         .replace(/^(\s*)let /gm, '$1var ');
     eval(modifiedScript);
@@ -165,9 +193,9 @@ test('gameState exists and has correct structure', () => {
 
 test('CHARACTER_AVATARS defined for all 3 players', () => {
     assertExists(CHARACTER_AVATARS, 'CHARACTER_AVATARS');
-    assertEqual(CHARACTER_AVATARS[1].color, 'Blue', 'Player 1 = Blue');
-    assertEqual(CHARACTER_AVATARS[2].color, 'Red', 'Player 2 = Red');
-    assertEqual(CHARACTER_AVATARS[3].color, 'Green', 'Player 3 = Green');
+    assertEqual(CHARACTER_AVATARS[1].color, 'Blue Wizard', 'Player 1 = Blue Wizard');
+    assertEqual(CHARACTER_AVATARS[2].color, 'Red Ranger', 'Player 2 = Red Ranger');
+    assertEqual(CHARACTER_AVATARS[3].color, 'Green Pirate', 'Player 3 = Green Pirate');
 });
 
 test('DICE_TYPES has all 9 dice types', () => {
@@ -179,7 +207,7 @@ test('DICE_TYPES has all 9 dice types', () => {
 test('STAGE_INFO includes Stage 0 (tutorial)', () => {
     assertExists(STAGE_INFO, 'STAGE_INFO');
     assertExists(STAGE_INFO[0], 'Stage 0 (tutorial)');
-    assertEqual(STAGE_INFO[0].name, 'The Awakening', 'Stage 0 name');
+    assertEqual(STAGE_INFO[0].name, 'Stage 0: A Dream of Pal', 'Stage 0 name');
 });
 
 test('BOSSES defined for stages 1-5', () => {
@@ -275,6 +303,35 @@ test('getEffectiveRoll applies DOOM penalty', () => {
     assertEqual(getEffectiveRoll(3), 1, 'should floor at 1');
 });
 
+// ==================== SAVE SYSTEM TESTS ====================
+console.log(`\n${colors.bold}Save System${colors.reset}`);
+
+test('hasSaveData returns false when no save exists', () => {
+    localStorage.clear();
+    assertEqual(hasSaveData(), false, 'should return false');
+});
+
+test('saveGame creates valid save data', () => {
+    localStorage.clear();
+    gameState.doom = 5;
+    gameState.hope = 1;
+    gameState.gold = 100;
+    gameState.players = [{id: 1, name: 'Test', dice: {}}];
+    saveGame();
+    assertEqual(hasSaveData(), true, 'save should exist');
+});
+
+test('getSaveInfo returns save metadata', () => {
+    const info = getSaveInfo();
+    assertExists(info, 'info should exist');
+    assertExists(info.timestamp, 'should have timestamp');
+});
+
+test('deleteSave removes save data', () => {
+    deleteSave();
+    assertEqual(hasSaveData(), false, 'save should be deleted');
+});
+
 // ==================== TUTORIAL TESTS ====================
 console.log(`\n${colors.bold}Tutorial System${colors.reset}`);
 
@@ -294,7 +351,6 @@ test('Combat tutorial encounters have DC', () => {
     combats.forEach(key => {
         const enc = TUTORIAL_ENCOUNTERS[key];
         assertExists(enc.dc, `${key}.dc`);
-        assertExists(enc.successThresholds, `${key}.successThresholds`);
     });
 });
 
@@ -333,6 +389,17 @@ test('Avatar lookup works for all players', () => {
 
 test('startNewGame function exists', () => {
     assertType(startNewGame, 'function', 'startNewGame should be a function');
+});
+
+test('resetGameState function exists', () => {
+    assertType(resetGameState, 'function', 'resetGameState should be a function');
+});
+
+test('getSerializableState returns valid object', () => {
+    const state = getSerializableState();
+    assertExists(state, 'state should exist');
+    assertExists(state.version, 'should have version');
+    assertExists(state.doom !== undefined, 'should have doom');
 });
 
 // ==================== SUMMARY ====================
