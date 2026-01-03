@@ -786,6 +786,8 @@
         .map-node.neutral { background: linear-gradient(135deg, #5a5a27, #4a4a17); }
         .map-node.boss { background: linear-gradient(135deg, #5a2757, #4a1747); }
         .map-node.start { background: linear-gradient(135deg, #275a5a, #174a4a); }
+        .map-node.story { background: linear-gradient(135deg, #5a4a27, #4a3a17); }
+        .map-node.tutorial { background: linear-gradient(135deg, #3a4a5a, #2a3a4a); }
 
         .map-path {
             width: 3px;
@@ -3208,9 +3210,14 @@
                 { encounter: 'boss', row: 8 }
             ];
 
-            // Tutorial map (Stage 0) - simple linear structure
+            // Tutorial map (Stage 0) - linear progression through tutorial encounters
             const TUTORIAL_MAP_STRUCTURE = [
-                { encounter: 'start', row: 0 }, // Pal's intro handled separately
+                { encounter: 'pal_intro', row: 0 },
+                { encounter: 'tutorial_obstacle1', row: 1 },
+                { encounter: 'tutorial_obstacle2', row: 2 },
+                { encounter: 'tutorial_intertwine', row: 3 },
+                { encounter: 'tutorial_final_battle', row: 4 },
+                { encounter: 'pal_farewell', row: 5 }
             ];
 
             const MAP_STRUCTURES = {
@@ -3243,12 +3250,13 @@
 
             const structure = MAP_STRUCTURES[stage] || MAP_STRUCTURES[1];
 
-            // Get the appropriate encounter source - only Stage 5 is different (warped)
-            const encounterSource = stage === 5 ? STAGE_5_ENCOUNTERS : ENCOUNTERS;
+            // Get the appropriate encounter source based on stage
+            const encounterSource = stage === 0 ? TUTORIAL_ENCOUNTERS :
+                                    stage === 5 ? STAGE_5_ENCOUNTERS : ENCOUNTERS;
 
-            // Generate boss encounter for this stage
+            // Generate boss encounter for this stage (skip for tutorial Stage 0)
             const bossData = BOSSES[stage];
-            const stageBoss = {
+            const stageBoss = bossData ? {
                 type: 'boss',
                 name: bossData.name,
                 description: bossData.description,
@@ -3262,7 +3270,7 @@
                     { text: 'Negotiate (Verbal)', types: ['verbal'], action: 'boss_combat' },
                     { text: 'Outmaneuver (Preventative)', types: ['preventative'], action: 'boss_combat' }
                 ]
-            };
+            } : null;
 
             gameState.map = structure.map((node, index) => {
                 let encounterData;
