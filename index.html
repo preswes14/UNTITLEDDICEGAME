@@ -6,10 +6,10 @@
     <title>Untitled Dice Game</title>
     <!-- Favicon - D20 Die -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 95,30 95,70 50,95 5,70 5,30' fill='%231a1a2e' stroke='%23ffd700' stroke-width='3'/><polygon points='50,5 95,30 50,50' fill='%234a4a6a'/><polygon points='5,30 50,5 50,50' fill='%233a3a5a'/><polygon points='50,50 95,30 95,70 50,95' fill='%232a2a4a'/><polygon points='50,50 5,30 5,70 50,95' fill='%23353555'/><text x='50' y='58' text-anchor='middle' fill='%23ffd700' font-family='Arial' font-size='24' font-weight='bold'>20</text></svg>">
-    <!-- Google Fonts for player distinction -->
+    <!-- Google Fonts for player distinction and action categories -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@700&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@700&family=Permanent+Marker&family=Black+Ops+One&family=Comic+Neue:wght@700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -48,6 +48,11 @@
             --font-player1: 'Cinzel', serif;
             --font-player2: 'Rajdhani', sans-serif;
             --font-player3: 'Permanent Marker', cursive;
+
+            /* Action Category Fonts */
+            --font-physical: 'Black Ops One', cursive;  /* Aggressive, bold */
+            --font-verbal: 'Comic Neue', cursive;       /* Friendly, approachable */
+            --font-preventative: 'Orbitron', sans-serif; /* Industrial, blocky */
         }
 
         body {
@@ -434,6 +439,214 @@
             color: #4ade80;
             font-size: 1.1rem;
             margin-top: 20px;
+        }
+
+        /* ==================== ACTION ASSIGNMENT SCREEN ==================== */
+        .action-assign-container {
+            max-width: 1100px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .color-tokens-area {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .color-tokens-area h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-family: 'Cinzel', serif;
+        }
+
+        .color-tokens {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .color-token {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 25px;
+            border-radius: 12px;
+            cursor: grab;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            min-width: 100px;
+        }
+
+        .color-token:active {
+            cursor: grabbing;
+        }
+
+        .color-token.player-1 {
+            background: linear-gradient(135deg, var(--player-blue), var(--player-blue-dark));
+            border-color: var(--player-blue);
+        }
+
+        .color-token.player-2 {
+            background: linear-gradient(135deg, var(--player-red), var(--player-red-dark));
+            border-color: var(--player-red);
+        }
+
+        .color-token.player-3 {
+            background: linear-gradient(135deg, var(--player-green), var(--player-green-dark));
+            border-color: var(--player-green);
+        }
+
+        .color-token .token-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .color-token .token-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .color-token:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .color-token.dragging {
+            opacity: 0.5;
+            transform: scale(0.9);
+        }
+
+        .action-categories {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .action-category {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .category-title {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            letter-spacing: 0.15em;
+        }
+
+        .physical-category { border: 2px solid var(--physical-primary); }
+        .physical-title {
+            background: var(--physical-secondary);
+            font-family: var(--font-physical);
+        }
+
+        .verbal-category { border: 2px solid var(--verbal-primary); }
+        .verbal-title {
+            background: var(--verbal-secondary);
+            font-family: var(--font-verbal);
+        }
+
+        .preventative-category { border: 2px solid var(--preventative-primary); }
+        .preventative-title {
+            background: var(--preventative-secondary);
+            font-family: var(--font-preventative);
+        }
+
+        .action-slots {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-slot {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 10px;
+            transition: all 0.3s;
+        }
+
+        .slot-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+
+        .action-slot[data-category="physical"] .slot-header {
+            font-family: var(--font-physical);
+            color: var(--physical-primary);
+        }
+
+        .action-slot[data-category="verbal"] .slot-header {
+            font-family: var(--font-verbal);
+            color: var(--verbal-primary);
+        }
+
+        .action-slot[data-category="preventative"] .slot-header {
+            font-family: var(--font-preventative);
+            color: var(--preventative-primary);
+        }
+
+        .slot-dropzone {
+            min-height: 50px;
+            border: 2px dashed #555;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .slot-dropzone::before {
+            content: 'Drop a color here';
+            font-style: italic;
+        }
+
+        .slot-dropzone.drag-over {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .slot-dropzone.has-token::before {
+            content: none;
+        }
+
+        .slot-dropzone .color-token {
+            margin: 5px;
+            padding: 8px 15px;
+        }
+
+        .assign-status {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .assign-status p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .assign-status.complete p {
+            color: #4ade80;
+        }
+
+        #confirmAssignBtn {
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         /* Intertwine Screen */
@@ -859,44 +1072,64 @@
         }
 
         .option-btn {
-            padding: 15px 25px;
-            border: 2px solid transparent;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 20px 35px;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
             background: #3a3a5a;
             color: #fff;
+            min-width: 180px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .option-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
         }
 
         .option-btn.physical {
-            background: var(--physical-secondary);
+            background: linear-gradient(135deg, var(--physical-primary), var(--physical-secondary));
             border-color: var(--physical-primary);
+            font-family: var(--font-physical);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        .option-btn.physical:hover { box-shadow: 0 8px 25px var(--physical-glow); }
+        .option-btn.physical:hover {
+            box-shadow: 0 10px 30px var(--physical-glow);
+            border-color: #ff7733;
+        }
 
         .option-btn.verbal {
-            background: var(--verbal-secondary);
+            background: linear-gradient(135deg, var(--verbal-primary), var(--verbal-secondary));
             border-color: var(--verbal-primary);
+            font-family: var(--font-verbal);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
-        .option-btn.verbal:hover { box-shadow: 0 8px 25px var(--verbal-glow); }
+        .option-btn.verbal:hover {
+            box-shadow: 0 10px 30px var(--verbal-glow);
+            border-color: #55aadd;
+        }
 
         .option-btn.preventative {
-            background: var(--preventative-secondary);
+            background: linear-gradient(135deg, var(--preventative-primary), var(--preventative-secondary));
             border-color: var(--preventative-primary);
+            font-family: var(--font-preventative);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            letter-spacing: 0.1em;
         }
-        .option-btn.preventative:hover { box-shadow: 0 8px 25px var(--preventative-glow); }
+        .option-btn.preventative:hover {
+            box-shadow: 0 10px 30px var(--preventative-glow);
+            border-color: #aa66cc;
+        }
 
         .option-btn.swap {
             background: linear-gradient(135deg, #4a3a6a, #3a2a5a);
             border-color: #8855cc;
         }
-        .option-btn.swap:hover { box-shadow: 0 8px 25px rgba(136, 85, 204, 0.5); }
+        .option-btn.swap:hover { box-shadow: 0 10px 30px rgba(136, 85, 204, 0.5); }
 
         .option-btn:disabled {
             opacity: 0.4;
@@ -1795,6 +2028,95 @@
         </div>
     </div>
 
+    <!-- ==================== ACTION ASSIGNMENT SCREEN ==================== -->
+    <div class="screen setup-screen hidden" id="actionAssignScreen">
+        <h1>Assign Your Actions</h1>
+        <p class="subtitle" id="actionAssignSubtitle">Pal's fading form shimmers before you. "My dear Colors... before I go, show me what you've learned. Each of you has developed skills in your own way. Choose the actions that suit your nature - but remember, each path can only be walked by one."</p>
+        <div class="action-assign-container" id="actionAssignContent">
+            <!-- Color tokens to drag -->
+            <div class="color-tokens-area">
+                <h3>Your Colors</h3>
+                <div class="color-tokens" id="colorTokens">
+                    <div class="color-token player-1" draggable="true" data-player="0">
+                        <span class="token-icon">🔵</span>
+                        <span class="token-name">Blue</span>
+                    </div>
+                    <div class="color-token player-2" draggable="true" data-player="1">
+                        <span class="token-icon">🔴</span>
+                        <span class="token-name">Red</span>
+                    </div>
+                    <div class="color-token player-3" draggable="true" data-player="2">
+                        <span class="token-icon">🟢</span>
+                        <span class="token-name">Green</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action slots organized by category -->
+            <div class="action-categories">
+                <div class="action-category physical-category">
+                    <h3 class="category-title physical-title">PHYSICAL</h3>
+                    <div class="action-slots">
+                        <div class="action-slot" data-action="slash" data-category="physical">
+                            <div class="slot-header">SLASH</div>
+                            <div class="slot-dropzone" data-action="slash"></div>
+                        </div>
+                        <div class="action-slot" data-action="stab" data-category="physical">
+                            <div class="slot-header">STAB</div>
+                            <div class="slot-dropzone" data-action="stab"></div>
+                        </div>
+                        <div class="action-slot" data-action="bonk" data-category="physical">
+                            <div class="slot-header">BONK</div>
+                            <div class="slot-dropzone" data-action="bonk"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-category verbal-category">
+                    <h3 class="category-title verbal-title">VERBAL</h3>
+                    <div class="action-slots">
+                        <div class="action-slot" data-action="threaten" data-category="verbal">
+                            <div class="slot-header">THREATEN</div>
+                            <div class="slot-dropzone" data-action="threaten"></div>
+                        </div>
+                        <div class="action-slot" data-action="deceive" data-category="verbal">
+                            <div class="slot-header">DECEIVE</div>
+                            <div class="slot-dropzone" data-action="deceive"></div>
+                        </div>
+                        <div class="action-slot" data-action="persuade" data-category="verbal">
+                            <div class="slot-header">PERSUADE</div>
+                            <div class="slot-dropzone" data-action="persuade"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-category preventative-category">
+                    <h3 class="category-title preventative-title">PREVENTATIVE</h3>
+                    <div class="action-slots">
+                        <div class="action-slot" data-action="bribe" data-category="preventative">
+                            <div class="slot-header">BRIBE</div>
+                            <div class="slot-dropzone" data-action="bribe"></div>
+                        </div>
+                        <div class="action-slot" data-action="hide" data-category="preventative">
+                            <div class="slot-header">HIDE</div>
+                            <div class="slot-dropzone" data-action="hide"></div>
+                        </div>
+                        <div class="action-slot" data-action="grapple" data-category="preventative">
+                            <div class="slot-header">GRAPPLE</div>
+                            <div class="slot-dropzone" data-action="grapple"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assign-status" id="assignStatus">
+                <p>Assign all 3 colors to one action in each category to continue.</p>
+            </div>
+
+            <button class="start-btn hidden" id="confirmAssignBtn" onclick="confirmActionAssignment()">Lock In Actions!</button>
+        </div>
+    </div>
+
     <!-- ==================== INTERTWINE SCREEN ==================== -->
     <div class="screen setup-screen hidden" id="intertwineScreen">
         <h1>Intertwine Your Fates</h1>
@@ -2208,31 +2530,31 @@
         const TUTORIAL_ENCOUNTERS = {
             pal_intro: {
                 type: 'story',
-                name: 'A Dream Begins',
-                description: '"Chosen ones... can you hear me?" A warm, ethereal voice echoes through swirling colors. An ancient figure made of shifting hues materializes before you. "I am Palette - call me Pal. The prophecy brought you to me, and now I must prepare you for what lies ahead..."',
+                name: 'A Final Lesson',
+                description: 'Pal\'s familiar form shimmers before you, but something is different. His colors are fading at the edges. "My dear Colors... my time grows short. I\'ve taught you everything I know these past years, but there is one last lesson I must give you before I go. Show me what you\'ve learned."',
                 icon: '🎨',
                 options: [
-                    { text: '"Who are you?"', action: 'pal_explain' },
-                    { text: '"What prophecy?"', action: 'pal_prophecy' },
-                    { text: '"Let\'s begin!"', action: 'tutorial_obstacle1' }
+                    { text: '"Pal, you look weak..."', action: 'pal_explain' },
+                    { text: '"We\'re not ready to lose you."', action: 'pal_prophecy' },
+                    { text: '"We\'ll make you proud."', action: 'tutorial_obstacle1' }
                 ]
             },
             tutorial_obstacle1: {
                 type: 'tutorial',
                 name: 'The Boulder with a Face',
-                description: 'A massive boulder blocks your path. Strangely, it has a grumpy face carved into it. "You shall not pass!" it grumbles. "Unless... you can prove your worth!"',
+                description: 'The dreamscape shifts around you. A massive boulder materializes, a grumpy face carved into its surface. Pal nods encouragingly. "Remember what I taught you. Show this old rock the strength you\'ve developed!"',
                 icon: '🪨',
                 dc: 5,
                 successThresholds: { physical: 1, verbal: 1, preventative: 1 },
                 tutorialPhase: 'strong_die',
                 options: [
-                    { text: 'Use your strongest skill!', action: 'tutorial_combat1' }
+                    { text: 'Show your best skill!', action: 'tutorial_combat1' }
                 ]
             },
             tutorial_obstacle2: {
                 type: 'tutorial',
                 name: 'The Stubborn Shadow',
-                description: 'A shadowy figure rises, mimicking your movements mockingly. Pal whispers: "Even heroes have weaknesses. Face yours now - use the skill you\'re WORST at..."',
+                description: 'A shadowy figure rises, mimicking your movements. Pal\'s voice grows gentle: "My Colors... even I have weaknesses. The bravest thing is to face them head-on. Try the skill you struggle with most..."',
                 icon: '👤',
                 dc: 15,
                 successThresholds: { physical: 2, verbal: 2, preventative: 2 },
@@ -2245,32 +2567,32 @@
             tutorial_intertwine: {
                 type: 'story',
                 name: 'The Binding',
-                description: 'Pal\'s form glows brighter. "Now comes the most important lesson. You are not alone. Your fates are INTERTWINED! This power is unique to you - the Chosen Ones. Link your dice together, and when one stumbles, another may rise!"',
+                description: 'Pal\'s form flickers, and for a moment you can see through him. He smiles warmly. "This is my final gift to you. The bond between you three is your greatest weapon. When I am gone, you will have each other. Intertwine your fates - let your strengths cover each other\'s weaknesses."',
                 icon: '🔗',
                 options: [
-                    { text: 'Intertwine our fates!', action: 'start_intertwine' }
+                    { text: 'Bind our fates together', action: 'start_intertwine' }
                 ]
             },
             tutorial_final_battle: {
                 type: 'tutorial',
                 name: 'The Final Test',
-                description: 'The dreamscape shifts into an arena. Pal stands across from you, but his form darkens. "One final test! Show me what the Chosen Ones can do together!" This battle will teach you about DOOM.',
+                description: 'Pal\'s form solidifies one last time, his colors briefly vivid. "One final test. Fight me with everything I\'ve taught you. Do not hold back - I need to see that you\'re ready for what comes next." Shadows gather around him as he takes a battle stance.',
                 icon: '⚔️',
                 dc: 8,
                 successThresholds: { physical: 3, verbal: 3, preventative: 3 },
                 tutorialPhase: 'full_combat',
                 attacksPerRound: 1,
                 options: [
-                    { text: 'Begin the final test!', action: 'tutorial_combat_final' }
+                    { text: 'For Pal!', action: 'tutorial_combat_final' }
                 ]
             },
             pal_farewell: {
                 type: 'story',
-                name: 'The Awakening',
-                description: 'Pal\'s form flickers. "You are ready. The prophecy speaks of 20 visions... only one remains true. Find the Dirty Innkeeper. He knows more than he lets on." Pal begins to fade. "Remember... HOPE is your shield against DOOM. I have given you what I can. Now... wake up."',
+                name: 'The Farewell',
+                description: 'Pal\'s form dissolves into streams of gentle color. His voice echoes one last time: "I am so proud of you, my Colors. Find the Dirty Innkeeper - he was there when the prophecies appeared twenty years ago. He knows what happened to the other nineteen... and why yours alone remains." His colors swirl around you like an embrace. "Remember: HOPE is never lost as long as you have each other. I will always be with you... in the colors you carry."',
                 icon: '🌅',
                 options: [
-                    { text: 'Wake up...', action: 'end_tutorial' }
+                    { text: 'Goodbye, old friend...', action: 'end_tutorial' }
                 ]
             }
         };
@@ -2576,6 +2898,197 @@
             }
         }
 
+        // ==================== ACTION ASSIGNMENT SYSTEM ====================
+        const actionAssignment = {
+            // Track which player is assigned to which action
+            // e.g., { slash: 2, stab: 1, bonk: 0, ... } where numbers are player indices
+            assignments: {},
+            // Track assignments by player for validation
+            playerAssignments: {
+                0: { physical: null, verbal: null, preventative: null },
+                1: { physical: null, verbal: null, preventative: null },
+                2: { physical: null, verbal: null, preventative: null }
+            }
+        };
+
+        function initActionAssignment() {
+            // Reset assignments
+            actionAssignment.assignments = {};
+            actionAssignment.playerAssignments = {
+                0: { physical: null, verbal: null, preventative: null },
+                1: { physical: null, verbal: null, preventative: null },
+                2: { physical: null, verbal: null, preventative: null }
+            };
+
+            // Set up drag and drop
+            const tokens = document.querySelectorAll('.color-token');
+            const dropzones = document.querySelectorAll('.slot-dropzone');
+
+            tokens.forEach(token => {
+                token.addEventListener('dragstart', handleDragStart);
+                token.addEventListener('dragend', handleDragEnd);
+            });
+
+            dropzones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+
+            updateAssignStatus();
+        }
+
+        function handleDragStart(e) {
+            e.target.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', e.target.dataset.player);
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.target.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.target.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.target.classList.remove('drag-over');
+
+            const playerIdx = parseInt(e.dataTransfer.getData('text/plain'));
+            const dropzone = e.target.closest('.slot-dropzone');
+            if (!dropzone) return;
+
+            const actionSlot = dropzone.closest('.action-slot');
+            const action = actionSlot.dataset.action;
+            const category = actionSlot.dataset.category;
+
+            // Check if another player already has this action
+            if (actionAssignment.assignments[action] !== undefined && actionAssignment.assignments[action] !== playerIdx) {
+                // Remove the other player's token first
+                const prevPlayer = actionAssignment.assignments[action];
+                actionAssignment.playerAssignments[prevPlayer][category] = null;
+            }
+
+            // Check if this player already has an action in this category
+            const existingAction = actionAssignment.playerAssignments[playerIdx][category];
+            if (existingAction && existingAction !== action) {
+                // Remove the old assignment
+                delete actionAssignment.assignments[existingAction];
+                // Remove the token from that slot
+                const oldSlot = document.querySelector(`.slot-dropzone[data-action="${existingAction}"]`);
+                if (oldSlot) {
+                    oldSlot.innerHTML = '';
+                    oldSlot.classList.remove('has-token');
+                }
+            }
+
+            // Make the assignment
+            actionAssignment.assignments[action] = playerIdx;
+            actionAssignment.playerAssignments[playerIdx][category] = action;
+
+            // Add token to dropzone
+            dropzone.innerHTML = '';
+            const tokenClone = createTokenElement(playerIdx);
+            dropzone.appendChild(tokenClone);
+            dropzone.classList.add('has-token');
+
+            updateAssignStatus();
+        }
+
+        function createTokenElement(playerIdx) {
+            const colors = ['🔵', '🔴', '🟢'];
+            const names = ['Blue', 'Red', 'Green'];
+            const token = document.createElement('div');
+            token.className = `color-token player-${playerIdx + 1}`;
+            token.draggable = true;
+            token.dataset.player = playerIdx;
+            token.innerHTML = `
+                <span class="token-icon">${colors[playerIdx]}</span>
+                <span class="token-name">${names[playerIdx]}</span>
+            `;
+            token.addEventListener('dragstart', handleDragStart);
+            token.addEventListener('dragend', handleDragEnd);
+            return token;
+        }
+
+        function updateAssignStatus() {
+            const statusDiv = document.getElementById('assignStatus');
+            const confirmBtn = document.getElementById('confirmAssignBtn');
+
+            // Check if all assignments are complete
+            let complete = true;
+            let statusText = '';
+
+            for (let p = 0; p < 3; p++) {
+                const assignments = actionAssignment.playerAssignments[p];
+                const colors = ['Blue', 'Red', 'Green'];
+                const missing = [];
+                if (!assignments.physical) missing.push('Physical');
+                if (!assignments.verbal) missing.push('Verbal');
+                if (!assignments.preventative) missing.push('Preventative');
+
+                if (missing.length > 0) {
+                    complete = false;
+                    statusText += `${colors[p]} needs: ${missing.join(', ')}<br>`;
+                }
+            }
+
+            if (complete) {
+                statusDiv.classList.add('complete');
+                statusDiv.innerHTML = '<p>All Colors assigned! Ready to continue.</p>';
+                confirmBtn.classList.remove('hidden');
+            } else {
+                statusDiv.classList.remove('complete');
+                statusDiv.innerHTML = `<p>${statusText}</p>`;
+                confirmBtn.classList.add('hidden');
+            }
+        }
+
+        function confirmActionAssignment() {
+            // Apply the assignments to create player dice
+            gameState.players = [];
+
+            const playerNames = ['Blue', 'Red', 'Green'];
+            for (let p = 0; p < 3; p++) {
+                const assignments = actionAssignment.playerAssignments[p];
+                gameState.players.push({
+                    id: p + 1,
+                    name: playerNames[p],
+                    dice: {
+                        physical: createDie(assignments.physical),
+                        verbal: createDie(assignments.verbal),
+                        preventative: createDie(assignments.preventative)
+                    }
+                });
+            }
+
+            // Save base faces
+            gameState.players.forEach(player => {
+                Object.values(player.dice).forEach(die => {
+                    die.baseFaces = [...die.faces];
+                });
+            });
+
+            // Initialize talent state for the next phase
+            talentState.currentPlayer = 0;
+            talentState.phase = 'best';
+            talentState.playerRankings = [{}, {}, {}];
+
+            // Hide action assign, show talent screen
+            document.getElementById('actionAssignScreen').classList.add('hidden');
+            document.getElementById('talentScreen').classList.remove('hidden');
+
+            showTalentBestScreen();
+        }
+
         // ==================== TALENT RANKING SYSTEM ====================
         const talentState = {
             currentPlayer: 0,
@@ -2870,8 +3383,24 @@
 
             // Check if we're in tutorial (Stage 0)
             if (gameState.currentStage === 0 && gameState.tutorial.active) {
-                // Return to tutorial flow - show final battle
+                // Initialize game UI if coming from action assignment flow
+                document.getElementById('actionAssignScreen').classList.add('hidden');
+                document.getElementById('talentScreen').classList.add('hidden');
                 document.getElementById('gameScreen').classList.remove('hidden');
+
+                // Generate tutorial map and initialize UI
+                generateMap();
+                renderMap();
+                renderPlayers();
+                renderDiceTray();
+                updateDoomHopeDisplay();
+                updateFloorDisplay();
+
+                const stageInfo = STAGE_INFO[0];
+                document.getElementById('gameLog').innerHTML = '<h4>Log</h4>';
+                log(`${stageInfo.name}`, 'info');
+                log('A final lesson begins...', 'info');
+
                 showPalDialogue(PAL_DIALOGUE.intertwine_explain);
                 setTimeout(() => {
                     showTutorialEncounter('tutorial_final_battle');
@@ -2894,35 +3423,19 @@
             gameState.players = [];
             gameState.tutorial = { active: true, step: 0, currentEncounter: null };
 
-            // Create default characters: Blue (Wizard), Red (Ranger), Green (Pirate)
-            // Each has thematic dice loadouts
-            const DEFAULT_LOADOUTS = [
-                { name: 'Blue', physical: 'bonk', verbal: 'persuade', preventative: 'hide' },    // Wizard: staff bonk, charm, invisibility
-                { name: 'Red', physical: 'stab', verbal: 'threaten', preventative: 'grapple' }, // Ranger: arrows, intimidate, rope
-                { name: 'Green', physical: 'slash', verbal: 'deceive', preventative: 'bribe' }  // Pirate: cutlass, lies, gold
-            ];
-
-            DEFAULT_LOADOUTS.forEach((loadout, idx) => {
-                gameState.players.push({
-                    id: idx + 1,
-                    name: loadout.name,
-                    dice: {
-                        physical: createDie(loadout.physical),
-                        verbal: createDie(loadout.verbal),
-                        preventative: createDie(loadout.preventative)
-                    }
-                });
-            });
-
-            // Save base faces (needed for shop reset logic)
-            gameState.players.forEach(player => {
-                Object.values(player.dice).forEach(die => {
-                    die.baseFaces = [...die.faces];
-                });
-            });
-
-            // Hide title screen, show game screen
+            // Hide title screen, show action assignment screen
             document.getElementById('titleScreen').classList.add('hidden');
+            document.getElementById('actionAssignScreen').classList.remove('hidden');
+
+            // Initialize the action assignment drag-and-drop
+            initActionAssignment();
+        }
+
+        function proceedToTutorial() {
+            // Called after talent ranking is complete
+            // Hide talent/intertwine screens, show game screen
+            document.getElementById('talentScreen').classList.add('hidden');
+            document.getElementById('intertwineScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
 
             // Generate tutorial map and initialize UI
@@ -2937,7 +3450,7 @@
             const stageInfo = STAGE_INFO[0];
             document.getElementById('gameLog').innerHTML = '<h4>Log</h4>';
             log(`${stageInfo.name}`, 'info');
-            log('A dream begins...', 'info');
+            log('A final lesson begins...', 'info');
 
             // Show Pal's introduction
             setTimeout(() => showTutorialEncounter('pal_intro'), 500);
@@ -2975,6 +3488,7 @@
 
             // Hide all setup screens
             document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('actionAssignScreen').classList.add('hidden');
             document.getElementById('talentScreen').classList.add('hidden');
             document.getElementById('intertwineScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
@@ -3019,7 +3533,7 @@
 
             // Generate options
             const optionsHtml = encounter.options.map(opt =>
-                `<button class="encounter-btn" onclick="handleTutorialAction('${opt.action}')">${opt.text}</button>`
+                `<button class="option-btn" onclick="handleTutorialAction('${opt.action}')">${opt.text}</button>`
             ).join('');
             document.getElementById('encounterOptions').innerHTML = optionsHtml;
 
@@ -3030,12 +3544,24 @@
         function handleTutorialAction(action) {
             switch(action) {
                 case 'pal_explain':
-                    showPalDialogue("I am an echo of the ancients who first received the prophecy. For twenty years, charlatans and treasure hunters chased these visions. But YOU are different. The prophecy chose you.");
-                    setTimeout(() => showTutorialEncounter('pal_intro'), 2000);
+                    // Update main encounter description instead of log
+                    updateEncounterDescription(
+                        "Pal's Words",
+                        "🎨",
+                        "*Pal's colors dim momentarily* \"I know, little ones. I can feel myself fading. But do not weep for me - I have lived long enough to see the prophecy choose its true champions. You three... you are my legacy. My greatest work.\"",
+                        [{ text: 'Continue...', action: 'pal_return' }]
+                    );
                     break;
                 case 'pal_prophecy':
-                    showPalDialogue("Twenty prophecies appeared overnight, twenty years ago. Nineteen have faded into darkness. Yours... yours still glows. You must find out why.");
-                    setTimeout(() => showTutorialEncounter('pal_intro'), 2000);
+                    updateEncounterDescription(
+                        "Pal's Words",
+                        "🎨",
+                        "*Pal reaches out, his translucent hand brushing your face* \"And I am not ready to leave you. But the universe does not ask permission. What matters is that I prepared you well. The years we spent together... they were not wasted.\"",
+                        [{ text: 'Continue...', action: 'pal_return' }]
+                    );
+                    break;
+                case 'pal_return':
+                    showTutorialEncounter('pal_intro');
                     break;
                 case 'tutorial_obstacle1':
                     showTutorialEncounter('tutorial_obstacle1');
@@ -3072,6 +3598,21 @@
             palMsg.style.cssText = 'background: rgba(147, 51, 234, 0.2); border-left: 3px solid #a855f7; padding: 8px; margin: 5px 0; border-radius: 5px;';
             logDiv.appendChild(palMsg);
             logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateEncounterDescription(title, icon, description, options) {
+            // Update the main encounter panel with new content
+            document.getElementById('encounterTitle').textContent = title;
+            document.getElementById('encounterDescription').innerHTML = `
+                <p style="font-size: 2rem; margin-bottom: 15px;">${icon}</p>
+                <p>${description}</p>
+            `;
+
+            // Generate option buttons
+            const optionsHtml = options.map(opt =>
+                `<button class="option-btn" onclick="handleTutorialAction('${opt.action}')">${opt.text}</button>`
+            ).join('');
+            document.getElementById('encounterOptions').innerHTML = optionsHtml;
         }
 
         function startTutorialCombat(encounterId) {
