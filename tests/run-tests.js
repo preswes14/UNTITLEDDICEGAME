@@ -52,6 +52,12 @@ function assertExists(value, message) {
     }
 }
 
+function assertType(value, type, message) {
+    if (typeof value !== type) {
+        throw new Error(`${message || 'Type mismatch'}: expected ${type}, got ${typeof value}`);
+    }
+}
+
 // Load and parse the game's JavaScript
 console.log(`\n${colors.cyan}${colors.bold}UNTITLED DICE GAME - Test Suite${colors.reset}\n`);
 console.log('Loading game script...\n');
@@ -323,6 +329,10 @@ test('Avatar lookup works for all players', () => {
         assertExists(avatar.color, `color for player ${p.id}`);
         assertExists(avatar.image, `image for player ${p.id}`);
     });
+});
+
+test('startNewGame function exists', () => {
+    assertType(startNewGame, 'function', 'startNewGame should be a function');
 });
 
 // ==================== SUMMARY ====================

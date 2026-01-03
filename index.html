@@ -1598,7 +1598,7 @@
             <p class="subtitle">A Collaborative TTRPG Adventure</p>
         </div>
         <div class="title-menu">
-            <button class="menu-btn primary" onclick="showScreen('setupScreen')">New Game</button>
+            <button class="menu-btn primary" onclick="startNewGame()">New Game</button>
             <button class="menu-btn" onclick="showScreen('howtoScreen')">How to Play</button>
             <button class="menu-btn" onclick="showScreen('settingsScreen')">Settings</button>
         </div>
@@ -2880,6 +2880,67 @@
         }
 
         // ==================== GAME INITIALIZATION ====================
+        function startNewGame() {
+            // Reset game state
+            gameState.gold = 0;
+            gameState.doom = 0;
+            gameState.hope = 0;
+            gameState.shields = 0;
+            gameState.currentStage = 0; // Start with tutorial
+            gameState.currentNode = 0;
+            gameState.map = [];
+            gameState.players = [];
+            gameState.tutorial = { active: true, step: 0, currentEncounter: null };
+
+            // Create default characters: Blue (Wizard), Red (Ranger), Green (Pirate)
+            // Each has thematic dice loadouts
+            const DEFAULT_LOADOUTS = [
+                { name: 'Blue', physical: 'bonk', verbal: 'persuade', preventative: 'hide' },    // Wizard: staff bonk, charm, invisibility
+                { name: 'Red', physical: 'stab', verbal: 'threaten', preventative: 'grapple' }, // Ranger: arrows, intimidate, rope
+                { name: 'Green', physical: 'slash', verbal: 'deceive', preventative: 'bribe' }  // Pirate: cutlass, lies, gold
+            ];
+
+            DEFAULT_LOADOUTS.forEach((loadout, idx) => {
+                gameState.players.push({
+                    id: idx + 1,
+                    name: loadout.name,
+                    dice: {
+                        physical: createDie(loadout.physical),
+                        verbal: createDie(loadout.verbal),
+                        preventative: createDie(loadout.preventative)
+                    }
+                });
+            });
+
+            // Save base faces (needed for shop reset logic)
+            gameState.players.forEach(player => {
+                Object.values(player.dice).forEach(die => {
+                    die.baseFaces = [...die.faces];
+                });
+            });
+
+            // Hide title screen, show game screen
+            document.getElementById('titleScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+            // Generate tutorial map and initialize UI
+            generateMap();
+            renderMap();
+            renderPlayers();
+            renderDiceTray();
+            updateDoomHopeDisplay();
+            updateFloorDisplay();
+
+            // Start the tutorial
+            const stageInfo = STAGE_INFO[0];
+            document.getElementById('gameLog').innerHTML = '<h4>Log</h4>';
+            log(`${stageInfo.name}`, 'info');
+            log('A dream begins...', 'info');
+
+            // Show Pal's introduction
+            setTimeout(() => showTutorialEncounter('pal_intro'), 500);
+        }
+
         function startGame() {
             // If coming from talent ranking, players already exist with upgrades applied
             // Only create players if they don't exist yet
