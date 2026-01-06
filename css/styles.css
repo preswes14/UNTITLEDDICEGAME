@@ -1817,3 +1817,200 @@ body {
 .shop-footer {
     margin-top: 30px;
 }
+
+/* ==================== SAVE SLOT SCREEN ==================== */
+.save-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.save-slot {
+    background: rgba(30, 30, 50, 0.9);
+    border: 2px solid #4a4a6a;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s;
+}
+
+.save-slot:hover {
+    border-color: #ffd700;
+    transform: translateX(5px);
+}
+
+.save-slot.empty {
+    border-style: dashed;
+    opacity: 0.7;
+}
+
+.save-slot.empty:hover {
+    opacity: 1;
+}
+
+.slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.slot-number {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    color: #ffd700;
+}
+
+.slot-progress {
+    background: linear-gradient(135deg, #4a3a6a, #3a2a5a);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #cc99ff;
+    font-weight: bold;
+    border: 1px solid #8855cc;
+}
+
+.slot-empty {
+    color: #666;
+    font-style: italic;
+}
+
+.slot-details {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.slot-stage {
+    display: block;
+    color: #88ccff;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.slot-stats {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.slot-stats span {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 10px;
+    border-radius: 4px;
+}
+
+.slot-time {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.slot-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.slot-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.slot-btn.continue {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: #000;
+    border-color: #4ade80;
+}
+
+.slot-btn.continue:hover {
+    box-shadow: 0 5px 20px rgba(74, 222, 128, 0.4);
+    transform: translateY(-2px);
+}
+
+.slot-btn.new {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    border-color: #3b82f6;
+}
+
+.slot-btn.new:hover {
+    box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+.slot-btn.delete {
+    background: transparent;
+    color: #f87171;
+    border-color: #f87171;
+}
+
+.slot-btn.delete:hover {
+    background: rgba(248, 113, 113, 0.2);
+}
+
+/* Ferryman mark styling - distinct from hope segments */
+.mini-die .ferryman-mark {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 14px;
+    height: 14px;
+    background: #8b0000;
+    border-radius: 50%;
+    font-size: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff6b6b;
+    border: 1px solid #ff3333;
+}
+
+/* Hope segment highlight */
+.die.has-hope-segment {
+    position: relative;
+}
+
+.die .hope-badge {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    background: #4ade80;
+    color: #000;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Ferryman mark badge on dice */
+.die .mark-badge {
+    position: absolute;
+    bottom: -8px;
+    left: -8px;
+    background: #8b0000;
+    color: #ff6b6b;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 1px solid #ff3333;
+}

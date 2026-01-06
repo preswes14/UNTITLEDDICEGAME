@@ -346,7 +346,7 @@ function showIntertwineScreen() {
 
     for (let n = 6; n <= 10; n++) {
         const used = intertwineData.usedNumbers.includes(n);
-        html += `<button class="number-btn ${used ? 'disabled' : ''}" ${used ? 'disabled' : ''} onclick="selectIntertwineNumber(${n})">${n}</button>`;
+        html += `<button class="number-btn ${used ? 'disabled' : ''}" ${used ? 'disabled' : ''} onclick="selectIntertwineNumber(${n}, event)">${n}</button>`;
     }
 
     html += `
@@ -361,11 +361,11 @@ function showIntertwineScreen() {
     document.getElementById('intertwineContent').innerHTML = html;
 }
 
-function selectIntertwineNumber(num) {
+function selectIntertwineNumber(num, e) {
     intertwineData.number = num;
 
     document.querySelectorAll('.number-btn').forEach(btn => btn.classList.remove('selected'));
-    event.target.classList.add('selected');
+    if (e && e.target) e.target.classList.add('selected');
 
     document.getElementById('intertwineStep2').classList.remove('hidden');
 
@@ -379,7 +379,7 @@ function selectIntertwineNumber(num) {
     ['physical', 'verbal', 'preventative'].forEach(cat => {
         const die = currentAlly.player.dice[cat];
         html += `
-            <button class="talent-btn ${cat}" onclick="selectIntertwineAllyDie('${cat}')">
+            <button class="talent-btn ${cat}" onclick="selectIntertwineAllyDie('${cat}', event)">
                 <span class="die-icon">${die.icon}</span>
                 <span class="die-name">${die.name}</span>
             </button>
@@ -390,11 +390,11 @@ function selectIntertwineNumber(num) {
     document.getElementById('allyDiceOptions').innerHTML = html;
 }
 
-function selectIntertwineAllyDie(dieType) {
+function selectIntertwineAllyDie(dieType, e) {
     intertwineData.allyDieType = dieType;
 
     document.querySelectorAll('#allyDiceOptions .talent-btn').forEach(btn => btn.classList.remove('selected'));
-    event.target.closest('.talent-btn').classList.add('selected');
+    if (e && e.target) e.target.closest('.talent-btn').classList.add('selected');
 
     document.getElementById('confirmIntertwine').style.display = 'block';
 }
