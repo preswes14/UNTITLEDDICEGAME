@@ -1,0 +1,864 @@
+/* ==================== PLAYER VIEW STYLES ==================== */
+/* Mobile-first design for player phone view */
+
+/* Player View Screen */
+.player-view-screen {
+    background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+    z-index: 1000;
+    padding: 0;
+}
+
+.player-view-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Header */
+.pv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.6);
+    border-bottom: 2px solid #4a4a6a;
+}
+
+.pv-connection-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+.status-dot.connected {
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+}
+
+.status-dot.disconnected {
+    background: #f87171;
+    box-shadow: 0 0 8px #f87171;
+    animation: none;
+}
+
+.status-dot.reconnecting {
+    background: #fbbf24;
+    box-shadow: 0 0 8px #fbbf24;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.status-text {
+    color: #888;
+}
+
+.pv-player-name {
+    flex: 1;
+    text-align: center;
+    padding: 0 10px;
+}
+
+.pv-name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #4a4a6a;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    text-align: center;
+    padding: 4px 8px;
+    width: 100%;
+    max-width: 180px;
+    transition: border-color 0.3s;
+}
+
+.pv-name-input:focus {
+    outline: none;
+    border-bottom-color: #ffd700;
+}
+
+.pv-name-input::placeholder {
+    color: #555;
+}
+
+.pv-menu-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #4a4a6a;
+    color: #aaa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pv-menu-btn:hover, .pv-menu-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* Main Content */
+.pv-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+/* Phase Indicator */
+.pv-phase-indicator {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.phase-label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    color: #ffd700;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
+
+.phase-desc {
+    display: block;
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* Dice 3D Area */
+.pv-dice-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+}
+
+.pv-dice-3d {
+    width: 200px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #4a4a6a;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.pv-dice-3d canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.dice-placeholder {
+    text-align: center;
+    color: #555;
+}
+
+.dice-placeholder .dice-emoji {
+    font-size: 4rem;
+    opacity: 0.5;
+}
+
+.dice-placeholder p {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.pv-view-faces-btn {
+    background: linear-gradient(135deg, #3a3a5a, #2a2a4a);
+    border: 2px solid #6a6a8a;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pv-view-faces-btn:hover, .pv-view-faces-btn:active {
+    background: linear-gradient(135deg, #4a4a6a, #3a3a5a);
+    border-color: #ffd700;
+    transform: scale(1.02);
+}
+
+/* Actions Area */
+.pv-actions {
+    padding: 16px 0;
+}
+
+.pv-instruction {
+    text-align: center;
+    color: #88ccff;
+    font-size: 1rem;
+    margin-bottom: 16px;
+}
+
+.pv-hint {
+    text-align: center;
+    color: #4ade80;
+    font-size: 0.85rem;
+    margin-top: 16px;
+    font-style: italic;
+}
+
+/* Waiting State */
+.pv-waiting-message {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.waiting-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #333;
+    border-top-color: #ffd700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.pv-waiting-message p {
+    color: #888;
+    margin: 8px 0;
+}
+
+.pv-waiting-message strong {
+    color: #ffd700;
+    font-family: monospace;
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+}
+
+/* Talent Options */
+.pv-talent-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pv-talent-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(30, 30, 40, 0.8);
+    border: 2px solid #444;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    text-align: left;
+}
+
+.pv-talent-btn .talent-icon {
+    font-size: 2rem;
+}
+
+.pv-talent-btn .talent-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.pv-talent-btn.physical {
+    border-color: var(--physical-primary);
+}
+.pv-talent-btn.physical:hover, .pv-talent-btn.physical:active {
+    background: rgba(205, 127, 50, 0.3);
+    box-shadow: 0 5px 20px rgba(205, 127, 50, 0.3);
+}
+
+.pv-talent-btn.verbal {
+    border-color: var(--verbal-primary);
+}
+.pv-talent-btn.verbal:hover, .pv-talent-btn.verbal:active {
+    background: rgba(184, 192, 200, 0.3);
+    box-shadow: 0 5px 20px rgba(184, 192, 200, 0.3);
+}
+
+.pv-talent-btn.preventative {
+    border-color: var(--preventative-primary);
+}
+.pv-talent-btn.preventative:hover, .pv-talent-btn.preventative:active {
+    background: rgba(83, 104, 120, 0.3);
+    box-shadow: 0 5px 20px rgba(83, 104, 120, 0.3);
+}
+
+/* Combat Roll Buttons */
+.pv-combat-actions {
+    text-align: center;
+}
+
+.pv-roll-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pv-roll-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 3px solid transparent;
+}
+
+.pv-roll-btn .roll-icon {
+    font-size: 1.8rem;
+}
+
+.pv-roll-btn.physical {
+    background: linear-gradient(135deg, var(--physical-primary), var(--physical-secondary));
+    border-color: var(--physical-primary);
+}
+
+.pv-roll-btn.verbal {
+    background: linear-gradient(135deg, var(--verbal-primary), var(--verbal-secondary));
+    border-color: var(--verbal-primary);
+    color: #1a1a2e;
+}
+
+.pv-roll-btn.preventative {
+    background: linear-gradient(135deg, var(--preventative-primary), var(--preventative-secondary));
+    border-color: var(--preventative-primary);
+}
+
+.pv-roll-btn:hover:not(.disabled), .pv-roll-btn:active:not(.disabled) {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.pv-roll-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(50%);
+}
+
+/* Footer - Dice Bar */
+.pv-footer {
+    background: rgba(0, 0, 0, 0.6);
+    border-top: 2px solid #4a4a6a;
+    padding: 12px;
+}
+
+.pv-dice-bar {
+    text-align: center;
+}
+
+.pv-dice-cards {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pv-dice-card {
+    width: 100px;
+    padding: 10px;
+    background: rgba(30, 30, 40, 0.9);
+    border: 2px solid #444;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.pv-dice-card.selected {
+    border-color: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    transform: scale(1.05);
+}
+
+.pv-dice-card.physical {
+    border-color: var(--physical-primary);
+}
+.pv-dice-card.verbal {
+    border-color: var(--verbal-primary);
+}
+.pv-dice-card.preventative {
+    border-color: var(--preventative-primary);
+}
+
+.dice-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.dice-card-icon {
+    font-size: 1.2rem;
+}
+
+.dice-card-name {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.dice-card-category {
+    font-size: 0.65rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dice-card-badges {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.dice-card-badges .badge {
+    font-size: 0.7rem;
+    padding: 2px 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dice-card-badges .swap-badge { color: #cc99ff; }
+.dice-card-badges .hope-badge { color: #4ade80; }
+.dice-card-badges .mark-badge { color: #ff6b6b; }
+
+.dice-card-last-roll {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* Modals */
+.pv-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.pv-modal.show {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.pv-modal-content {
+    background: linear-gradient(135deg, #2a2a4a, #1a1a3a);
+    padding: 24px;
+    border-radius: 15px;
+    max-width: 400px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    text-align: center;
+    border: 2px solid #4a4a6a;
+}
+
+.pv-modal-content h2 {
+    font-family: 'Cinzel', serif;
+    color: #ffd700;
+    margin-bottom: 16px;
+}
+
+.pv-modal-close {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background: #4a4a6a;
+    border: 2px solid #6a6a8a;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.pv-modal-close:hover {
+    background: #5a5a7a;
+}
+
+/* Face List Modal */
+.face-list-content {
+    text-align: left;
+}
+
+.face-list-body {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 16px 0;
+}
+
+.face-list-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    margin-bottom: 4px;
+    gap: 10px;
+}
+
+.face-list-item.upgraded {
+    background: rgba(74, 222, 128, 0.15);
+    border-left: 3px solid #4ade80;
+}
+
+.face-list-item.downgraded {
+    background: rgba(248, 113, 113, 0.15);
+    border-left: 3px solid #f87171;
+}
+
+.face-index {
+    color: #666;
+    font-size: 0.85rem;
+    min-width: 30px;
+}
+
+.face-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+    min-width: 40px;
+}
+
+.face-change {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.face-list-item.upgraded .face-change {
+    color: #4ade80;
+}
+
+.face-list-item.downgraded .face-change {
+    color: #f87171;
+}
+
+.face-badges {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+}
+
+.face-badge {
+    font-size: 1rem;
+    cursor: help;
+}
+
+.face-badge.swap { color: #cc99ff; }
+.face-badge.hope { color: #4ade80; }
+.face-badge.mark { color: #ff6b6b; }
+
+/* Player Menu Options */
+.pv-menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.pv-menu-option {
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid #4a4a6a;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pv-menu-option:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ffd700;
+}
+
+.pv-menu-option.danger {
+    border-color: #f87171;
+    color: #f87171;
+}
+
+.pv-menu-option.danger:hover {
+    background: rgba(248, 113, 113, 0.2);
+}
+
+/* Confirmation Modal */
+.confirm-modal-content {
+    text-align: center;
+}
+
+.confirm-modal-content h2 {
+    margin-bottom: 16px;
+}
+
+.confirm-modal-content .confirm-message {
+    color: #aaa;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.confirm-btn-yes, .confirm-btn-no {
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.confirm-btn-yes {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: #000;
+    border-color: #4ade80;
+}
+
+.confirm-btn-yes:hover {
+    box-shadow: 0 5px 20px rgba(74, 222, 128, 0.4);
+}
+
+.confirm-btn-yes.danger {
+    background: linear-gradient(135deg, #f87171, #dc2626);
+    border-color: #f87171;
+    color: #fff;
+}
+
+.confirm-btn-yes.danger:hover {
+    box-shadow: 0 5px 20px rgba(248, 113, 113, 0.4);
+}
+
+.confirm-btn-no {
+    background: #4a4a6a;
+    border-color: #6a6a8a;
+    color: #fff;
+}
+
+.confirm-btn-no:hover {
+    background: #5a5a7a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+    .pv-dice-cards {
+        gap: 6px;
+    }
+
+    .pv-dice-card {
+        width: 90px;
+        padding: 8px;
+    }
+
+    .pv-dice-3d {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+@media (min-height: 800px) {
+    .pv-dice-3d {
+        width: 240px;
+        height: 240px;
+    }
+}
+
+/* Disconnection overlay */
+.pv-disconnected-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.pv-disconnected-overlay h2 {
+    color: #f87171;
+    font-family: 'Cinzel', serif;
+    margin-bottom: 16px;
+}
+
+.pv-disconnected-overlay p {
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.reconnect-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #333;
+    border-top-color: #ffd700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+/* Fallback dice styles */
+.fallback-dice {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 500px;
+    cursor: grab;
+}
+
+.fallback-dice:active {
+    cursor: grabbing;
+}
+
+.fallback-dice-inner {
+    text-align: center;
+    transition: transform 0.1s ease;
+    transform-style: preserve-3d;
+}
+
+.fallback-icon {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.fallback-note {
+    font-size: 0.75rem;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Claimed badge for draft system */
+.claimed-badge {
+    display: block;
+    font-size: 0.75rem;
+    color: #4ade80;
+    margin-top: 8px;
+    padding: 4px 8px;
+    background: rgba(74, 222, 128, 0.2);
+    border-radius: 4px;
+}
+
+/* Upgrade option claimed state */
+.upgrade-option.claimed {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: #4ade80 !important;
+}
+
+.upgrade-option.claimed:hover {
+    transform: none;
+    background: rgba(74, 222, 128, 0.1);
+}
+
+/* Host TV mode indicator */
+.tv-mode-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 2px solid #ffd700;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    z-index: 100;
+}
+
+/* How to play in player view */
+.pv-howto {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.pv-howto h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+}
+
+.pv-howto p {
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+/* Game status in player view */
+.pv-game-status {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.pv-game-status p {
+    color: #888;
+    margin: 8px 0;
+}
+
+/* Shop info in player view */
+.pv-shop-info {
+    text-align: center;
+    padding: 20px;
+}
+
+.pv-shop-info p {
+    color: #888;
+    margin: 8px 0;
+}

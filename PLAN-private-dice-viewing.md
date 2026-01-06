@@ -1,5 +1,24 @@
 # Private Dice Viewing - Implementation Plan
 
+## Status: PHASE 1 COMPLETE
+
+## Design Decisions (Confirmed)
+- **Dice rotation:** Three.js icosahedron (fancy 3D)
+- **Confirmations:** Only important/dangerous actions (not every click)
+- **Disconnects:** Pause game, but allow menu access for saves
+- **Player names:** Free text entry
+- **Host powers:** No override - just wait or save & quit options
+
+## Files Created/Modified
+- `js/playerView.js` - Player phone view system (NEW)
+- `js/confirmation.js` - Confirmation modal system (NEW)
+- `js/dice3d.js` - Three.js dice renderer (NEW)
+- `css/player-view.css` - Mobile-first player styles (NEW)
+- `js/multiplayer.js` - Extended with bidirectional messaging, heartbeat, claims
+- `index.html` - Added new script/css includes
+
+---
+
 ## Overview
 Transform the multiplayer experience so each player uses their personal device (phone) to view their private dice, make decisions, and interact with the game, while a shared "host" screen displays the communal game state.
 
