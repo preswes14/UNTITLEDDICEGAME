@@ -1,10 +1,10 @@
 // ==================== MULTIPLAYER SYSTEM ====================
 // Uses Supabase Realtime for state synchronization
 
-// Configuration - USER MUST FILL THESE IN
+// Configuration - Supabase credentials
 const SUPABASE_CONFIG = {
-    url: '', // e.g., 'https://xxxxx.supabase.co'
-    anonKey: '' // Your anon/public key
+    url: 'https://dqsophptvtlweaiyqlco.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc29waHB0dnRsd2VhaXlxbGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2Njc3NDQsImV4cCI6MjA4MzI0Mzc0NH0.Ep4TYknEHpIa0cPyGnkk3qfiZkvh0woHCqMHDIPL0UQ'
 };
 
 // Multiplayer state
