@@ -446,3 +446,300 @@ Haven't worked out all the details but players will earn a rare resource called 
 - Filling a complete dozen (hitting all 12 values?) grants bonuses
 - Flips the usual "high = good" dice psychology on its head
 - Could be an alternate campaign, challenge mode, or unlockable difficulty
+
+---
+
+## BRAINSTORMING ZONE: The Heart of the Game
+
+*Last updated: 1/6/26 - Claude's prompts for fleshing out the narrative, dialogue, and humanity*
+
+The mechanics are scaffolding. The HEART is what makes players care. This section is for you to work through - write, sketch, muse, rant. I'll incorporate your answers into the game.
+
+---
+
+### PAL (Your Ally-Mentor)
+
+Pal is the emotional core of the tutorial. He's the one who gives the heroes their prophecy, teaches them to fight, and then... leaves. This needs to hit hard.
+
+**Character Questions:**
+| Question | Your Notes |
+|----------|------------|
+| What does Pal look like? (Old wizard? Tired knight? Former adventurer with a limp?) | |
+| Why did Pal give up being an adventurer himself? What's his regret? | |
+| What's Pal's relationship to the prophecy? Did he try and fail? Did he pass it down to someone he loves? | |
+| What pet name or catchphrase does Pal use for the heroes? ("my little dice", "Chosen Ones", "you colorful idiots") | |
+| How does Pal die/disappear? Sacrifice? Illness? Called away? Simply too old to continue? | |
+| What's the LAST thing Pal says to them? (This is the line they'll remember at the end of Stage 5) | |
+
+**Pal's Key Dialogue Moments (write 2-3 lines each):**
+
+1. **When the heroes first meet Pal:**
+   - *What does Pal say when he hands them the prophecy?*
+   -
+
+2. **When teaching them about their "BEST" die:**
+   - *How does Pal frame this as finding their true talent?*
+   -
+
+3. **When teaching them about their "WORST" die:**
+   - *How does Pal make this feel like wisdom, not failure? ("Even the sharpest sword has a dull edge...")*
+   -
+
+4. **When teaching them about Intertwining:**
+   - *How does Pal explain this cosmic gift? Why are the heroes special?*
+   -
+
+5. **When DOOM is first introduced:**
+   - *How does Pal react to seeing the DOOM meter? Fear? Resignation? Determination?*
+   -
+
+6. **When bestowing HOPE:**
+   - *What does Pal say about HOPE? Is it faith? Love? Spite? Refusal to die?*
+   -
+
+7. **Pal's final words:**
+   - *What does Pal say as he passes the torch? What wisdom does he leave behind?*
+   -
+
+---
+
+### THE PROPHECY
+
+The prophecy is what drives everything. What does it actually SAY?
+
+**Write the prophecy text here (can be cryptic, poetic, or ominous):**
+```
+[YOUR PROPHECY HERE - maybe 4-8 lines?]
+
+
+```
+
+**Prophecy Questions:**
+| Question | Your Notes |
+|----------|------------|
+| Why were there 20 prophecies? What happened to the other 19 groups? | |
+| Is the prophecy literal or metaphorical? | |
+| Does the prophecy reference the heroes directly, or are they just interpreting it? | |
+| Is there a twist? (The heroes ARE the prophecy? BOMB wrote it? Pal was one of the failed 19?) | |
+| How does the prophecy connect to DOOM thematically? | |
+
+---
+
+### ENCOUNTER PERSONALITY
+
+Each encounter NPC needs a voice. Currently they're mechanical - let's give them HEART.
+
+**THE MATHEMATICIAN**
+| Prompt | Your Notes |
+|--------|------------|
+| Personality: Absent-minded professor? Obsessive number-lover? Weary scholar? | |
+| Catchphrase or verbal tic when doing math on dice: | |
+| What does he say when you leave WITHOUT taking his offer? | |
+| Does he have a tragic backstory? (Used to be an adventurer? Lost someone to bad probability?) | |
+
+**THE ALCHEMIST**
+| Prompt | Your Notes |
+|--------|------------|
+| Personality: Mad scientist? Gentle healer? Creepy experimentalist? | |
+| How does she describe the feeling of dice-splicing? (Painful? Euphoric? Strange?) | |
+| What does she mutter while working? | |
+| What happens if players ask why she does this? | |
+
+**THE PRIEST**
+| Prompt | Your Notes |
+|--------|------------|
+| Personality: Serene monk? Zealous preacher? Quietly faithful? | |
+| What god or force does the Priest serve? | |
+| How does the Priest describe HOPE? | |
+| What does the Priest think about DOOM? | |
+
+**THE GAMBLER**
+| Prompt | Your Notes |
+|--------|------------|
+| Personality: Flashy showman? Quiet shark? Addicted and broken? | |
+| What does the Gambler say when you WIN big? | |
+| What does the Gambler say when you LOSE? | |
+| Does the Gambler have stakes in ATOM, the heroes, or neither? | |
+
+**THE FERRYMAN**
+| Prompt | Your Notes |
+|--------|------------|
+| Personality: Ancient and bored? Cryptic and wise? Menacing? | |
+| What does the Ferryman know about the prophecy? | |
+| Why does the Ferryman mark dice? What do the marks mean? | |
+| What does the Ferryman say when someone rolls a natural 20 in his presence? | |
+
+---
+
+### BOSS FLAVOR
+
+Each boss needs more than combat stats - they need PRESENCE.
+
+**STAGE 1: THE DIRTY INNKEEPER**
+| Prompt | Your Notes |
+|--------|------------|
+| Name (if you want one): | |
+| Why did he steal from the heroes specifically? | |
+| What does he say when caught? (Remorseful? Defiant? Terrified?) | |
+| What does ATOM have on him? Debt? Family? Threat? | |
+| What are his last words before the arrow silences him? | |
+
+**STAGE 2: THE CORRUPT GUARD**
+| Prompt | Your Notes |
+|--------|------------|
+| Name (if you want one): | |
+| Why did he shoot the Innkeeper? Orders? Panic? Cruelty? | |
+| What does he say when cornered? | |
+| Does he believe in ATOM's cause, or is he just following orders? | |
+| What information does defeating him reveal? | |
+
+**STAGE 3: GENERAL HEIMER**
+| Prompt | Your Notes |
+|--------|------------|
+| Full name and title: | |
+| Is Heimer a true believer, or a pawn? | |
+| What does Heimer's army look like? (Human? Corrupted? Mixed?) | |
+| What does Heimer say about the King? Loyalty? Fear? Disgust? | |
+| Does Heimer have any redeemable qualities? | |
+
+**STAGE 4: KING ROBERT**
+| Prompt | Your Notes |
+|--------|------------|
+| What title does Robert prefer? | |
+| How long has Robert been working with ATOM? | |
+| What does Robert say in the fake "victory" moment? | |
+| What happens to Robert when the portal opens? (Consumed? Transformed? Abandoned?) | |
+| Is Robert AWARE of what BOMB is, or did he think he was summoning something else? | |
+
+**STAGE 5: B.O.M.B.**
+| Prompt | Your Notes |
+|--------|------------|
+| What does BOMB look like? (Eldritch horror? Cosmic entity? Beautiful and terrifying?) | |
+| Does BOMB speak? If so, what's his/its voice like? | |
+| What does BOMB want? (Destruction? Consumption? To exist? To unmake?) | |
+| What is the connection between BOMB and the prophecy? | |
+| What happens in the final moment of victory? (BOMB screams? Fades? Thanks the heroes?) | |
+
+---
+
+### DIE-SPECIFIC FLAVOR
+
+Each die type should have personality in how it's described during rolls. Write a SUCCESS and FAILURE line for each:
+
+| Die | Success Flavor | Failure Flavor |
+|-----|----------------|----------------|
+| **Slash** | | |
+| **Stab** | | |
+| **Bonk** | | |
+| **Threaten** | | |
+| **Deceive** | | |
+| **Persuade** | | |
+| **Bribe** | | |
+| **Hide** | | |
+| **Grapple** | | |
+
+---
+
+### EMOTIONAL BEATS
+
+What are the BIG moments in this game? Write the feeling you want players to have:
+
+| Moment | Desired Emotion | How to Achieve It |
+|--------|-----------------|-------------------|
+| Pal's farewell | | |
+| First DOOM roll that could end the game | | |
+| Using HOPE to save a friend | | |
+| Realizing King Robert was the puppet, not the puppeteer | | |
+| The fake victory screen before the portal opens | | |
+| Seeing the 19 darkened prophecy lines | | |
+| The final hit that destroys BOMB | | |
+
+---
+
+### DIALOGUE SNIPPETS TO WRITE
+
+Quick dialogue lines that would make the game feel alive:
+
+**Player Idles (when someone takes too long):**
+-
+-
+-
+
+**Natural 1 Reactions:**
+-
+-
+-
+
+**Natural 20 Reactions:**
+-
+-
+-
+
+**Low DOOM (everything's fine):**
+-
+-
+
+**High DOOM (getting scary):**
+-
+-
+
+**HOPE Spent:**
+-
+-
+
+---
+
+### WORLDBUILDING QUESTIONS
+
+| Question | Your Notes |
+|----------|------------|
+| What's the world called? | |
+| What's ATOM's full name and philosophy? | |
+| Are there other adventurers in this world? If so, what happened to them? | |
+| What's the relationship between the 20 prophecies and BOMB? | |
+| Is there magic in this world beyond dice and intertwining? | |
+| What year is it? What era? | |
+| What do common people think about the prophecies? (Legend? Joke? Forgotten?) | |
+
+---
+
+### ITEMS I (CLAUDE) CREATED THAT NEED YOUR TOUCH
+
+These are things I implemented mechanically but need your creative input:
+
+**Draft Mode Options (Alchemist Potions):**
+Currently generic names like "Potion of Boosting", "Elixir of Balance", etc.
+- What should these actually be called?
+- What do they look like?
+- What does the Alchemist say when offering them?
+
+**Boss Rewards (Snake Draft):**
+Currently: "+3 to Lowest Face", "+3 HOPE", etc.
+- Should these be narrative artifacts? ("The Innkeeper's Lucky Coin", "A Shard of Pal's Wisdom")
+- What do they look like when claimed?
+
+**Mathematician Options:**
+Currently: "Sculpt: The Safe Bet", "Sculpt: The Climber", etc.
+- How does the Mathematician describe these choices?
+- Are these formulas? Philosophies? Diagrams he draws?
+
+---
+
+### PLACEHOLDER TEXT THAT NEEDS REPLACEMENT
+
+Search the codebase for these and replace with real content:
+
+- [ ] All encounter descriptions in `config.js` (currently functional but bland)
+- [ ] Tutorial dialogue (Pal's lines)
+- [ ] Boss defeat messages
+- [ ] Natural 1 and Natural 20 flavor text
+- [ ] DOOM roll survival/failure messages
+- [ ] Stage transition text
+- [ ] Victory screen text
+- [ ] Game over text
+
+---
+
+### YOUR ADDITIONS
+
+*Add your own brainstorming notes below:*
