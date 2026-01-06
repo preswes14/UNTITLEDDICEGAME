@@ -397,6 +397,81 @@ const SHOP_UPGRADES = [
     { id: 'shield1', name: '+1 Max SHIELD', tier: 4, cost: 3, effect: { type: 'max_shield', amount: 1 } }
 ];
 
+// Consumable items that can be purchased with gold and used during encounters
+const CONSUMABLES = {
+    // Defensive items
+    lucky_charm: {
+        id: 'lucky_charm',
+        name: 'Lucky Charm',
+        description: 'Reroll your last die once',
+        cost: 15,
+        icon: '🍀',
+        effect: 'reroll'
+    },
+    hope_potion: {
+        id: 'hope_potion',
+        name: 'Hope Potion',
+        description: 'Instantly gain +1 HOPE',
+        cost: 20,
+        icon: '🧪',
+        effect: 'hope',
+        amount: 1
+    },
+    doom_ward: {
+        id: 'doom_ward',
+        name: 'Doom Ward',
+        description: 'Reduce DOOM by 2',
+        cost: 25,
+        icon: '🛡️',
+        effect: 'doom_reduce',
+        amount: 2
+    },
+    // Offensive items
+    precision_oil: {
+        id: 'precision_oil',
+        name: 'Precision Oil',
+        description: '+3 to your next roll',
+        cost: 12,
+        icon: '⚗️',
+        effect: 'roll_bonus',
+        amount: 3
+    },
+    fate_coin: {
+        id: 'fate_coin',
+        name: 'Fate Coin',
+        description: 'Flip: 50% chance of +5 or -2 to next roll',
+        cost: 8,
+        icon: '🪙',
+        effect: 'fate_flip'
+    },
+    // Utility items
+    swap_scroll: {
+        id: 'swap_scroll',
+        name: 'Swap Scroll',
+        description: 'Create a random swap link on any die',
+        cost: 18,
+        icon: '📜',
+        effect: 'create_swap'
+    },
+    cleansing_salt: {
+        id: 'cleansing_salt',
+        name: 'Cleansing Salt',
+        description: 'Remove one Ferryman mark from a die',
+        cost: 22,
+        icon: '🧂',
+        effect: 'remove_mark'
+    },
+    merchants_blessing: {
+        id: 'merchants_blessing',
+        name: "Merchant's Blessing",
+        description: '+15 Gold',
+        cost: 10,
+        icon: '💰',
+        effect: 'gold',
+        amount: 15
+    }
+};
+
 // Exotic Dice definitions for The Trapper
 const EXOTIC_DICE = [
     { id: 'd6', name: 'The d6', description: 'Faces: 1, 2, 6, 12, 19, 20',
@@ -462,5 +537,9 @@ const STAGE_5_MAP_STRUCTURE = [
 ];
 
 // Save key for localStorage
-const SAVE_KEY = 'untitledDiceGame_save';
-const SAVE_VERSION = 1;
+const SAVE_KEY_PREFIX = 'untitledDiceGame_slot';
+const SAVE_VERSION = 2;
+const MAX_SAVE_SLOTS = 3;
+
+// Legacy save key for migration
+const LEGACY_SAVE_KEY = 'untitledDiceGame_save';

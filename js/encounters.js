@@ -12,6 +12,9 @@ function selectNode(nodeId) {
     gameState.currentNode = nodeId;
     gameState.currentEncounter = node;
 
+    // Track encounter number within the stage
+    gameState.encounterNumber++;
+
     node.connections.forEach(connId => {
         if (gameState.map[connId].status === 'locked') {
             gameState.map[connId].status = 'available';
@@ -275,6 +278,7 @@ function handleOption(option, node) {
             if (oneIdx > 0) {
                 randomDie.faces[oneIdx] = oneIdx + 1;
                 log(`${randomPlayer.name}'s ${randomDie.name} is partially restored!`, 'success');
+                trackDiceChange();
             } else {
                 log('The fragment pulses but finds nothing to heal.', 'info');
             }
@@ -543,6 +547,7 @@ function applySculpting(die, newValues, playerName, modal) {
     });
 
     log(`${die.name} sculpted! New faces: ${newValues.join(', ')}`, 'success');
+    trackDiceChange(3); // 3 faces modified
     modal.classList.remove('show');
     renderDiceTray();
     completeEncounter();
@@ -628,6 +633,7 @@ function showTrapperTrade() {
                 }
 
                 die.faces[minIdx] = newVal;
+                trackDiceChange();
                 modal.classList.remove('show');
                 renderDiceTray();
                 completeEncounter();
@@ -694,6 +700,8 @@ function showExoticDiceTrade() {
             btn.onclick = () => {
                 ranked.die.faces = [...exoticToGet.faces];
                 if (exoticToGet.isWildcard) {
+                    // Clear existing swaps before adding wildcard swaps
+                    ranked.die.swaps = [];
                     for (let i = 1; i <= 20; i++) {
                         ranked.die.swaps.push({
                             faceValue: i,
@@ -703,6 +711,7 @@ function showExoticDiceTrade() {
                     }
                 }
                 log(`${player.name} trades ${ranked.die.name} for ${exoticToGet.name}!`, 'success');
+                trackDiceChange(20); // Complete die replacement
                 modal.classList.remove('show');
                 renderDiceTray();
                 completeEncounter();
@@ -751,6 +760,7 @@ function showTrapperPaidTrade() {
                 const newVal = Math.min(20, minVal + bonus);
                 die.faces[minIdx] = newVal;
                 log(`Premium trade! ${die.name}: ${minVal} -> ${newVal} (+${bonus})`, 'crit');
+                trackDiceChange();
                 modal.classList.remove('show');
                 renderDiceTray();
                 completeEncounter();
