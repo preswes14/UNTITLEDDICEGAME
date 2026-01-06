@@ -262,6 +262,12 @@ function handleOption(option, node) {
         case 'alchemist_double':
             showDoubleLinkModal();
             break;
+        case 'alchemist_potions':
+            showAlchemistPotions();
+            break;
+        case 'math_draft':
+            showMathematicianOptions();
+            break;
         case 'gamble_range_choice':
             showGambleRangeChoice();
             break;
@@ -937,4 +943,427 @@ function showGambleRangeChoice() {
     options.appendChild(betOut);
 
     modal.classList.add('show');
+}
+
+// ==================== DRAFT MODE ENCOUNTERS ====================
+
+// Show draft-enabled upgrade selection (FCFS mode for shared upgrades)
+function showDraftUpgradeModal(upgrades, mode = DRAFT_MODES.FCFS, onComplete = null) {
+    const modal = document.getElementById('upgradeModal');
+
+    // Determine title based on mode
+    let modeTitle = 'Choose Upgrades';
+    let modeDesc = 'Select an upgrade for your dice:';
+
+    switch (mode) {
+        case DRAFT_MODES.FCFS:
+            modeTitle = 'First Come, First Served!';
+            modeDesc = 'Claim an upgrade before others grab it!';
+            break;
+        case DRAFT_MODES.SNAKE:
+            modeTitle = 'Snake Draft';
+            modeDesc = 'Take turns selecting upgrades.';
+            break;
+        case DRAFT_MODES.DIBS:
+            modeTitle = 'Call Your Dibs!';
+            modeDesc = 'Call dibs and hold for 5 seconds to claim!';
+            break;
+    }
+
+    document.getElementById('upgradeTitle').textContent = modeTitle;
+    document.getElementById('upgradeDescription').textContent = modeDesc;
+
+    // Start draft session
+    startDraft({
+        mode: mode,
+        items: upgrades,
+        onItemClaimed: (item, slot, playerName) => {
+            applyDraftUpgrade(item, slot);
+            updateDraftModalUI();
+        },
+        onDraftComplete: (claimedItems) => {
+            modal.classList.remove('show');
+            if (onComplete) onComplete(claimedItems);
+            completeEncounter();
+        }
+    });
+
+    // Render initial UI
+    renderDraftModalUI(modal, upgrades, mode);
+    modal.classList.add('show');
+}
+
+// Render draft modal UI on host screen
+function renderDraftModalUI(modal, upgrades, mode) {
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    const status = getDraftStatus();
+    if (!status) return;
+
+    // Add snake turn indicator if needed
+    if (mode === DRAFT_MODES.SNAKE) {
+        const currentPicker = getSnakeCurrentPicker();
+        const pickerName = gameState.players[currentPicker]?.name || `Player ${currentPicker + 1}`;
+        const turnDiv = document.createElement('div');
+        turnDiv.className = 'draft-turn-indicator';
+        turnDiv.innerHTML = `<strong>${pickerName}'s turn to pick!</strong>`;
+        turnDiv.style.cssText = 'text-align:center; padding:10px; margin-bottom:15px; background:rgba(255,215,0,0.1); border-radius:8px; color:#ffd700;';
+        options.appendChild(turnDiv);
+    }
+
+    status.items.forEach(item => {
+        const opt = document.createElement('div');
+        opt.className = 'upgrade-option';
+        opt.setAttribute('data-upgrade-id', item.id);
+
+        if (item.claimed) {
+            opt.classList.add('claimed');
+            opt.innerHTML = `
+                <h4>${item.name}</h4>
+                <p>${item.description || ''}</p>
+                <span class="claimed-badge">Claimed by ${item.claimedBy}</span>
+            `;
+        } else {
+            const dibs = status.dibsTimers?.[item.id];
+            if (dibs && dibs.timeLeft > 0) {
+                opt.classList.add('has-dibs');
+                opt.innerHTML = `
+                    <h4>${item.name}</h4>
+                    <p>${item.description || ''}</p>
+                    <span class="dibs-indicator">${dibs.playerName} holding... (${dibs.timeLeft}s)</span>
+                `;
+            } else {
+                opt.innerHTML = `
+                    <h4>${item.name}</h4>
+                    <p>${item.description || ''}</p>
+                `;
+
+                // Only clickable if mode allows (host view is for display mostly)
+                if (!multiplayerState.enabled) {
+                    opt.onclick = () => {
+                        // Single player mode - just claim immediately
+                        const slot = 0; // Default to player 0 in single player
+                        claimDraftItem(item.id, 'local', slot, gameState.players[slot].name);
+                    };
+                }
+            }
+        }
+
+        options.appendChild(opt);
+    });
+
+    // Add close button if no items claimed or for leaving early
+    const skipBtn = document.createElement('button');
+    skipBtn.className = 'option-btn';
+    skipBtn.style.marginTop = '20px';
+    skipBtn.textContent = 'Skip / Continue';
+    skipBtn.onclick = () => {
+        endDraft();
+        modal.classList.remove('show');
+        completeEncounter();
+    };
+    options.appendChild(skipBtn);
+}
+
+// Update draft modal UI when claims happen
+function updateDraftModalUI() {
+    const modal = document.getElementById('upgradeModal');
+    if (!modal.classList.contains('show')) return;
+
+    const status = getDraftStatus();
+    if (!status) return;
+
+    renderDraftModalUI(modal, status.items, status.mode);
+}
+
+// Apply a draft upgrade to a player
+function applyDraftUpgrade(item, slot) {
+    const player = gameState.players[slot];
+    if (!player) return;
+
+    const effect = item.effect || item.data;
+    if (!effect) return;
+
+    switch (effect.type) {
+        case 'upgrade_lowest':
+            // Upgrade lowest face of a random die
+            const dieTypes = Object.keys(player.dice);
+            const randomDie = player.dice[dieTypes[Math.floor(Math.random() * dieTypes.length)]];
+            const minIdx = randomDie.faces.indexOf(Math.min(...randomDie.faces));
+            randomDie.faces[minIdx] += effect.amount || 2;
+            log(`${player.name}'s ${randomDie.name} +${effect.amount || 2}!`, 'success');
+            trackDiceChange();
+            break;
+
+        case 'upgrade_all':
+            Object.values(player.dice).forEach(die => {
+                const minIdx = die.faces.indexOf(Math.min(...die.faces));
+                die.faces[minIdx] += effect.amount || 1;
+            });
+            log(`${player.name}'s all dice +${effect.amount || 1}!`, 'success');
+            trackDiceChange(3);
+            break;
+
+        case 'hope':
+            addHope(effect.amount || 1);
+            log(`+${effect.amount || 1} HOPE!`, 'hope');
+            break;
+
+        case 'gold':
+            addGold(effect.amount || 10);
+            break;
+
+        case 'reduce_doom':
+            reduceDoom(effect.amount || 1);
+            log(`-${effect.amount || 1} DOOM!`, 'success');
+            break;
+
+        default:
+            console.log('Unknown upgrade effect type:', effect.type);
+    }
+
+    renderDiceTray();
+    broadcastStateSync();
+}
+
+// ==================== POST-BOSS REWARDS (Snake Draft) ====================
+
+// Show post-boss reward selection with snake draft
+function showBossRewards() {
+    const stage = gameState.currentStage;
+
+    // Generate rewards based on stage
+    const rewards = generateBossRewards(stage);
+
+    log('Boss defeated! Time to claim your rewards!', 'crit');
+
+    // Custom completion handler to skip the completeEncounter call
+    const modal = document.getElementById('upgradeModal');
+
+    startDraft({
+        mode: DRAFT_MODES.SNAKE,
+        items: rewards,
+        onItemClaimed: (item, slot, playerName) => {
+            applyDraftUpgrade(item, slot);
+            updateDraftModalUI();
+        },
+        onDraftComplete: (claimedItems) => {
+            modal.classList.remove('show');
+            log(`${claimedItems.length} rewards claimed!`, 'success');
+            // Proceed to shop after boss rewards
+            setTimeout(() => {
+                showStageShop();
+            }, 500);
+        }
+    });
+
+    // Set up modal
+    document.getElementById('upgradeTitle').textContent = 'Boss Rewards - Snake Draft!';
+    document.getElementById('upgradeDescription').textContent = 'Take turns claiming your rewards!';
+    renderDraftModalUI(modal, rewards, DRAFT_MODES.SNAKE);
+    modal.classList.add('show');
+}
+
+// Generate boss rewards based on stage
+function generateBossRewards(stage) {
+    const baseRewards = [
+        { id: 'boss_plus3', name: '+3 to Lowest Face', description: 'Upgrade your weakest die face', effect: { type: 'upgrade_lowest', amount: 3 } },
+        { id: 'boss_plus2_all', name: '+2 to All Dice', description: 'Small upgrade to every die', effect: { type: 'upgrade_all', amount: 2 } },
+        { id: 'boss_hope3', name: '+3 HOPE', description: 'Build your safety net', effect: { type: 'hope', amount: 3 } },
+        { id: 'boss_doom_minus2', name: '-2 DOOM', description: 'Reduce the encroaching darkness', effect: { type: 'reduce_doom', amount: 2 } },
+        { id: 'boss_gold20', name: '+20 Gold', description: 'A pile of treasure', effect: { type: 'gold', amount: 20 } }
+    ];
+
+    // Add more powerful rewards for later stages
+    if (stage >= 3) {
+        baseRewards.push(
+            { id: 'boss_plus5', name: '+5 to Lowest Face', description: 'Major die upgrade', effect: { type: 'upgrade_lowest', amount: 5 } },
+            { id: 'boss_hope5', name: '+5 HOPE', description: 'A surge of hope!', effect: { type: 'hope', amount: 5 } }
+        );
+    }
+
+    // Shuffle and return subset
+    const shuffled = baseRewards.sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, Math.min(5, 3 + Math.floor(stage / 2)));
+}
+
+// ==================== ALCHEMIST POTIONS (Dibs Mode) ====================
+
+// Show alchemist potion selection with dibs mode
+function showAlchemistPotions() {
+    const potions = [
+        {
+            id: 'potion_boost',
+            name: 'Potion of Boosting',
+            description: '+4 to your lowest face, but adds a random ally swap',
+            effect: { type: 'boost', amount: 4 }
+        },
+        {
+            id: 'potion_balance',
+            name: 'Elixir of Balance',
+            description: '+2 to ALL your dice faces',
+            effect: { type: 'upgrade_all', amount: 2 }
+        },
+        {
+            id: 'potion_fate',
+            name: 'Brew of Fate',
+            description: '+6 to one face, but -2 to another',
+            effect: { type: 'fate', amount: 6 }
+        },
+        {
+            id: 'potion_clarity',
+            name: 'Draught of Clarity',
+            description: '+3 HOPE and reduce DOOM by 1',
+            effect: { type: 'clarity' }
+        }
+    ];
+
+    log('The Alchemist presents their potions...', 'info');
+    log('Call dibs quickly!', 'info');
+
+    showDraftUpgradeModal(potions, DRAFT_MODES.DIBS, (claimed) => {
+        claimed.forEach(item => {
+            applyAlchemistPotion(item);
+        });
+    });
+}
+
+// Apply alchemist potion effect
+function applyAlchemistPotion(item) {
+    const slot = item.claimedBySlot;
+    const player = gameState.players[slot];
+    if (!player) return;
+
+    const effect = item.effect;
+
+    switch (effect.type) {
+        case 'boost':
+            // +4 to lowest, add random swap
+            const dieTypes = Object.keys(player.dice);
+            const die = player.dice[dieTypes[Math.floor(Math.random() * dieTypes.length)]];
+            const minIdx = die.faces.indexOf(Math.min(...die.faces));
+            die.faces[minIdx] += effect.amount;
+
+            // Add random swap
+            const otherPlayers = gameState.players.filter((_, i) => i !== slot);
+            const targetPlayer = otherPlayers[Math.floor(Math.random() * otherPlayers.length)];
+            const targetSlot = gameState.players.indexOf(targetPlayer);
+            const swapValue = Math.floor(Math.random() * 10) + 5;
+            die.swaps = die.swaps || [];
+            die.swaps.push({
+                faceValue: swapValue,
+                targetPlayer: targetSlot,
+                targetDieType: dieTypes[Math.floor(Math.random() * dieTypes.length)]
+            });
+
+            log(`${player.name}'s ${die.name} boosted! Rolling ${swapValue} now links to ${targetPlayer.name}!`, 'success');
+            trackDiceChange();
+            break;
+
+        case 'upgrade_all':
+            Object.values(player.dice).forEach(die => {
+                const minIdx = die.faces.indexOf(Math.min(...die.faces));
+                die.faces[minIdx] += effect.amount;
+            });
+            log(`${player.name}'s all dice +${effect.amount}!`, 'success');
+            trackDiceChange(3);
+            break;
+
+        case 'fate':
+            // +6 to one face, -2 to another
+            const dType = Object.keys(player.dice)[Math.floor(Math.random() * 3)];
+            const dieToMod = player.dice[dType];
+            const lowIdx = dieToMod.faces.indexOf(Math.min(...dieToMod.faces));
+            const highIdx = dieToMod.faces.indexOf(Math.max(...dieToMod.faces));
+            dieToMod.faces[lowIdx] += 6;
+            dieToMod.faces[highIdx] = Math.max(1, dieToMod.faces[highIdx] - 2);
+            log(`${player.name}'s ${dieToMod.name}: lowest +6, highest -2!`, 'info');
+            trackDiceChange(2);
+            break;
+
+        case 'clarity':
+            addHope(3);
+            reduceDoom(1);
+            log(`${player.name} gains clarity! +3 HOPE, -1 DOOM!`, 'hope');
+            break;
+    }
+
+    renderDiceTray();
+}
+
+// ==================== MATHEMATICIAN (FCFS Mode) ====================
+
+// Show mathematician upgrades with FCFS mode
+function showMathematicianOptions() {
+    const options = [
+        {
+            id: 'math_sculpt_safe',
+            name: 'Sculpt: The Safe Bet',
+            description: 'Replace 3 lowest faces with 8, 9, 10',
+            effect: { type: 'sculpt', values: [8, 9, 10] }
+        },
+        {
+            id: 'math_sculpt_climb',
+            name: 'Sculpt: The Climber',
+            description: 'Replace 3 lowest faces with 5, 10, 15',
+            effect: { type: 'sculpt', values: [5, 10, 15] }
+        },
+        {
+            id: 'math_sculpt_crit',
+            name: 'Sculpt: Crit Fisher',
+            description: 'Replace 3 lowest faces with 17, 18, 19',
+            effect: { type: 'sculpt', values: [17, 18, 19] }
+        },
+        {
+            id: 'math_trade',
+            name: 'Mathematical Trade',
+            description: '-1 to highest face, +4 to lowest face',
+            effect: { type: 'trade' }
+        }
+    ];
+
+    log('The Mathematician offers their calculations...', 'info');
+
+    showDraftUpgradeModal(options, DRAFT_MODES.FCFS, (claimed) => {
+        claimed.forEach(item => {
+            applyMathematicianUpgrade(item);
+        });
+    });
+}
+
+// Apply mathematician upgrade
+function applyMathematicianUpgrade(item) {
+    const slot = item.claimedBySlot;
+    const player = gameState.players[slot];
+    if (!player) return;
+
+    const effect = item.effect;
+    const dieTypes = Object.keys(player.dice);
+    const die = player.dice[dieTypes[Math.floor(Math.random() * dieTypes.length)]];
+
+    switch (effect.type) {
+        case 'sculpt':
+            const sortedWithIdx = die.faces.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
+            const lowestThreeIdx = sortedWithIdx.slice(0, 3).map(x => x.i);
+            lowestThreeIdx.forEach((faceIdx, i) => {
+                die.faces[faceIdx] = effect.values[i];
+            });
+            log(`${player.name}'s ${die.name} sculpted: ${effect.values.join(', ')}!`, 'success');
+            trackDiceChange(3);
+            break;
+
+        case 'trade':
+            const maxVal = Math.max(...die.faces);
+            const minVal = Math.min(...die.faces);
+            const maxIdx = die.faces.indexOf(maxVal);
+            const minIdx = die.faces.indexOf(minVal);
+            die.faces[maxIdx] -= 1;
+            die.faces[minIdx] += 4;
+            log(`${player.name}'s ${die.name}: ${maxVal}->${maxVal-1}, ${minVal}->${minVal+4}!`, 'success');
+            trackDiceChange(2);
+            break;
+    }
+
+    renderDiceTray();
 }

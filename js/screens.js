@@ -7,7 +7,496 @@ let actionAssignments = {
     preventative: [null, null, null]
 };
 
-// Start new game
+// ==================== GAME MODE MENUS ====================
+
+// Show solo game menu
+function showSoloMenu() {
+    gameState.gameMode = 'solo';
+
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'Solo Game';
+
+    const hasSave = hasAnySaveDataForMode('solo');
+    const mostRecent = getMostRecentSaveForMode('solo');
+
+    let savePreview = '';
+    if (mostRecent) {
+        savePreview = `
+            <div class="save-preview-box">
+                <span class="save-stage">Slot ${mostRecent.idx + 1}: ${mostRecent.info.stageName}</span>
+                <span class="save-details">Progress: ${mostRecent.info.progressStr} | Dice: ${mostRecent.info.diceChanges}</span>
+                <span class="save-time">${formatSaveTime(mostRecent.info.timestamp)}</span>
+            </div>
+        `;
+    }
+
+    document.getElementById('upgradeDescription').innerHTML = `
+        <p>Control all 3 heroes yourself!</p>
+        <p style="color:#888; font-size:0.85rem; margin-top:5px;">View all dice at once with the expanded dice tray.</p>
+        ${savePreview}
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    // Continue button (if save exists)
+    if (hasSave) {
+        const continueBtn = document.createElement('button');
+        continueBtn.className = 'option-btn primary';
+        continueBtn.textContent = '▶ Continue';
+        continueBtn.onclick = () => {
+            modal.classList.remove('show');
+            showSoloSaveSlotScreen('load');
+        };
+        options.appendChild(continueBtn);
+    }
+
+    // New Game button
+    const newBtn = document.createElement('button');
+    newBtn.className = 'option-btn';
+    newBtn.textContent = '+ New Solo Game';
+    newBtn.onclick = () => {
+        modal.classList.remove('show');
+        if (hasSave) {
+            showSoloSaveSlotScreen('new');
+        } else {
+            startSoloGame(0);
+        }
+    };
+    options.appendChild(newBtn);
+
+    // Back button
+    const backBtn = document.createElement('button');
+    backBtn.className = 'option-btn secondary';
+    backBtn.style.marginTop = '10px';
+    backBtn.textContent = 'Back';
+    backBtn.onclick = () => modal.classList.remove('show');
+    options.appendChild(backBtn);
+
+    modal.classList.add('show');
+}
+
+// Show solo save slot selection
+function showSoloSaveSlotScreen(mode = 'load') {
+    gameState.gameMode = 'solo';
+
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = mode === 'load' ? 'Continue Solo Game' : 'New Solo Game';
+    document.getElementById('upgradeDescription').textContent = 'Select a save slot:';
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    const allSaveInfo = getAllSaveInfoForMode('solo');
+
+    allSaveInfo.forEach((info, idx) => {
+        const slotDiv = document.createElement('div');
+        slotDiv.className = `save-slot-option ${info ? 'has-data' : 'empty'}`;
+
+        if (info) {
+            slotDiv.innerHTML = `
+                <div class="slot-header">
+                    <span class="slot-number">Slot ${idx + 1}</span>
+                    <span class="slot-progress">${info.progressStr}</span>
+                </div>
+                <div class="slot-details">
+                    <span class="slot-stage">${info.stageName}</span>
+                    <span class="slot-stats">Dice: ${info.diceChanges}</span>
+                    <span class="slot-time">${formatSaveTime(info.timestamp)}</span>
+                </div>
+            `;
+            if (mode === 'load') {
+                slotDiv.onclick = () => {
+                    modal.classList.remove('show');
+                    continueSoloGame(idx);
+                };
+            } else {
+                slotDiv.onclick = () => {
+                    if (confirm(`Overwrite save in Slot ${idx + 1}?`)) {
+                        modal.classList.remove('show');
+                        startSoloGame(idx);
+                    }
+                };
+            }
+        } else {
+            slotDiv.innerHTML = `
+                <div class="slot-header">
+                    <span class="slot-number">Slot ${idx + 1}</span>
+                    <span class="slot-empty">Empty</span>
+                </div>
+            `;
+            slotDiv.onclick = () => {
+                modal.classList.remove('show');
+                startSoloGame(idx);
+            };
+        }
+
+        options.appendChild(slotDiv);
+    });
+
+    // Back button
+    const backBtn = document.createElement('button');
+    backBtn.className = 'option-btn secondary';
+    backBtn.style.marginTop = '15px';
+    backBtn.textContent = 'Back';
+    backBtn.onclick = () => {
+        modal.classList.remove('show');
+        showSoloMenu();
+    };
+    options.appendChild(backBtn);
+
+    modal.classList.add('show');
+}
+
+// Start a new solo game
+function startSoloGame(slot) {
+    gameState.gameMode = 'solo';
+    gameState.currentSaveSlot = slot;
+    deleteSave(slot);
+    startNewGame();
+}
+
+// Continue solo game from save
+function continueSoloGame(slot) {
+    gameState.gameMode = 'solo';
+    continueGame(slot);
+}
+
+// Show multiplayer game menu
+function showMultiplayerGameMenu() {
+    gameState.gameMode = 'multiplayer';
+
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'Multiplayer Game';
+
+    const hasSave = hasAnySaveDataForMode('multiplayer');
+    const mostRecent = getMostRecentSaveForMode('multiplayer');
+
+    let savePreview = '';
+    if (mostRecent) {
+        savePreview = `
+            <div class="save-preview-box">
+                <span class="save-stage">Slot ${mostRecent.idx + 1}: ${mostRecent.info.stageName}</span>
+                <span class="save-details">Progress: ${mostRecent.info.progressStr}</span>
+                <span class="save-time">${formatSaveTime(mostRecent.info.timestamp)}</span>
+            </div>
+        `;
+    }
+
+    document.getElementById('upgradeDescription').innerHTML = `
+        <p>Play with friends on separate devices!</p>
+        <p style="color:#888; font-size:0.85rem; margin-top:5px;">Each player uses their phone to view their private dice.</p>
+        ${savePreview}
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    // Continue button (if save exists)
+    if (hasSave) {
+        const continueBtn = document.createElement('button');
+        continueBtn.className = 'option-btn primary';
+        continueBtn.textContent = '▶ Continue Multiplayer';
+        continueBtn.onclick = () => {
+            modal.classList.remove('show');
+            showMultiplayerSaveSlotScreen('load');
+        };
+        options.appendChild(continueBtn);
+    }
+
+    // Host new game
+    const hostBtn = document.createElement('button');
+    hostBtn.className = 'option-btn';
+    hostBtn.textContent = '🏠 Host New Game';
+    hostBtn.onclick = () => {
+        modal.classList.remove('show');
+        if (hasSave) {
+            showMultiplayerSaveSlotScreen('new');
+        } else {
+            startMultiplayerGame(0, true);
+        }
+    };
+    options.appendChild(hostBtn);
+
+    // Join game
+    const joinBtn = document.createElement('button');
+    joinBtn.className = 'option-btn';
+    joinBtn.textContent = '🔗 Join Game';
+    joinBtn.onclick = () => {
+        modal.classList.remove('show');
+        showJoinGameModal();
+    };
+    options.appendChild(joinBtn);
+
+    // Back button
+    const backBtn = document.createElement('button');
+    backBtn.className = 'option-btn secondary';
+    backBtn.style.marginTop = '10px';
+    backBtn.textContent = 'Back';
+    backBtn.onclick = () => modal.classList.remove('show');
+    options.appendChild(backBtn);
+
+    modal.classList.add('show');
+}
+
+// Show multiplayer save slot selection
+function showMultiplayerSaveSlotScreen(mode = 'load') {
+    gameState.gameMode = 'multiplayer';
+
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = mode === 'load' ? 'Continue Multiplayer' : 'New Multiplayer Game';
+    document.getElementById('upgradeDescription').textContent = 'Select a save slot:';
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    const allSaveInfo = getAllSaveInfoForMode('multiplayer');
+
+    allSaveInfo.forEach((info, idx) => {
+        const slotDiv = document.createElement('div');
+        slotDiv.className = `save-slot-option ${info ? 'has-data' : 'empty'}`;
+
+        if (info) {
+            slotDiv.innerHTML = `
+                <div class="slot-header">
+                    <span class="slot-number">Slot ${idx + 1}</span>
+                    <span class="slot-progress">${info.progressStr}</span>
+                </div>
+                <div class="slot-details">
+                    <span class="slot-stage">${info.stageName}</span>
+                    <span class="slot-time">${formatSaveTime(info.timestamp)}</span>
+                </div>
+            `;
+            if (mode === 'load') {
+                slotDiv.onclick = () => {
+                    modal.classList.remove('show');
+                    continueMultiplayerGame(idx);
+                };
+            } else {
+                slotDiv.onclick = () => {
+                    if (confirm(`Overwrite save in Slot ${idx + 1}?`)) {
+                        modal.classList.remove('show');
+                        startMultiplayerGame(idx, true);
+                    }
+                };
+            }
+        } else {
+            slotDiv.innerHTML = `
+                <div class="slot-header">
+                    <span class="slot-number">Slot ${idx + 1}</span>
+                    <span class="slot-empty">Empty</span>
+                </div>
+            `;
+            slotDiv.onclick = () => {
+                modal.classList.remove('show');
+                startMultiplayerGame(idx, true);
+            };
+        }
+
+        options.appendChild(slotDiv);
+    });
+
+    // Back button
+    const backBtn = document.createElement('button');
+    backBtn.className = 'option-btn secondary';
+    backBtn.style.marginTop = '15px';
+    backBtn.textContent = 'Back';
+    backBtn.onclick = () => {
+        modal.classList.remove('show');
+        showMultiplayerGameMenu();
+    };
+    options.appendChild(backBtn);
+
+    modal.classList.add('show');
+}
+
+// Start a new multiplayer game as host
+function startMultiplayerGame(slot, isHost = true) {
+    gameState.gameMode = 'multiplayer';
+    gameState.currentSaveSlot = slot;
+
+    if (isHost) {
+        deleteSave(slot);
+        // Create and host room, then start game
+        showHostSetupModal();
+    }
+}
+
+// Show host setup modal (room creation)
+function showHostSetupModal() {
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'Host Game';
+    document.getElementById('upgradeDescription').innerHTML = `
+        <p>Create a room for your friends to join.</p>
+        <p style="color:#888; font-size:0.85rem;">Share the room code via Discord or text.</p>
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = `
+        <button class="option-btn primary" onclick="createAndHostRoom()">Create Room</button>
+        <button class="option-btn secondary" onclick="showMultiplayerGameMenu()">Back</button>
+    `;
+
+    modal.classList.add('show');
+}
+
+// Create room and start as host
+async function createAndHostRoom() {
+    const modal = document.getElementById('upgradeModal');
+
+    try {
+        document.getElementById('upgradeDescription').innerHTML = '<p>Creating room...</p>';
+
+        await createRoom();
+
+        // Show room code
+        document.getElementById('upgradeTitle').textContent = 'Room Created!';
+        document.getElementById('upgradeDescription').innerHTML = `
+            <p>Share this code with your friends:</p>
+            <div class="room-code-display">${multiplayerState.roomCode}</div>
+            <p style="color:#888; font-size:0.85rem; margin-top:10px;">
+                Game URL: <span style="color:#ffd700;">${window.location.origin}${window.location.pathname}</span>
+            </p>
+            <p style="color:#888; font-size:0.85rem;">Waiting for players to join...</p>
+        `;
+
+        const options = document.getElementById('upgradeOptions');
+        options.innerHTML = `
+            <button class="option-btn primary" onclick="startGameFromLobby()">Start Game</button>
+            <button class="option-btn secondary" onclick="leaveRoom(); showMultiplayerGameMenu();">Cancel</button>
+        `;
+    } catch (error) {
+        document.getElementById('upgradeDescription').innerHTML = `
+            <p style="color:#ff6666;">Failed to create room: ${error.message}</p>
+        `;
+    }
+}
+
+// Start game from lobby
+function startGameFromLobby() {
+    const modal = document.getElementById('upgradeModal');
+    modal.classList.remove('show');
+    startNewGame();
+}
+
+// Continue multiplayer game from save
+function continueMultiplayerGame(slot) {
+    gameState.gameMode = 'multiplayer';
+
+    // For multiplayer continue, we need to create a room first
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'Continue Multiplayer';
+    document.getElementById('upgradeDescription').innerHTML = `
+        <p>Create a room to continue your saved game.</p>
+        <p style="color:#888; font-size:0.85rem;">Players will need to rejoin with the new room code.</p>
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = `
+        <button class="option-btn primary" onclick="createRoomAndContinue(${slot})">Create Room</button>
+        <button class="option-btn secondary" onclick="showMultiplayerGameMenu()">Back</button>
+    `;
+
+    modal.classList.add('show');
+}
+
+// Create room and continue from save
+async function createRoomAndContinue(slot) {
+    const modal = document.getElementById('upgradeModal');
+
+    try {
+        document.getElementById('upgradeDescription').innerHTML = '<p>Creating room...</p>';
+
+        await createRoom();
+
+        // Show room code
+        document.getElementById('upgradeTitle').textContent = 'Room Created!';
+        document.getElementById('upgradeDescription').innerHTML = `
+            <p>Share this code with your friends:</p>
+            <div class="room-code-display">${multiplayerState.roomCode}</div>
+            <p style="color:#888; font-size:0.85rem; margin-top:10px;">Waiting for players to join...</p>
+        `;
+
+        const options = document.getElementById('upgradeOptions');
+        options.innerHTML = `
+            <button class="option-btn primary" onclick="continueGameFromLobby(${slot})">Continue Game</button>
+            <button class="option-btn secondary" onclick="leaveRoom(); showMultiplayerGameMenu();">Cancel</button>
+        `;
+    } catch (error) {
+        document.getElementById('upgradeDescription').innerHTML = `
+            <p style="color:#ff6666;">Failed to create room: ${error.message}</p>
+        `;
+    }
+}
+
+// Continue game from lobby
+function continueGameFromLobby(slot) {
+    const modal = document.getElementById('upgradeModal');
+    modal.classList.remove('show');
+    continueGame(slot);
+}
+
+// Show join game modal
+function showJoinGameModal() {
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'Join Game';
+    document.getElementById('upgradeDescription').innerHTML = `
+        <p>Enter the room code from your host:</p>
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = `
+        <input type="text" id="joinRoomCodeInput" class="room-code-input"
+               placeholder="Room Code" maxlength="6" style="text-transform: uppercase;">
+        <button class="option-btn primary" onclick="joinRoomFromInput()">Join</button>
+        <button class="option-btn secondary" onclick="showMultiplayerGameMenu()">Back</button>
+    `;
+
+    modal.classList.add('show');
+
+    // Focus input
+    setTimeout(() => {
+        document.getElementById('joinRoomCodeInput')?.focus();
+    }, 100);
+}
+
+// Join room from input
+async function joinRoomFromInput() {
+    const input = document.getElementById('joinRoomCodeInput');
+    const code = input?.value?.toUpperCase()?.trim();
+
+    if (!code || code.length < 4) {
+        alert('Please enter a valid room code');
+        return;
+    }
+
+    try {
+        document.getElementById('upgradeDescription').innerHTML = '<p>Joining room...</p>';
+
+        await joinRoom(code);
+
+        document.getElementById('upgradeTitle').textContent = 'Joined!';
+        document.getElementById('upgradeDescription').innerHTML = `
+            <p>Connected to room <strong>${code}</strong></p>
+            <p style="color:#888;">Waiting for host to start the game...</p>
+        `;
+
+        const options = document.getElementById('upgradeOptions');
+        options.innerHTML = `
+            <button class="option-btn secondary" onclick="leaveRoom(); showMultiplayerGameMenu();">Leave</button>
+        `;
+    } catch (error) {
+        document.getElementById('upgradeDescription').innerHTML = `
+            <p style="color:#ff6666;">Failed to join: ${error.message}</p>
+            <input type="text" id="joinRoomCodeInput" class="room-code-input"
+                   placeholder="Room Code" maxlength="6" value="${code}" style="text-transform: uppercase;">
+        `;
+    }
+}
+
+// ==================== LEGACY FUNCTIONS ====================
+
+// Start new game (internal - used by both modes)
 function startNewGame() {
     resetGameState();
     deleteSave(); // Clear any existing save
@@ -451,6 +940,7 @@ function finishTalentRanking() {
         renderDiceTray();
         updateDoomHopeDisplay();
         updateFloorDisplay();
+        updateSoloDiceToggle(); // Show/hide solo dice button based on mode
 
         const stageInfo = STAGE_INFO[0];
         document.getElementById('gameLog').innerHTML = '<h4>Log</h4>';
@@ -488,6 +978,7 @@ function startGame() {
     renderDiceTray();
     updateDoomHopeDisplay();
     updateFloorDisplay();
+    updateSoloDiceToggle(); // Show/hide solo dice button based on mode
 
     gameState.map[0].status = 'available';
     renderMap();

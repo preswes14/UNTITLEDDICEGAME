@@ -117,7 +117,23 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 300px;
+    width: 320px;
+}
+
+/* Mode sections on title screen */
+.mode-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.save-info-mini {
+    font-size: 0.75rem;
+    color: #888;
+    text-align: center;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
 }
 
 .menu-btn {
@@ -161,6 +177,150 @@ body {
     background: linear-gradient(135deg, #3a5a7a, #2a4a6a);
     border-color: #88ccff;
     box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+}
+
+.menu-btn.secondary {
+    background: transparent;
+    border-color: #555;
+    font-size: 1rem;
+}
+
+.menu-btn.secondary:hover {
+    border-color: #888;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Save slot options in modals */
+.save-slot-option {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.save-slot-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffd700;
+    transform: translateX(5px);
+}
+
+.save-slot-option.has-data {
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.save-slot-option.empty {
+    opacity: 0.6;
+}
+
+.save-slot-option .slot-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.save-slot-option .slot-number {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.save-slot-option .slot-progress {
+    color: #88ccff;
+    font-family: monospace;
+}
+
+.save-slot-option .slot-empty {
+    color: #555;
+    font-style: italic;
+}
+
+.save-slot-option .slot-details {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.save-slot-option .slot-stage {
+    color: #aaa;
+}
+
+.save-slot-option .slot-time {
+    color: #666;
+}
+
+/* Save preview box */
+.save-preview-box {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.save-preview-box .save-stage {
+    display: block;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.save-preview-box .save-details {
+    display: block;
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.save-preview-box .save-time {
+    display: block;
+    color: #666;
+    font-size: 0.75rem;
+    margin-top: 5px;
+}
+
+/* Room code display */
+.room-code-display {
+    font-size: 2.5rem;
+    font-family: monospace;
+    font-weight: bold;
+    color: #ffd700;
+    letter-spacing: 0.3em;
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+/* Room code input */
+.room-code-input {
+    font-size: 1.5rem;
+    font-family: monospace;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #4a4a6a;
+    border-radius: 8px;
+    color: #fff;
+    letter-spacing: 0.2em;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.room-code-input:focus {
+    outline: none;
+    border-color: #ffd700;
+}
+
+.room-code-input::placeholder {
+    color: #555;
+    letter-spacing: normal;
 }
 
 .version {
@@ -1638,6 +1798,67 @@ body {
     margin: 0;
 }
 
+/* Draft Mode Styles */
+.upgrade-option.claimed {
+    background: rgba(74, 222, 128, 0.15);
+    border-color: #4ade80;
+    cursor: default;
+    pointer-events: none;
+}
+
+.upgrade-option.claimed:hover {
+    transform: none;
+    background: rgba(74, 222, 128, 0.15);
+}
+
+.upgrade-option.has-dibs {
+    background: rgba(251, 146, 60, 0.15);
+    border-color: #fb923c;
+    cursor: default;
+}
+
+.claimed-badge {
+    display: inline-block;
+    background: #4ade80;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-top: 8px;
+    text-transform: uppercase;
+}
+
+.dibs-indicator {
+    display: inline-block;
+    background: #fb923c;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-top: 8px;
+    animation: dibs-pulse 1s infinite;
+}
+
+@keyframes dibs-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.draft-turn-indicator {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 8px;
+    border: 2px solid #ffd700;
+    margin-bottom: 15px;
+}
+
+.draft-turn-indicator strong {
+    color: #ffd700;
+}
+
 /* Pause Modal */
 .pause-modal .modal-content {
     background: linear-gradient(135deg, #2a2a4a, #1a1a3a);
@@ -2024,4 +2245,296 @@ body {
     justify-content: center;
     font-weight: bold;
     border: 1px solid #ff3333;
+}
+
+/* ==================== SOLO MODE DICE PANEL ==================== */
+
+.solo-dice-toggle {
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid #ffd700;
+    color: #ffd700;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-left: 15px;
+    transition: all 0.2s;
+}
+
+.solo-dice-toggle:hover {
+    background: rgba(255, 215, 0, 0.3);
+    transform: scale(1.05);
+}
+
+.dice-tray-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.solo-dice-panel {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    max-height: 80vh;
+    background: rgba(20, 20, 30, 0.98);
+    border: 2px solid #444;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+    z-index: 1500;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.solo-dice-panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%) translateX(50px);
+}
+
+.solo-dice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(40, 40, 50, 0.9);
+    border-bottom: 1px solid #444;
+}
+
+.solo-dice-header h3 {
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.solo-dice-close {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.solo-dice-close:hover {
+    color: #ff6b6b;
+}
+
+.solo-dice-content {
+    padding: 10px;
+    max-height: calc(80vh - 50px);
+    overflow-y: auto;
+}
+
+/* Individual player die card in solo panel */
+.solo-die-card {
+    background: rgba(30, 30, 40, 0.6);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.solo-die-card:last-child {
+    margin-bottom: 0;
+}
+
+.solo-die-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.solo-die-header .player-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+}
+
+.solo-die-header .player-name {
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.solo-die-header.player-1 .player-name { color: var(--player-blue); }
+.solo-die-header.player-2 .player-name { color: var(--player-red); }
+.solo-die-header.player-3 .player-name { color: var(--player-green); }
+
+.solo-die-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.solo-die-icon {
+    font-size: 1.3rem;
+}
+
+.solo-die-name {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.solo-die-name.physical { color: var(--physical-primary); }
+.solo-die-name.verbal { color: var(--verbal-primary); }
+.solo-die-name.preventative { color: var(--preventative-primary); }
+
+.solo-die-faces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.solo-face {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(50, 50, 60, 0.8);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 1px solid #555;
+}
+
+/* Face value coloring */
+.solo-face.high {
+    color: #4ade80;
+    border-color: #4ade80;
+    background: rgba(74, 222, 128, 0.15);
+}
+
+.solo-face.crit {
+    color: #ffd700;
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.2);
+    animation: pulse 1.5s infinite;
+}
+
+.solo-face.low {
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.15);
+}
+
+.solo-face.swap {
+    border-color: #c084fc;
+    background: rgba(192, 132, 252, 0.2);
+    position: relative;
+}
+
+.solo-face.swap::after {
+    content: "↔";
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 8px;
+    color: #c084fc;
+}
+
+.solo-face.hope {
+    border-color: #4ade80;
+    box-shadow: 0 0 6px rgba(74, 222, 128, 0.5);
+}
+
+.solo-face.marked {
+    border-color: #8b0000;
+    background: rgba(139, 0, 0, 0.2);
+}
+
+.solo-die-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+    font-size: 0.7rem;
+    color: #888;
+}
+
+.solo-die-meta .swap-count {
+    color: #c084fc;
+}
+
+.solo-die-meta .hope-count {
+    color: #4ade80;
+}
+
+.solo-die-meta .mark-count {
+    color: #ff6b6b;
+}
+
+/* Collapsible sections in solo panel */
+.solo-player-section {
+    margin-bottom: 8px;
+}
+
+.solo-player-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    background: rgba(40, 40, 50, 0.8);
+    border: 1px solid #444;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #eee;
+    transition: all 0.2s;
+}
+
+.solo-player-toggle:hover {
+    background: rgba(50, 50, 60, 0.9);
+}
+
+.solo-player-toggle.player-1 { border-left: 3px solid var(--player-blue); }
+.solo-player-toggle.player-2 { border-left: 3px solid var(--player-red); }
+.solo-player-toggle.player-3 { border-left: 3px solid var(--player-green); }
+
+.solo-player-toggle .toggle-arrow {
+    transition: transform 0.2s;
+}
+
+.solo-player-toggle.collapsed .toggle-arrow {
+    transform: rotate(-90deg);
+}
+
+.solo-player-dice {
+    padding: 8px 0 0 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.solo-player-dice.collapsed {
+    max-height: 0;
+    padding: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 768px) {
+    .solo-dice-panel {
+        width: calc(100% - 40px);
+        right: 20px;
+        max-height: 50vh;
+        top: auto;
+        bottom: 120px;
+        transform: none;
+    }
+    
+    .solo-dice-panel.hidden {
+        transform: translateY(30px);
+    }
 }

@@ -1,5 +1,9 @@
 // ==================== UI RENDERING FUNCTIONS ====================
 
+// Solo dice panel state
+let soloDicePanelOpen = false;
+let soloDiceCollapsedPlayers = {};
+
 // Render the map
 function renderMap() {
     const container = document.getElementById('mapContainer');
@@ -140,6 +144,9 @@ function renderDiceTray() {
         group.appendChild(row);
         tray.appendChild(group);
     });
+
+    // Update solo dice panel if open
+    refreshSoloDicePanel();
 }
 
 // Update DOOM/HOPE/SHIELD display
@@ -668,4 +675,181 @@ function useConsumable(itemId) {
     document.getElementById('upgradeModal').classList.remove('show');
     updateDoomHopeDisplay();
     autoSave();
+}
+
+// ==================== SOLO MODE DICE PANEL ====================
+
+// Toggle solo dice panel visibility
+function toggleSoloDicePanel() {
+    const panel = document.getElementById('soloDicePanel');
+    if (!panel) return;
+
+    soloDicePanelOpen = !soloDicePanelOpen;
+
+    if (soloDicePanelOpen) {
+        panel.classList.remove('hidden');
+        renderSoloDicePanel();
+    } else {
+        panel.classList.add('hidden');
+    }
+}
+
+// Show/hide the solo dice toggle button based on game mode
+function updateSoloDiceToggle() {
+    const toggle = document.getElementById('soloDiceToggle');
+    if (!toggle) return;
+
+    if (gameState.gameMode === 'solo') {
+        toggle.style.display = 'inline-block';
+    } else {
+        toggle.style.display = 'none';
+        // Also hide the panel if switching modes
+        const panel = document.getElementById('soloDicePanel');
+        if (panel) panel.classList.add('hidden');
+        soloDicePanelOpen = false;
+    }
+}
+
+// Render the solo dice panel content
+function renderSoloDicePanel() {
+    const content = document.getElementById('soloDiceContent');
+    if (!content || gameState.players.length === 0) return;
+
+    content.innerHTML = '';
+
+    gameState.players.forEach((player, pIdx) => {
+        const avatar = CHARACTER_AVATARS[player.id];
+        const isCollapsed = soloDiceCollapsedPlayers[pIdx] === true;
+
+        const section = document.createElement('div');
+        section.className = 'solo-player-section';
+
+        // Player toggle header
+        const toggle = document.createElement('button');
+        toggle.className = 'solo-player-toggle player-' + player.id + (isCollapsed ? ' collapsed' : '');
+        toggle.innerHTML = '<img src="' + avatar.image + '" alt="' + avatar.color + '" class="player-avatar" style="width:20px;height:20px;border-radius:3px;">' +
+            '<span>' + player.name + '</span>' +
+            '<span class="toggle-arrow" style="margin-left:auto;">▼</span>';
+        toggle.onclick = function() { toggleSoloPlayerSection(pIdx); };
+        section.appendChild(toggle);
+
+        // Player dice container
+        const diceContainer = document.createElement('div');
+        diceContainer.className = 'solo-player-dice' + (isCollapsed ? ' collapsed' : '');
+        diceContainer.id = 'solo-player-dice-' + pIdx;
+
+        // Render each die
+        Object.entries(player.dice).forEach(function(entry) {
+            var type = entry[0];
+            var die = entry[1];
+            var dieCard = createSoloDieCard(player, type, die);
+            diceContainer.appendChild(dieCard);
+        });
+
+        section.appendChild(diceContainer);
+        content.appendChild(section);
+    });
+}
+
+// Create a die card for the solo panel
+function createSoloDieCard(player, type, die) {
+    const card = document.createElement('div');
+    card.className = 'solo-die-card';
+
+    // Die info header
+    const info = document.createElement('div');
+    info.className = 'solo-die-info';
+    info.innerHTML = '<span class="solo-die-icon">' + die.icon + '</span>' +
+        '<span class="solo-die-name ' + die.category + '">' + die.name + '</span>';
+    card.appendChild(info);
+
+    // Die faces
+    const facesDiv = document.createElement('div');
+    facesDiv.className = 'solo-die-faces';
+
+    // Get swap values, hope segments, and marked segments for highlighting
+    const swapValues = (die.swaps || []).map(function(s) { return s.faceValue; });
+    const hopeSegments = die.hopeSegments || [];
+    const markedSegments = die.crossedSegments || [];
+
+    // Sort faces for display
+    const sortedFaces = die.faces.slice().sort(function(a, b) { return a - b; });
+
+    sortedFaces.forEach(function(face) {
+        const faceEl = document.createElement('span');
+        faceEl.className = 'solo-face';
+        faceEl.textContent = face;
+
+        // Add classes based on face value and special status
+        if (face === 20) {
+            faceEl.classList.add('crit');
+        } else if (face >= 15) {
+            faceEl.classList.add('high');
+        } else if (face <= 3) {
+            faceEl.classList.add('low');
+        }
+
+        if (swapValues.indexOf(face) !== -1) {
+            faceEl.classList.add('swap');
+        }
+
+        if (hopeSegments.indexOf(face) !== -1) {
+            faceEl.classList.add('hope');
+        }
+
+        if (markedSegments.indexOf(face) !== -1) {
+            faceEl.classList.add('marked');
+        }
+
+        facesDiv.appendChild(faceEl);
+    });
+
+    card.appendChild(facesDiv);
+
+    // Meta info (swaps, hope segments, marks)
+    const meta = document.createElement('div');
+    meta.className = 'solo-die-meta';
+
+    if (swapValues.length > 0) {
+        meta.innerHTML += '<span class="swap-count">⇄ ' + swapValues.join(', ') + '</span>';
+    }
+
+    if (hopeSegments.length > 0) {
+        meta.innerHTML += '<span class="hope-count">♡ ' + hopeSegments.join(', ') + '</span>';
+    }
+
+    if (markedSegments.length > 0) {
+        meta.innerHTML += '<span class="mark-count">☠ ' + markedSegments.join(', ') + '</span>';
+    }
+
+    if (meta.innerHTML) {
+        card.appendChild(meta);
+    }
+
+    return card;
+}
+
+// Toggle a player's section in the solo panel
+function toggleSoloPlayerSection(playerIdx) {
+    soloDiceCollapsedPlayers[playerIdx] = !soloDiceCollapsedPlayers[playerIdx];
+
+    const toggle = document.querySelector('.solo-player-section:nth-child(' + (playerIdx + 1) + ') .solo-player-toggle');
+    const container = document.getElementById('solo-player-dice-' + playerIdx);
+
+    if (toggle && container) {
+        if (soloDiceCollapsedPlayers[playerIdx]) {
+            toggle.classList.add('collapsed');
+            container.classList.add('collapsed');
+        } else {
+            toggle.classList.remove('collapsed');
+            container.classList.remove('collapsed');
+        }
+    }
+}
+
+// Update solo panel when dice change (called after rolls, upgrades, etc.)
+function refreshSoloDicePanel() {
+    if (soloDicePanelOpen && gameState.gameMode === 'solo') {
+        renderSoloDicePanel();
+    }
 }

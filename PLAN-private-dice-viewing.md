@@ -1,6 +1,6 @@
 # Private Dice Viewing - Implementation Plan
 
-## Status: PHASE 1 COMPLETE
+## Status: PHASE 2 COMPLETE (Draft Modes Added)
 
 ## Design Decisions (Confirmed)
 - **Dice rotation:** Three.js icosahedron (fancy 3D)
@@ -13,9 +13,19 @@
 - `js/playerView.js` - Player phone view system (NEW)
 - `js/confirmation.js` - Confirmation modal system (NEW)
 - `js/dice3d.js` - Three.js dice renderer (NEW)
+- `js/draftModes.js` - Multi-mode draft system (NEW in Phase 2)
 - `css/player-view.css` - Mobile-first player styles (NEW)
 - `js/multiplayer.js` - Extended with bidirectional messaging, heartbeat, claims
+- `js/encounters.js` - Added draft mode encounters (Phase 2)
+- `js/combat.js` - Boss rewards with snake draft (Phase 2)
+- `js/config.js` - Added new encounter options (Phase 2)
+- `css/styles.css` - Added draft mode styling (Phase 2)
 - `index.html` - Added new script/css includes
+
+## Draft Modes (Phase 2)
+- **FCFS (First Come, First Served)**: Mathematician options - grab fast!
+- **Snake Draft**: Post-boss rewards - rotating priority (1,2,3,3,2,1...)
+- **Dibs + Countdown**: Alchemist potions - call dibs, hold 5 seconds
 
 ---
 

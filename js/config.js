@@ -84,7 +84,8 @@ const ENCOUNTERS = {
         options: [
             { text: 'Free Analysis (+2 to lowest)', action: 'math_free' },
             { text: 'Trade-off (-1 high, +4 low)', action: 'math_tradeoff' },
-            { text: 'Sculpt 3 Faces (choose values)', action: 'math_sculpt' }
+            { text: 'Sculpt 3 Faces (choose values)', action: 'math_sculpt' },
+            { text: '📊 Calculation Draft (grab fast!)', action: 'math_draft' }
         ]
     },
     alchemist: {
@@ -95,7 +96,8 @@ const ENCOUNTERS = {
         options: [
             { text: 'Safe Link (link low roll)', action: 'swap_low_to_ally' },
             { text: 'Risky Splice (random + bonus)', action: 'alchemist_risky' },
-            { text: 'Double Link (both allies)', action: 'alchemist_double' }
+            { text: 'Double Link (both allies)', action: 'alchemist_double' },
+            { text: '🧪 Potion Draft (call dibs!)', action: 'alchemist_potions' }
         ]
     },
     priest: {
@@ -536,10 +538,18 @@ const STAGE_5_MAP_STRUCTURE = [
     { encounter: 'boss', row: 8 }
 ];
 
-// Save key for localStorage
-const SAVE_KEY_PREFIX = 'untitledDiceGame_slot';
+// Save key for localStorage - separate for solo and multiplayer
+const SAVE_KEY_SOLO = 'untitledDiceGame_solo';
+const SAVE_KEY_MULTI = 'untitledDiceGame_multi';
+const SAVE_KEY_PREFIX = 'untitledDiceGame_slot'; // Legacy, keep for migration
 const SAVE_VERSION = 2;
 const MAX_SAVE_SLOTS = 3;
+
+// Game modes
+const GAME_MODES = {
+    SOLO: 'solo',
+    MULTIPLAYER: 'multiplayer'
+};
 
 // Legacy save key for migration
 const LEGACY_SAVE_KEY = 'untitledDiceGame_save';
