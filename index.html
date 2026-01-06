@@ -13,6 +13,9 @@
     <!-- Game Styles -->
     <link rel="stylesheet" href="css/styles.css">
 
+    <!-- Supabase Client (for multiplayer) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
 </head>
@@ -28,9 +31,10 @@
             <button id="continueBtn" class="menu-btn" style="display:none;" onclick="continueGame()">Continue</button>
             <div id="saveInfo" style="display:none; text-align:center; margin-bottom:10px; font-size:0.9rem; color:#888;"></div>
             <button class="menu-btn primary" onclick="startNewGame()">New Game</button>
+            <button class="menu-btn multiplayer-btn" onclick="showMultiplayerMenu()">🌐 Multiplayer</button>
             <button class="menu-btn" onclick="showHowToPlay()">How to Play</button>
         </div>
-        <div class="version">v0.2.0</div>
+        <div class="version">v0.4.0</div>
     </div>
 
     <!-- ==================== HOW TO PLAY SCREEN ==================== -->
@@ -87,6 +91,14 @@
             </div>
 
             <button class="menu-btn back-btn" onclick="closeHowToPlay()">Back to Menu</button>
+        </div>
+    </div>
+
+    <!-- ==================== SAVE SLOT SCREEN ==================== -->
+    <div id="saveSlotScreen" class="screen hidden" style="background:rgba(0,0,0,0.95); padding:40px;">
+        <div style="max-width:600px; margin:0 auto; text-align:center;">
+            <h1 id="saveSlotTitle" style="font-family:'Cinzel',serif; color:#ffd700; margin-bottom:30px;">Select Save Slot</h1>
+            <div id="saveSlots" class="save-slots"></div>
         </div>
     </div>
 
@@ -230,6 +242,8 @@
                     </div>
                 </div>
                 <div class="header-buttons">
+                    <button class="header-btn inventory-btn" onclick="showInventory()" title="Use Items">🎒</button>
+                    <button class="header-btn shop-btn" onclick="showConsumablesShop()" title="Item Shop">🛒</button>
                     <button class="header-btn" onclick="showPauseMenu()">Menu</button>
                 </div>
             </header>
@@ -359,5 +373,6 @@
     <script src="js/encounters.js"></script>
     <script src="js/screens.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/multiplayer.js"></script>
 </body>
 </html>

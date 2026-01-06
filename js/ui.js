@@ -95,7 +95,8 @@ function renderDiceTray() {
             const dieEl = document.createElement('div');
             const hasSwaps = die.swaps && die.swaps.length > 0;
             const hasCrossed = die.crossedSegments && die.crossedSegments.length > 0;
-            dieEl.className = `die ${die.category} player-${player.id}${hasSwaps ? ' has-swap' : ''}`;
+            const hasHope = die.hopeSegments && die.hopeSegments.length > 0;
+            dieEl.className = `die ${die.category} player-${player.id}${hasSwaps ? ' has-swap' : ''}${hasHope ? ' has-hope-segment' : ''}`;
             dieEl.dataset.player = pIdx;
             dieEl.dataset.type = type;
 
@@ -118,11 +119,19 @@ function renderDiceTray() {
                 dieEl.onclick = () => rollDie(pIdx, type);
             }
 
+            // Build tooltip showing special segments
+            let tooltip = die.name;
+            if (hasSwaps) tooltip += `\nSwaps: ${die.swaps.map(s => s.faceValue).join(', ')}`;
+            if (hasHope) tooltip += `\nHope on: ${die.hopeSegments.join(', ')}`;
+            if (hasCrossed) tooltip += `\nMarked: ${die.crossedSegments.join(', ')} (DOOM trigger)`;
+
+            dieEl.title = tooltip;
             dieEl.innerHTML = `
                 <span class="die-name">${die.name}</span>
                 <span class="die-value">${die.lastRoll || 'd20'}</span>
                 ${hasSwaps ? `<span class="swap-badge">${die.swaps.length}</span>` : ''}
-                ${hasCrossed ? `<span class="swap-badge" style="background:#8b0000;left:-8px;right:auto;">&#x2A02;</span>` : ''}
+                ${hasHope ? `<span class="hope-badge" title="Hope segments: ${die.hopeSegments.join(', ')}">&#x2661;</span>` : ''}
+                ${hasCrossed ? `<span class="mark-badge" title="Ferryman marks: ${die.crossedSegments.join(', ')}">&#x2620;</span>` : ''}
             `;
 
             row.appendChild(dieEl);
@@ -313,6 +322,7 @@ function updateShopDisplay() {
 // Continue from shop to next stage
 function continueFromShop() {
     gameState.currentStage++;
+    gameState.encounterNumber = 0; // Reset encounter counter for new stage
     generateMap();
 
     document.getElementById('stageShopScreen').classList.add('hidden');
@@ -351,6 +361,7 @@ function purchaseUpgrade(player, playerIdx, upgrade) {
             const minIdx = randomDie.faces.indexOf(Math.min(...randomDie.faces));
             randomDie.faces[minIdx] += effect.amount;
             log(`${player.name}'s ${randomDie.name} +${effect.amount}!`, 'success');
+            trackDiceChange();
             break;
         }
         case 'upgrade_all': {
@@ -359,6 +370,7 @@ function purchaseUpgrade(player, playerIdx, upgrade) {
                 die.faces[minIdx] += effect.amount;
             });
             log(`${player.name}'s all dice +${effect.amount}!`, 'success');
+            trackDiceChange(3); // 3 dice modified
             break;
         }
         case 'upgrade_best': {
@@ -370,6 +382,7 @@ function purchaseUpgrade(player, playerIdx, upgrade) {
             const maxIdx = bestDie.faces.indexOf(Math.max(...bestDie.faces));
             bestDie.faces[maxIdx] = Math.min(30, bestDie.faces[maxIdx] + effect.amount);
             log(`${player.name}'s ${bestDie.name} +${effect.amount}!`, 'crit');
+            trackDiceChange();
             break;
         }
         case 'gold':
@@ -421,6 +434,7 @@ function showUpgradeModal(amount) {
                 const minIdx = die.faces.indexOf(Math.min(...die.faces));
                 die.faces[minIdx] += amount;
                 log(`Upgraded ${player.name}'s ${die.name}!`, 'success');
+                trackDiceChange();
                 modal.classList.remove('show');
                 renderDiceTray();
                 completeEncounter();
@@ -442,5 +456,216 @@ function applyRandomUpgrade(amount) {
     const minIdx = die.faces.indexOf(Math.min(...die.faces));
     die.faces[minIdx] += amount;
     log(`${randomPlayer.name}'s ${die.name} gets +${amount}!`, 'success');
+    trackDiceChange();
     renderDiceTray();
+}
+
+// ==================== CONSUMABLES SYSTEM ====================
+
+// Show consumables shop modal
+function showConsumablesShop() {
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'Item Shop';
+    document.getElementById('upgradeDescription').innerHTML = `
+        <p>Purchase items with Gold. Items are stored in your inventory for later use.</p>
+        <p style="color:#ffd700; margin-top:5px;">Current Gold: ${gameState.gold}G | Inventory: ${gameState.consumables.length} items</p>
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    // Show available consumables
+    Object.values(CONSUMABLES).forEach(item => {
+        const canAfford = gameState.gold >= item.cost;
+        const opt = document.createElement('div');
+        opt.className = `upgrade-option ${canAfford ? '' : 'disabled'}`;
+        opt.style.opacity = canAfford ? '1' : '0.5';
+        opt.innerHTML = `
+            <h4>${item.icon} ${item.name} <span style="color:#ffd700;">(${item.cost}G)</span></h4>
+            <p>${item.description}</p>
+        `;
+        if (canAfford) {
+            opt.onclick = () => purchaseConsumable(item.id);
+        }
+        options.appendChild(opt);
+    });
+
+    // Show current inventory
+    if (gameState.consumables.length > 0) {
+        const invHeader = document.createElement('h4');
+        invHeader.style.cssText = 'color:#88ccff; margin-top:20px; margin-bottom:10px;';
+        invHeader.textContent = 'Your Inventory:';
+        options.appendChild(invHeader);
+
+        const invCounts = {};
+        gameState.consumables.forEach(id => {
+            invCounts[id] = (invCounts[id] || 0) + 1;
+        });
+
+        const invDiv = document.createElement('div');
+        invDiv.style.cssText = 'display:flex; gap:10px; flex-wrap:wrap; justify-content:center;';
+        Object.entries(invCounts).forEach(([id, count]) => {
+            const item = CONSUMABLES[id];
+            if (item) {
+                const badge = document.createElement('span');
+                badge.style.cssText = 'background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;';
+                badge.textContent = `${item.icon} ${item.name} x${count}`;
+                invDiv.appendChild(badge);
+            }
+        });
+        options.appendChild(invDiv);
+    }
+
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'option-btn';
+    closeBtn.style.marginTop = '20px';
+    closeBtn.textContent = 'Close Shop';
+    closeBtn.onclick = () => modal.classList.remove('show');
+    options.appendChild(closeBtn);
+
+    modal.classList.add('show');
+}
+
+// Purchase a consumable
+function purchaseConsumable(itemId) {
+    const item = CONSUMABLES[itemId];
+    if (!item || gameState.gold < item.cost) return;
+
+    spendGold(item.cost);
+    gameState.consumables.push(itemId);
+    log(`Purchased ${item.icon} ${item.name}!`, 'success');
+
+    // Refresh the shop
+    showConsumablesShop();
+    autoSave();
+}
+
+// Show inventory and use items
+function showInventory() {
+    if (gameState.consumables.length === 0) {
+        log('Your inventory is empty!', 'info');
+        return;
+    }
+
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'Use Item';
+    document.getElementById('upgradeDescription').textContent = 'Select an item to use:';
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    const invCounts = {};
+    gameState.consumables.forEach(id => {
+        invCounts[id] = (invCounts[id] || 0) + 1;
+    });
+
+    Object.entries(invCounts).forEach(([id, count]) => {
+        const item = CONSUMABLES[id];
+        if (item) {
+            const opt = document.createElement('div');
+            opt.className = 'upgrade-option';
+            opt.innerHTML = `
+                <h4>${item.icon} ${item.name} <span style="color:#888;">x${count}</span></h4>
+                <p>${item.description}</p>
+            `;
+            opt.onclick = () => useConsumable(id);
+            options.appendChild(opt);
+        }
+    });
+
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'option-btn';
+    closeBtn.style.marginTop = '20px';
+    closeBtn.textContent = 'Cancel';
+    closeBtn.onclick = () => modal.classList.remove('show');
+    options.appendChild(closeBtn);
+
+    modal.classList.add('show');
+}
+
+// Use a consumable
+function useConsumable(itemId) {
+    const idx = gameState.consumables.indexOf(itemId);
+    if (idx === -1) return;
+
+    const item = CONSUMABLES[itemId];
+    if (!item) return;
+
+    // Remove from inventory
+    gameState.consumables.splice(idx, 1);
+
+    // Apply effect
+    switch (item.effect) {
+        case 'hope':
+            addHope(item.amount);
+            log(`Used ${item.icon} ${item.name}! +${item.amount} HOPE`, 'hope');
+            break;
+        case 'doom_reduce':
+            reduceDoom(item.amount);
+            log(`Used ${item.icon} ${item.name}! -${item.amount} DOOM`, 'success');
+            break;
+        case 'gold':
+            addGold(item.amount);
+            log(`Used ${item.icon} ${item.name}! +${item.amount}G`, 'success');
+            break;
+        case 'roll_bonus':
+            gameState.nextRollBonus = (gameState.nextRollBonus || 0) + item.amount;
+            log(`Used ${item.icon} ${item.name}! Next roll +${item.amount}`, 'success');
+            break;
+        case 'fate_flip':
+            const flip = Math.random() < 0.5;
+            gameState.nextRollBonus = (gameState.nextRollBonus || 0) + (flip ? 5 : -2);
+            log(`Used ${item.icon} ${item.name}! ${flip ? 'Lucky! +5' : 'Unlucky... -2'} to next roll`, flip ? 'crit' : 'fail');
+            break;
+        case 'reroll':
+            gameState.canReroll = true;
+            log(`Used ${item.icon} ${item.name}! You can reroll once`, 'success');
+            break;
+        case 'create_swap':
+            // Create a random swap on a random die
+            const randomPlayer = gameState.players[Math.floor(Math.random() * 3)];
+            const dieTypes = Object.keys(randomPlayer.dice);
+            const randomDie = randomPlayer.dice[dieTypes[Math.floor(Math.random() * 3)]];
+            const faceValue = Math.floor(Math.random() * 10) + 6;
+            const otherPlayers = gameState.players.filter(p => p !== randomPlayer);
+            const targetPlayer = otherPlayers[Math.floor(Math.random() * otherPlayers.length)];
+            const targetDieType = dieTypes[Math.floor(Math.random() * 3)];
+            randomDie.swaps.push({
+                faceValue: faceValue,
+                targetPlayer: gameState.players.indexOf(targetPlayer),
+                targetDieType: targetDieType
+            });
+            log(`Used ${item.icon} ${item.name}! ${randomPlayer.name}'s ${randomDie.name}: ${faceValue} -> ${targetPlayer.name}`, 'swap');
+            trackDiceChange();
+            renderDiceTray();
+            break;
+        case 'remove_mark':
+            // Remove a random ferryman mark
+            let removed = false;
+            for (const player of gameState.players) {
+                for (const die of Object.values(player.dice)) {
+                    if (die.crossedSegments && die.crossedSegments.length > 0) {
+                        die.crossedSegments.pop();
+                        log(`Used ${item.icon} ${item.name}! Removed a Ferryman mark from ${player.name}'s ${die.name}`, 'success');
+                        removed = true;
+                        trackDiceChange();
+                        renderDiceTray();
+                        break;
+                    }
+                }
+                if (removed) break;
+            }
+            if (!removed) {
+                log(`Used ${item.icon} ${item.name}... but no marks to remove!`, 'info');
+                // Refund the item
+                gameState.consumables.push(itemId);
+            }
+            break;
+    }
+
+    document.getElementById('upgradeModal').classList.remove('show');
+    updateDoomHopeDisplay();
+    autoSave();
 }

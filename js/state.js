@@ -10,6 +10,7 @@ const gameState = {
     maxShields: 1,
     currentNode: 0,
     currentStage: 0,
+    encounterNumber: 0, // Track which encounter we're on in current stage
     players: [],
     map: [],
     currentEncounter: null,
@@ -21,7 +22,10 @@ const gameState = {
     tutorial: { active: false, step: 0, currentEncounter: null },
     voting: { active: false, options: [], votes: {}, round: 1, node: null },
     favor: 0,
-    purchasedUpgrades: []
+    purchasedUpgrades: [],
+    diceChanges: 0, // Track total dice modifications made
+    consumables: [], // Inventory of consumable items
+    currentSaveSlot: 0 // Which save slot is active (0, 1, or 2)
 };
 
 // Talent ranking state
@@ -54,6 +58,7 @@ function resetGameState() {
     gameState.maxShields = 1;
     gameState.currentNode = 0;
     gameState.currentStage = 0;
+    gameState.encounterNumber = 0;
     gameState.players = [];
     gameState.map = [];
     gameState.currentEncounter = null;
@@ -66,6 +71,9 @@ function resetGameState() {
     gameState.voting = { active: false, options: [], votes: {}, round: 1, node: null };
     gameState.favor = 0;
     gameState.purchasedUpgrades = [];
+    gameState.diceChanges = 0;
+    gameState.consumables = [];
+    // Note: currentSaveSlot is NOT reset - it persists across games
 
     // Reset talent state
     talentState = {
@@ -101,6 +109,9 @@ function getSerializableState() {
         maxShields: gameState.maxShields,
         currentNode: gameState.currentNode,
         currentStage: gameState.currentStage,
+        encounterNumber: gameState.encounterNumber,
+        diceChanges: gameState.diceChanges,
+        consumables: [...gameState.consumables],
         players: gameState.players.map(p => ({
             id: p.id,
             name: p.name,
@@ -137,13 +148,17 @@ function getSerializableState() {
         })),
         favor: gameState.favor,
         purchasedUpgrades: [...gameState.purchasedUpgrades],
-        tutorial: { ...gameState.tutorial }
+        tutorial: { ...gameState.tutorial },
+        // Save encounter state for mid-encounter resumption
+        encounterState: gameState.encounterState ? { ...gameState.encounterState } : null,
+        voting: gameState.voting ? { ...gameState.voting } : null
     };
 }
 
 // Restore state from saved data
 function restoreFromSave(savedData) {
-    if (!savedData || savedData.version !== SAVE_VERSION) {
+    // Support both old (version 1) and new (version 2) saves
+    if (!savedData || (savedData.version !== SAVE_VERSION && savedData.version !== 1)) {
         console.warn('Invalid or outdated save data');
         return false;
     }
@@ -156,9 +171,16 @@ function restoreFromSave(savedData) {
     gameState.maxShields = savedData.maxShields;
     gameState.currentNode = savedData.currentNode;
     gameState.currentStage = savedData.currentStage;
+    gameState.encounterNumber = savedData.encounterNumber || 0;
+    gameState.diceChanges = savedData.diceChanges || 0;
+    gameState.consumables = savedData.consumables || [];
     gameState.favor = savedData.favor;
     gameState.purchasedUpgrades = savedData.purchasedUpgrades || [];
     gameState.tutorial = savedData.tutorial || { active: false, step: 0, currentEncounter: null };
+
+    // Restore encounter state for mid-encounter resumption
+    gameState.encounterState = savedData.encounterState || null;
+    gameState.voting = savedData.voting || { active: false, options: [], votes: {}, round: 1, node: null };
 
     // Restore players
     gameState.players = savedData.players.map(p => ({
