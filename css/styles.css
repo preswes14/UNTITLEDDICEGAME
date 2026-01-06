@@ -1638,6 +1638,67 @@ body {
     margin: 0;
 }
 
+/* Draft Mode Styles */
+.upgrade-option.claimed {
+    background: rgba(74, 222, 128, 0.15);
+    border-color: #4ade80;
+    cursor: default;
+    pointer-events: none;
+}
+
+.upgrade-option.claimed:hover {
+    transform: none;
+    background: rgba(74, 222, 128, 0.15);
+}
+
+.upgrade-option.has-dibs {
+    background: rgba(251, 146, 60, 0.15);
+    border-color: #fb923c;
+    cursor: default;
+}
+
+.claimed-badge {
+    display: inline-block;
+    background: #4ade80;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-top: 8px;
+    text-transform: uppercase;
+}
+
+.dibs-indicator {
+    display: inline-block;
+    background: #fb923c;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-top: 8px;
+    animation: dibs-pulse 1s infinite;
+}
+
+@keyframes dibs-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.draft-turn-indicator {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 8px;
+    border: 2px solid #ffd700;
+    margin-bottom: 15px;
+}
+
+.draft-turn-indicator strong {
+    color: #ffd700;
+}
+
 /* Pause Modal */
 .pause-modal .modal-content {
     background: linear-gradient(135deg, #2a2a4a, #1a1a3a);

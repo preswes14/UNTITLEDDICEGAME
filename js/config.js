@@ -84,7 +84,8 @@ const ENCOUNTERS = {
         options: [
             { text: 'Free Analysis (+2 to lowest)', action: 'math_free' },
             { text: 'Trade-off (-1 high, +4 low)', action: 'math_tradeoff' },
-            { text: 'Sculpt 3 Faces (choose values)', action: 'math_sculpt' }
+            { text: 'Sculpt 3 Faces (choose values)', action: 'math_sculpt' },
+            { text: '📊 Calculation Draft (grab fast!)', action: 'math_draft' }
         ]
     },
     alchemist: {
@@ -95,7 +96,8 @@ const ENCOUNTERS = {
         options: [
             { text: 'Safe Link (link low roll)', action: 'swap_low_to_ally' },
             { text: 'Risky Splice (random + bonus)', action: 'alchemist_risky' },
-            { text: 'Double Link (both allies)', action: 'alchemist_double' }
+            { text: 'Double Link (both allies)', action: 'alchemist_double' },
+            { text: '🧪 Potion Draft (call dibs!)', action: 'alchemist_potions' }
         ]
     },
     priest: {

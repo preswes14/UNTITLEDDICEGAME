@@ -636,6 +636,175 @@ function onStateSync() {
     renderPlayerView();
 }
 
+// ==================== DRAFT UI SYSTEM ====================
+
+// Render draft UI for player view
+function renderDraftUI() {
+    if (!draftState.active) return;
+
+    const actionsDiv = document.getElementById('pvActions');
+    if (!actionsDiv) return;
+
+    const status = getDraftStatus();
+    if (!status) return;
+
+    let modeLabel = '';
+    let modeDesc = '';
+
+    switch (status.mode) {
+        case DRAFT_MODES.FCFS:
+            modeLabel = 'FIRST COME, FIRST SERVED';
+            modeDesc = 'Tap to claim - fastest wins!';
+            break;
+        case DRAFT_MODES.SNAKE:
+            const currentPicker = status.snakeCurrentPicker;
+            const isMyTurn = currentPicker === multiplayerState.playerSlot;
+            const pickerName = currentPicker !== null ?
+                (gameState.players[currentPicker]?.name || `Player ${currentPicker + 1}`) : 'Unknown';
+            modeLabel = 'SNAKE DRAFT';
+            modeDesc = isMyTurn ? "It's YOUR turn to pick!" : `Waiting for ${pickerName}...`;
+            break;
+        case DRAFT_MODES.DIBS:
+            modeLabel = 'CALL DIBS';
+            modeDesc = 'Call dibs and hold for 5 seconds!';
+            break;
+    }
+
+    updatePhaseIndicator(modeLabel, modeDesc);
+
+    actionsDiv.innerHTML = `
+        <div class="pv-draft-container">
+            <div class="pv-draft-items" id="pvDraftItems">
+                ${renderDraftItems(status)}
+            </div>
+        </div>
+    `;
+}
+
+// Render individual draft items
+function renderDraftItems(status) {
+    return status.items.map(item => {
+        const isClaimed = item.claimed;
+        const claimedByMe = item.claimedBySlot === multiplayerState.playerSlot;
+        const canClaim = !isClaimed && canPlayerClaim(multiplayerState.playerSlot, item.id);
+
+        // Check for dibs on this item
+        const dibs = status.dibsTimers?.[item.id];
+        const hasDibs = dibs && dibs.timeLeft > 0;
+        const myDibs = hasDibs && dibs.playerSlot === multiplayerState.playerSlot;
+
+        let statusClass = '';
+        let statusBadge = '';
+
+        if (isClaimed) {
+            statusClass = claimedByMe ? 'claimed-mine' : 'claimed-other';
+            statusBadge = `<span class="claim-badge">${claimedByMe ? 'YOURS!' : `${item.claimedBy}`}</span>`;
+        } else if (hasDibs) {
+            statusClass = myDibs ? 'my-dibs' : 'other-dibs';
+            statusBadge = `<span class="dibs-badge">${myDibs ? `HOLDING (${dibs.timeLeft}s)` : `${dibs.playerName} (${dibs.timeLeft}s)`}</span>`;
+        }
+
+        const clickHandler = isClaimed ? '' :
+            (status.mode === DRAFT_MODES.DIBS && myDibs ?
+                `onclick="cancelPlayerDibs('${item.id}')"` :
+                `onclick="claimDraftItemFromUI('${item.id}')"`);
+
+        return `
+            <div class="pv-draft-item ${statusClass} ${canClaim ? 'can-claim' : ''}" ${clickHandler}>
+                <div class="draft-item-name">${item.name}</div>
+                <div class="draft-item-desc">${item.description || ''}</div>
+                ${statusBadge}
+                ${!isClaimed && canClaim && !hasDibs ? '<div class="draft-item-action">TAP TO CLAIM</div>' : ''}
+                ${hasDibs && myDibs ? '<div class="draft-item-action">TAP TO CANCEL</div>' : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// Claim a draft item from UI
+function claimDraftItemFromUI(itemId) {
+    const playerSlot = multiplayerState.playerSlot;
+    const playerId = multiplayerState.playerId;
+    const player = getMyPlayer();
+    const playerName = player?.name || `Player ${playerSlot + 1}`;
+
+    // Show confirmation for important claims
+    const item = draftState.items.find(i => i.id === itemId);
+    if (item) {
+        showConfirmation({
+            title: 'Claim Upgrade?',
+            message: `Claim "${item.name}"?\n\n${item.description || ''}`,
+            confirmText: 'Claim!',
+            onConfirm: () => {
+                const result = claimDraftItem(itemId, playerId, playerSlot, playerName);
+                if (result.success === false) {
+                    log(result.reason, 'fail');
+                }
+            }
+        });
+    }
+}
+
+// Cancel dibs from UI
+function cancelPlayerDibs(itemId) {
+    cancelDibs(itemId, multiplayerState.playerId);
+}
+
+// Update draft item UI when claim happens
+function updateDraftItemUI(itemId, playerName) {
+    const item = draftState.items.find(i => i.id === itemId);
+    const itemEl = document.querySelector(`[data-item-id="${itemId}"]`);
+
+    if (itemEl && item) {
+        itemEl.classList.add('claimed');
+        itemEl.classList.remove('can-claim');
+
+        const badge = document.createElement('span');
+        badge.className = 'claim-badge';
+        badge.textContent = `${playerName}`;
+        itemEl.appendChild(badge);
+    }
+
+    // Re-render if still active
+    if (draftState.active) {
+        renderDraftUI();
+    }
+}
+
+// Update dibs UI countdown
+function updateDibsUI(itemId, playerSlot, playerName, timeLeft) {
+    if (!draftState.active) return;
+
+    // Re-render the draft UI to show updated countdown
+    renderDraftUI();
+}
+
+// Update snake UI when turn changes
+function updateSnakeUI(currentPicker) {
+    if (!draftState.active) return;
+
+    const isMyTurn = currentPicker === multiplayerState.playerSlot;
+    const pickerName = currentPicker !== null ?
+        (gameState.players[currentPicker]?.name || `Player ${currentPicker + 1}`) : 'Unknown';
+
+    const desc = isMyTurn ? "It's YOUR turn to pick!" : `Waiting for ${pickerName}...`;
+    updatePhaseIndicator('SNAKE DRAFT', desc);
+
+    // Show notification if it's my turn
+    if (isMyTurn) {
+        log("Your turn! Pick an upgrade!", 'success');
+    }
+
+    renderDraftUI();
+}
+
+// Hide draft UI
+function hideDraftUI() {
+    // Return to normal game phase
+    playerViewState.currentPhase = 'game';
+    renderPhaseContent();
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     // Check URL for player view mode
