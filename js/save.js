@@ -1,9 +1,21 @@
 // ==================== SAVE/LOAD SYSTEM ====================
 // localStorage persistence with multiple save slots
+// Separate save systems for solo and multiplayer modes
 
-// Get the save key for a specific slot
+// Get the save key prefix based on current game mode
+function getSaveKeyPrefix() {
+    return gameState.gameMode === 'multiplayer' ? SAVE_KEY_MULTI : SAVE_KEY_SOLO;
+}
+
+// Get the save key for a specific slot (uses current game mode)
 function getSaveKey(slot) {
-    return `${SAVE_KEY_PREFIX}_${slot}`;
+    return `${getSaveKeyPrefix()}_${slot}`;
+}
+
+// Get the save key for a specific slot and mode
+function getSaveKeyForMode(slot, mode) {
+    const prefix = mode === 'multiplayer' ? SAVE_KEY_MULTI : SAVE_KEY_SOLO;
+    return `${prefix}_${slot}`;
 }
 
 // Save the current game state to the active slot
@@ -50,12 +62,79 @@ function hasSaveData(slot) {
     }
 }
 
-// Check if any save slots have data
+// Check if any save slots have data (for current mode)
 function hasAnySaveData() {
     for (let i = 0; i < MAX_SAVE_SLOTS; i++) {
         if (hasSaveData(i)) return true;
     }
     return false;
+}
+
+// Check if any save slots have data for a specific mode
+function hasAnySaveDataForMode(mode) {
+    for (let i = 0; i < MAX_SAVE_SLOTS; i++) {
+        if (hasSaveDataForMode(i, mode)) return true;
+    }
+    return false;
+}
+
+// Check if a save exists in a specific slot for a specific mode
+function hasSaveDataForMode(slot, mode) {
+    try {
+        const savedJson = localStorage.getItem(getSaveKeyForMode(slot, mode));
+        if (!savedJson) return false;
+
+        const savedData = JSON.parse(savedJson);
+        return savedData && (savedData.version === SAVE_VERSION || savedData.version === 1);
+    } catch (error) {
+        return false;
+    }
+}
+
+// Get save info for a specific slot and mode
+function getSaveInfoForMode(slot, mode) {
+    try {
+        const savedJson = localStorage.getItem(getSaveKeyForMode(slot, mode));
+        if (!savedJson) return null;
+
+        const savedData = JSON.parse(savedJson);
+        if (!savedData || (savedData.version !== SAVE_VERSION && savedData.version !== 1)) return null;
+
+        const progressStr = `${savedData.currentStage}-${savedData.encounterNumber || savedData.currentNode}`;
+
+        return {
+            timestamp: savedData.timestamp,
+            stage: savedData.currentStage,
+            stageName: STAGE_INFO[savedData.currentStage]?.name || 'Unknown',
+            gold: savedData.gold,
+            doom: savedData.doom,
+            hope: savedData.hope,
+            players: savedData.players.map(p => p.name),
+            encounterNumber: savedData.encounterNumber || savedData.currentNode,
+            diceChanges: savedData.diceChanges || 0,
+            progressStr: progressStr
+        };
+    } catch (error) {
+        return null;
+    }
+}
+
+// Get info for all save slots for a specific mode
+function getAllSaveInfoForMode(mode) {
+    const slots = [];
+    for (let i = 0; i < MAX_SAVE_SLOTS; i++) {
+        slots.push(getSaveInfoForMode(i, mode));
+    }
+    return slots;
+}
+
+// Get most recent save info for a mode
+function getMostRecentSaveForMode(mode) {
+    const allInfo = getAllSaveInfoForMode(mode);
+    return allInfo
+        .map((info, idx) => ({ info, idx }))
+        .filter(s => s.info)
+        .sort((a, b) => (b.info.timestamp || 0) - (a.info.timestamp || 0))[0] || null;
 }
 
 // Delete save data from a specific slot

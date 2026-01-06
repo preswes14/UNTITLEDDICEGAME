@@ -25,7 +25,8 @@ const gameState = {
     purchasedUpgrades: [],
     diceChanges: 0, // Track total dice modifications made
     consumables: [], // Inventory of consumable items
-    currentSaveSlot: 0 // Which save slot is active (0, 1, or 2)
+    currentSaveSlot: 0, // Which save slot is active (0, 1, or 2)
+    gameMode: 'solo' // 'solo' or 'multiplayer'
 };
 
 // Talent ranking state

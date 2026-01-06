@@ -117,7 +117,23 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 300px;
+    width: 320px;
+}
+
+/* Mode sections on title screen */
+.mode-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.save-info-mini {
+    font-size: 0.75rem;
+    color: #888;
+    text-align: center;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
 }
 
 .menu-btn {
@@ -161,6 +177,150 @@ body {
     background: linear-gradient(135deg, #3a5a7a, #2a4a6a);
     border-color: #88ccff;
     box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+}
+
+.menu-btn.secondary {
+    background: transparent;
+    border-color: #555;
+    font-size: 1rem;
+}
+
+.menu-btn.secondary:hover {
+    border-color: #888;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Save slot options in modals */
+.save-slot-option {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.save-slot-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffd700;
+    transform: translateX(5px);
+}
+
+.save-slot-option.has-data {
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.save-slot-option.empty {
+    opacity: 0.6;
+}
+
+.save-slot-option .slot-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.save-slot-option .slot-number {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.save-slot-option .slot-progress {
+    color: #88ccff;
+    font-family: monospace;
+}
+
+.save-slot-option .slot-empty {
+    color: #555;
+    font-style: italic;
+}
+
+.save-slot-option .slot-details {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.save-slot-option .slot-stage {
+    color: #aaa;
+}
+
+.save-slot-option .slot-time {
+    color: #666;
+}
+
+/* Save preview box */
+.save-preview-box {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.save-preview-box .save-stage {
+    display: block;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.save-preview-box .save-details {
+    display: block;
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.save-preview-box .save-time {
+    display: block;
+    color: #666;
+    font-size: 0.75rem;
+    margin-top: 5px;
+}
+
+/* Room code display */
+.room-code-display {
+    font-size: 2.5rem;
+    font-family: monospace;
+    font-weight: bold;
+    color: #ffd700;
+    letter-spacing: 0.3em;
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+/* Room code input */
+.room-code-input {
+    font-size: 1.5rem;
+    font-family: monospace;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #4a4a6a;
+    border-radius: 8px;
+    color: #fff;
+    letter-spacing: 0.2em;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.room-code-input:focus {
+    outline: none;
+    border-color: #ffd700;
+}
+
+.room-code-input::placeholder {
+    color: #555;
+    letter-spacing: normal;
 }
 
 .version {

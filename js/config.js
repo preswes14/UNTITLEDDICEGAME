@@ -538,10 +538,18 @@ const STAGE_5_MAP_STRUCTURE = [
     { encounter: 'boss', row: 8 }
 ];
 
-// Save key for localStorage
-const SAVE_KEY_PREFIX = 'untitledDiceGame_slot';
+// Save key for localStorage - separate for solo and multiplayer
+const SAVE_KEY_SOLO = 'untitledDiceGame_solo';
+const SAVE_KEY_MULTI = 'untitledDiceGame_multi';
+const SAVE_KEY_PREFIX = 'untitledDiceGame_slot'; // Legacy, keep for migration
 const SAVE_VERSION = 2;
 const MAX_SAVE_SLOTS = 3;
+
+// Game modes
+const GAME_MODES = {
+    SOLO: 'solo',
+    MULTIPLAYER: 'multiplayer'
+};
 
 // Legacy save key for migration
 const LEGACY_SAVE_KEY = 'untitledDiceGame_save';

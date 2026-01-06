@@ -29,13 +29,25 @@
             <p class="subtitle">A Cooperative Dice Adventure</p>
         </div>
         <div class="title-menu">
-            <button id="continueBtn" class="menu-btn" style="display:none;" onclick="continueGame()">Continue</button>
-            <div id="saveInfo" style="display:none; text-align:center; margin-bottom:10px; font-size:0.9rem; color:#888;"></div>
-            <button class="menu-btn primary" onclick="startNewGame()">New Game</button>
-            <button class="menu-btn multiplayer-btn" onclick="showMultiplayerMenu()">🌐 Multiplayer</button>
-            <button class="menu-btn" onclick="showHowToPlay()">How to Play</button>
+            <!-- Solo Mode -->
+            <div id="soloSection" class="mode-section">
+                <button id="soloBtn" class="menu-btn primary solo-btn" onclick="showSoloMenu()">
+                    🎮 Solo Game
+                </button>
+                <div id="soloSaveInfo" class="save-info-mini" style="display:none;"></div>
+            </div>
+
+            <!-- Multiplayer Mode -->
+            <div id="multiplayerSection" class="mode-section">
+                <button id="multiplayerBtn" class="menu-btn multiplayer-btn" onclick="showMultiplayerGameMenu()">
+                    🌐 Multiplayer Game
+                </button>
+                <div id="multiSaveInfo" class="save-info-mini" style="display:none;"></div>
+            </div>
+
+            <button class="menu-btn secondary" onclick="showHowToPlay()">How to Play</button>
         </div>
-        <div class="version">v0.4.0</div>
+        <div class="version">v0.5.0</div>
     </div>
 
     <!-- ==================== HOW TO PLAY SCREEN ==================== -->
