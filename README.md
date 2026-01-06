@@ -436,3 +436,13 @@ Haven't worked out all the details but players will earn a rare resource called 
   If this color rolls a 20 on a doom die, the doom meter is reduced by 5 (minimum 1). (Triggers before other doom rolls)
   Choose another player's weak die to duplicate. Destroy your weak die, but keep the action name.
   I am envisioning these as permanent, stage-end upgrades sort of like Slay the Spire's Boss Relics. In my mind we should balance test these and figure out the most broken ones, and then give players either the choice of 1 LEGENDARY or 2 EPIC upgrades.
+
+### Future Content Ideas
+
+**"EGGS" Game Mode (Brainstorm 1/3/26)**
+- Players use d12s instead of d20s
+- Core mechanic: Often need to hit EXACTLY 12 to succeed
+- Creates interesting tension where low numbers still suck, but players sometimes need to prioritize getting low numbers to fill out their "dozen"
+- Filling a complete dozen (hitting all 12 values?) grants bonuses
+- Flips the usual "high = good" dice psychology on its head
+- Could be an alternate campaign, challenge mode, or unlockable difficulty
