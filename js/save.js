@@ -241,6 +241,7 @@ function continueGame(slot = 0) {
     renderDiceTray();
     updateDoomHopeDisplay();
     updateFloorDisplay();
+    updateSoloDiceToggle(); // Show/hide solo dice button based on mode
 
     // Check if we were mid-encounter
     if (gameState.encounterState && gameState.currentEncounter) {

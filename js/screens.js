@@ -940,6 +940,7 @@ function finishTalentRanking() {
         renderDiceTray();
         updateDoomHopeDisplay();
         updateFloorDisplay();
+        updateSoloDiceToggle(); // Show/hide solo dice button based on mode
 
         const stageInfo = STAGE_INFO[0];
         document.getElementById('gameLog').innerHTML = '<h4>Log</h4>';
@@ -977,6 +978,7 @@ function startGame() {
     renderDiceTray();
     updateDoomHopeDisplay();
     updateFloorDisplay();
+    updateSoloDiceToggle(); // Show/hide solo dice button based on mode
 
     gameState.map[0].status = 'available';
     renderMap();
