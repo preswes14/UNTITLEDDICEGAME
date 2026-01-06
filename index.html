@@ -13,6 +13,9 @@
     <!-- Game Styles -->
     <link rel="stylesheet" href="css/styles.css">
 
+    <!-- Supabase Client (for multiplayer) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
 </head>
@@ -28,9 +31,10 @@
             <button id="continueBtn" class="menu-btn" style="display:none;" onclick="continueGame()">Continue</button>
             <div id="saveInfo" style="display:none; text-align:center; margin-bottom:10px; font-size:0.9rem; color:#888;"></div>
             <button class="menu-btn primary" onclick="startNewGame()">New Game</button>
+            <button class="menu-btn multiplayer-btn" onclick="showMultiplayerMenu()">🌐 Multiplayer</button>
             <button class="menu-btn" onclick="showHowToPlay()">How to Play</button>
         </div>
-        <div class="version">v0.3.0</div>
+        <div class="version">v0.4.0</div>
     </div>
 
     <!-- ==================== HOW TO PLAY SCREEN ==================== -->
@@ -369,5 +373,6 @@
     <script src="js/encounters.js"></script>
     <script src="js/screens.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/multiplayer.js"></script>
 </body>
 </html>
