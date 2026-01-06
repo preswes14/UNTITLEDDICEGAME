@@ -240,6 +240,13 @@ async function subscribeToRoom(roomCode) {
         .on('broadcast', { event: 'player_disconnected' }, handlePlayerDisconnected)
         .on('broadcast', { event: 'player_reconnected' }, handlePlayerReconnected)
         .on('broadcast', { event: 'game_paused' }, handleGamePaused)
+        // Draft mode events
+        .on('broadcast', { event: 'draft_start' }, handleDraftStart)
+        .on('broadcast', { event: 'draft_end' }, handleDraftEnd)
+        .on('broadcast', { event: 'draft_claim' }, handleDraftClaim)
+        .on('broadcast', { event: 'draft_snake_update' }, handleDraftSnakeUpdate)
+        .on('broadcast', { event: 'draft_dibs' }, handleDraftDibs)
+        .on('broadcast', { event: 'draft_claim_request' }, handleDraftClaimRequest)
         .on('presence', { event: 'sync' }, handlePresenceSync)
         .on('presence', { event: 'leave' }, handlePlayerLeave);
 

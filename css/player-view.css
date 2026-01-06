@@ -862,3 +862,167 @@
     color: #888;
     margin: 8px 0;
 }
+
+/* ==================== DRAFT UI STYLES ==================== */
+
+.pv-draft-container {
+    padding: 10px;
+}
+
+.pv-draft-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pv-draft-item {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 15px;
+    position: relative;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.pv-draft-item.can-claim {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.pv-draft-item.can-claim:active {
+    transform: scale(0.98);
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.pv-draft-item.claimed-mine {
+    background: rgba(74, 222, 128, 0.15);
+    border-color: #4ade80;
+    cursor: default;
+}
+
+.pv-draft-item.claimed-other {
+    background: rgba(100, 100, 100, 0.1);
+    border-color: rgba(100, 100, 100, 0.3);
+    opacity: 0.6;
+    cursor: default;
+}
+
+.pv-draft-item.my-dibs {
+    background: rgba(96, 165, 250, 0.15);
+    border-color: #60a5fa;
+    animation: dibs-pulse 1s infinite;
+}
+
+.pv-draft-item.other-dibs {
+    background: rgba(251, 146, 60, 0.1);
+    border-color: #fb923c;
+    opacity: 0.8;
+}
+
+@keyframes dibs-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(96, 165, 250, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(96, 165, 250, 0.6); }
+}
+
+.draft-item-name {
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.draft-item-desc {
+    color: #aaa;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.draft-item-action {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 0.75rem;
+    color: #ffd700;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.claim-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #4ade80;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.pv-draft-item.claimed-other .claim-badge {
+    background: #666;
+    color: #fff;
+}
+
+.dibs-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #60a5fa;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    animation: countdown-pulse 1s infinite;
+}
+
+.pv-draft-item.other-dibs .dibs-badge {
+    background: #fb923c;
+}
+
+@keyframes countdown-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Snake draft turn indicator */
+.pv-draft-turn-indicator {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.pv-draft-turn-indicator.my-turn {
+    background: rgba(74, 222, 128, 0.15);
+    border: 2px solid #4ade80;
+    animation: my-turn-glow 1.5s infinite;
+}
+
+@keyframes my-turn-glow {
+    0%, 100% { box-shadow: 0 0 10px rgba(74, 222, 128, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(74, 222, 128, 0.6); }
+}
+
+.pv-draft-turn-indicator h4 {
+    color: #ffd700;
+    margin-bottom: 5px;
+}
+
+.pv-draft-turn-indicator.my-turn h4 {
+    color: #4ade80;
+}
+
+.pv-draft-turn-indicator p {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+/* Draft mode labels in phase indicator */
+.phase-label:contains("FIRST"), .phase-label:contains("SNAKE"), .phase-label:contains("DIBS") {
+    color: #ffd700;
+}

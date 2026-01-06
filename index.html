@@ -29,13 +29,25 @@
             <p class="subtitle">A Cooperative Dice Adventure</p>
         </div>
         <div class="title-menu">
-            <button id="continueBtn" class="menu-btn" style="display:none;" onclick="continueGame()">Continue</button>
-            <div id="saveInfo" style="display:none; text-align:center; margin-bottom:10px; font-size:0.9rem; color:#888;"></div>
-            <button class="menu-btn primary" onclick="startNewGame()">New Game</button>
-            <button class="menu-btn multiplayer-btn" onclick="showMultiplayerMenu()">🌐 Multiplayer</button>
-            <button class="menu-btn" onclick="showHowToPlay()">How to Play</button>
+            <!-- Solo Mode -->
+            <div id="soloSection" class="mode-section">
+                <button id="soloBtn" class="menu-btn primary solo-btn" onclick="showSoloMenu()">
+                    🎮 Solo Game
+                </button>
+                <div id="soloSaveInfo" class="save-info-mini" style="display:none;"></div>
+            </div>
+
+            <!-- Multiplayer Mode -->
+            <div id="multiplayerSection" class="mode-section">
+                <button id="multiplayerBtn" class="menu-btn multiplayer-btn" onclick="showMultiplayerGameMenu()">
+                    🌐 Multiplayer Game
+                </button>
+                <div id="multiSaveInfo" class="save-info-mini" style="display:none;"></div>
+            </div>
+
+            <button class="menu-btn secondary" onclick="showHowToPlay()">How to Play</button>
         </div>
-        <div class="version">v0.4.0</div>
+        <div class="version">v0.5.0</div>
     </div>
 
     <!-- ==================== HOW TO PLAY SCREEN ==================== -->
@@ -280,9 +292,23 @@
 
             <!-- Dice Tray -->
             <footer class="dice-tray">
-                <div class="dice-tray-header">Roll Your Dice</div>
+                <div class="dice-tray-header">
+                    Roll Your Dice
+                    <button id="soloDiceToggle" class="solo-dice-toggle" onclick="toggleSoloDicePanel()" style="display:none;" title="View All Dice Faces">
+                        📊 All Dice
+                    </button>
+                </div>
                 <div id="diceTray" class="dice-grid"></div>
             </footer>
+
+            <!-- Solo Mode Dice Overview Panel (Hidden by default) -->
+            <div id="soloDicePanel" class="solo-dice-panel hidden">
+                <div class="solo-dice-header">
+                    <h3>All Dice Faces</h3>
+                    <button class="solo-dice-close" onclick="toggleSoloDicePanel()">×</button>
+                </div>
+                <div id="soloDiceContent" class="solo-dice-content"></div>
+            </div>
 
             <!-- Game Log -->
             <div id="gameLog" class="game-log">
@@ -375,6 +401,7 @@
     <script src="js/screens.js"></script>
     <script src="js/main.js"></script>
     <script src="js/multiplayer.js"></script>
+    <script src="js/draftModes.js"></script>
     <!-- Player View System -->
     <script src="js/confirmation.js"></script>
     <script src="js/dice3d.js"></script>

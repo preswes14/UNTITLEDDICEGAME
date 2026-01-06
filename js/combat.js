@@ -474,15 +474,26 @@ function showBossVictory() {
         document.getElementById('gameScreen').classList.add('hidden');
         deleteSave(); // Clear save on victory
     } else {
-        // Show stage complete, proceed to shop
+        // Show stage complete
         const nextStage = stage + 1;
         gameState.favor = STAGE_FAVOR[nextStage] || 0;
 
-        log(`Stage ${stage} Complete! Proceeding to upgrade shop...`, 'crit');
+        log(`Stage ${stage} Complete!`, 'crit');
 
-        setTimeout(() => {
-            showStageShop();
-        }, 1500);
+        // In multiplayer, show boss rewards with snake draft
+        if (multiplayerState.enabled) {
+            log('Choose your rewards!', 'success');
+            setTimeout(() => {
+                showBossRewards();
+                // showStageShop will be called after draft completes
+            }, 1500);
+        } else {
+            // Single player - go straight to shop
+            log('Proceeding to upgrade shop...', 'info');
+            setTimeout(() => {
+                showStageShop();
+            }, 1500);
+        }
     }
 }
 
