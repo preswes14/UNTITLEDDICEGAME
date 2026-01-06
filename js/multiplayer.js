@@ -495,11 +495,16 @@ function startMultiplayerGame() {
 // Show host waiting screen
 function showHostWaitingScreen(roomCode) {
     const modal = document.getElementById('upgradeModal');
+    const gameUrl = window.location.origin + window.location.pathname;
     document.getElementById('upgradeTitle').textContent = 'Room Created!';
     document.getElementById('upgradeDescription').innerHTML = `
-        <p>Share this code with your friends:</p>
+        <p style="margin-bottom:15px;">Tell your friends to go to:</p>
+        <div style="font-size:0.9rem; font-family:monospace; color:#60a5fa;
+             background:#1a2a3a; padding:10px 15px; border-radius:6px; margin-bottom:20px;
+             word-break:break-all; border:1px solid #3a5a7a;">${gameUrl}</div>
+        <p>Then enter this code:</p>
         <div id="roomCodeDisplay" style="font-size:3rem; font-family:monospace; color:#ffd700;
-             background:#222; padding:20px 40px; border-radius:10px; margin:20px auto;
+             background:#222; padding:20px 40px; border-radius:10px; margin:15px auto;
              border:3px solid #ffd700; letter-spacing:10px;">${roomCode}</div>
         <p id="waitingPlayerCount">Waiting for players... (1/3)</p>
     `;
