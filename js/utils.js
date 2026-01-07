@@ -115,7 +115,12 @@ function showPalDialogue(text) {
 
     const palMsg = document.createElement('div');
     palMsg.className = 'log-entry pal-dialogue';
-    palMsg.innerHTML = `<strong>Pal:</strong> "${text}"`;
+    palMsg.innerHTML = `
+        <div style="display: flex; align-items: flex-start; gap: 10px;">
+            <img src="assets/pal.png" alt="Pal" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: rgba(0,0,0,0.3);">
+            <div><strong>Pal:</strong> "${text}"</div>
+        </div>
+    `;
     palMsg.style.cssText = 'background: rgba(147, 51, 234, 0.2); border-left: 3px solid #a855f7; padding: 8px; margin: 5px 0; border-radius: 5px;';
     logDiv.appendChild(palMsg);
     logDiv.scrollTop = logDiv.scrollHeight;
@@ -132,8 +137,14 @@ function getNeutralOutcome() {
 // Update encounter description dynamically
 function updateEncounterDescription(title, icon, description, options) {
     document.getElementById('encounterTitle').textContent = title;
+
+    // If icon is 'PAL', show PAL's image instead
+    const imageHtml = icon === 'PAL'
+        ? `<img src="assets/pal.png" alt="Pal" style="width: 80px; height: 80px; border-radius: 12px; object-fit: contain; background: rgba(147, 51, 234, 0.2); border: 2px solid #a855f7; margin-bottom: 15px;">`
+        : `<p style="font-size: 2rem; margin-bottom: 15px;">${icon}</p>`;
+
     document.getElementById('encounterDescription').innerHTML = `
-        <p style="font-size: 2rem; margin-bottom: 15px;">${icon}</p>
+        ${imageHtml}
         <p>${description}</p>
     `;
 
