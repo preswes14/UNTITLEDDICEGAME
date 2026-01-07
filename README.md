@@ -402,353 +402,86 @@ Ranked from most to least powerful:
 - [x] More intertwine rewards (Double Link, Exotic Dice trades)
 - [ ] Visual flourishes for 1s (red) and 20s (gold) on dice display
 
-### Open Questions
+---
 
-- Should the players have gotten their prophecy from a beloved figure who left them notes?
-- Why were there 20 prophecies? This needs to tie in better with the narrative
-- Explore the Oppenheimer thematic parallels further?
-- 
-NOTES FOR CLAUDE 1/2/26 -I have showed this game to several people and come up with some changes that need to happen for the game to make sense to an incoming human.
-- LITTLE THING 1: Graphics - Each character should be loosely represented as a humanoid die (sort of similar to Dicey Dungeons but with a d20 not a D6), each with a distinctive feature (off the top I am thinking hat, tail, and bow. I will upload my basic art for Blue, Red, and Green (who are styled after wizard, ranger, and pirate, but no need to call them that in game - use the Color names for each character as default names, and allow the players to rename them.)) I may sometimes call The Players "The Colors" below cause that's how my brain works.
-- MEDIUM THING 2 - I want to change how HOPE works to instead BANK (1 max as a team to start) the ability to PREVENT a doom roll that would otherwise end the game. However, that means that when they succeed on a DOOM roll *without* spending their HOPE charge, the DOOM meter also increases by 1 (to indicate a light injury, a brush with death, etc). Similarly I want to require all 3 players to roll a DOOM die on a doom check, and if ANY 1s are rolled, it's a fail. But HOPE can prevent this and later a mechanic called SHIELD will help ease this pressure by preventing a certain number of DOOM rolls.
-- BIG THING 3: STAGE 0 This is going to be a "Stage 0" or tutorial stage that gradually introduces the mechanics that will be used throughout the actual stages.
-- -- The game should start with a rudimentary character select screen prompting each player to choose a name, their "feature (which will match that player number's color)" and select something they are good at. This gives them one move that is their "core move", and lets them do the existing power-up for the good die.  
-- --The players should then come across an obstacle that allows them to roll their core moves to try to beat it (like a boulder with a face in the middle of the path). One success of any kind should clear this (with some funny dialogue I'll write)
-- --The player should then get to pick something they are bad at (you have more than one skill of course, you are a great adventurer!). The next obstacle will be rigged or scripted to go poorly somehow (maybe even just forcing them to use their bad die and requiring 2 successes of any kind, forcing at least 1 nat 1 on the players. This will make the DOOM meter appear, which we will mention but lampshade (oh. that's.. bad. The DOOM meter just increased. Oh well, problem for later!)
-- --Finally, in picking the medium die, the players will get to intertwine their dice. This should be presented as a super-powerful game-breaking power, that only THESE characters in the world get due to them being the protagonists.. cough cough i mean the CHOSEN ONES!!! Prompt them to replace the 2 and the 3 on each of their dice with rolls on another hero's specific dice - this must be chosen NOW! (This serves to make sure the players are talking and remember each other's abilities and strengths).
-- A final combat (possibly the end of a reverie or a memory or a training sequence) ensues, allowing the players to use their mid die on turn 1 then their mid OR strong on turn 2, and finally all 3 dice (or all 9 total) on Round 3. More importantly, this is the first combat, so this *officially* introduces the DOOM meter - this is the first time they have been capable of actually taking damage, and therefore rolling on the DOOM meter.
-- -- The battle is semi-scripted to ensure the players roll twice on the doom meter - the first roll, at the end of Turn 1, will be a close call that increases the doom meter, but would not end the game.
-- The ally-mentor who gave them their prophecy bestows HOPE upon them at the start of TURN 2 this battle and explains how to use it. At the end of Turn 2 they do another DOOM roll which is scripted to have at least one 1 (maybe even all 1s would be funny) so that they have to burn their charge of HOPE. At the start of Turn 3, ally-mentor should imbue their GOOD dice with HOPE on the D20s (they did not have it before this point in the tutorial), and then ensure that the third person who takes their turn rolls a 20 to get a charge of HOPE back. The battle should conclude shortly after, around turn 4 or 5, fair and square as the heroes triumph.
-- We see a short little scene where the Colors lose their ally-mentor (Pallete, like color palette (not sure about spelling), call him Pal?) and this sets up the narrative of them following the prophecy where it leads to Stage 1.
-- -END OF BIG THING 3
-- MEDIUM THING 4 - SHIELDS
-Haven't worked out all the details but players will earn a rare resource called SHIELDS which will prevent DOOM rolls before they happen (at the cost of 1 shield per TEAM roll). Perhaps the heroes ace the miniboss (whatever that means), that means they would be awarded 1 shield which persists through until the final combat. Then the first DOOM roll they'd have to make is canceled and the battle continues as normally. Like HOPE this will initially cap at 1 stack.
-  Other thoughts
-  There need to be legendary relics/garments that the Colors can choose from upon conquering bosses or clearing specific challenges. I'm thinking powerful game-changers like:
-  This Color no longer has to roll a die on Doom checks
-  This color removes doom from 1 of their nat 1 dice
-  The party gains an extra max charge of HOPE (repeatable up to 3x? 5x?)
-  The party gains an extra max charge of SHIELD (repeatable up to 3x? 5x?)
-  When this color's grants an intertwined roll, that roll cannot result in a natural 1 (reroll).
-  When this color is granted an intertwined roll, that roll cannot result in a natural 1.
-  Start each stage with 0 doom instead of 1
-  This character replaces all HOPE on their dice with SHIELD
-  If this color rolls a 20 on a doom die, the doom meter is reduced by 5 (minimum 1). (Triggers before other doom rolls)
-  Choose another player's weak die to duplicate. Destroy your weak die, but keep the action name.
-  I am envisioning these as permanent, stage-end upgrades sort of like Slay the Spire's Boss Relics. In my mind we should balance test these and figure out the most broken ones, and then give players either the choice of 1 LEGENDARY or 2 EPIC upgrades.
+## Characters
 
-### Future Content Ideas
+### The Colors (Playable Heroes)
 
-**"EGGS" Game Mode (Brainstorm 1/3/26)**
+The three playable characters are humanoid d20 dice, each with a distinctive style:
+
+| Character | Color | Style | Default Name |
+|-----------|-------|-------|--------------|
+| Player 1 | Blue | Wizard (mystical robes, staff) | Blue |
+| Player 2 | Red | Ranger (hooded cloak, bow) | Red |
+| Player 3 | Green | Pirate (tricorn hat, cutlass) | Green |
+
+Players can rename their characters but the color identities remain.
+
+### Pal (Ally-Mentor)
+
+Pal is the emotional core of the tutorial - a greying d20 with a beard and staff, decrepit and soft-edged. He found the Colors as orphaned street dice and raised them. He's part Aragorn, part Robin Hood, part Guildmaster, and two parts Dad.
+
+**Key Traits:**
+- Pet names for heroes: "Dicelings", "Pips", "Little Dice", "Pipsqueaks"
+- The prophecy foretold his failure would allow the Colors to succeed
+- At tutorial's end, he's struck down and passes the prophecy to the Colors
+- Final words: *"I am... And forever shall be... Your Pal..."*
+
+---
+
+## The Prophecy
+
+*The colors of momentous day—*
+*Red and blue and green and grey,*
+*Less but one, a Pal forgotten,*
+*Walk fate's rope and feel it tauten*
+*Botch and crit and fail and roll*
+*The mentor's death, inciting toll*
+*Then dielines blur and Colors sort,*
+*Thus, Fate's Intertwined Cohort;*
+*Together, Lucky Trio, shall,*
+*Behold The Future Sought by Pal.*
+*DOOM be damned, HOPE unforesaken,*
+*The Colors Powers shall awaken.*
+*To save the very planet's soul*
+*Defeat the BOMB, achieve your goal.*
+
+**Lore Notes:**
+- 20 prophecies appeared overnight, 20 years ago
+- The other 19 groups either went corrupt, died, or lost the prophecy
+- BOMB is a galaxy-black d20 with a fuse who has been forcing luck in his favor
+- Something Pal taught the Colors will help them break BOMB's streak
+
+---
+
+## NPC Personalities
+
+| NPC | Personality | Voice/Quirks |
+|-----|-------------|--------------|
+| **The Mathematician** | Middle-school nerd | "Astounding! According to my calculations, this upgrade is Completely OP!" |
+| **The Alchemist** | Mad scientist, euphoric about dice-splicing | Cackles when asked why she does this; mutters about remaking bodies |
+| **The Priest** | Poor priest with nothing to offer but HOPE | Serves the forces of HOPE, opposes DOOM |
+| **The Gambler** | Carnival barker meets 3-card Monty dealer | "Eyy wouldja lookithat bigwinner bigwinner wannagoagain?" |
+| **The Ferryman** | Tall, menacing, silent (like Charon from Hades) | Wants payment one way or another; visibly impressed by nat 20s |
+
+---
+
+## Boss Details
+
+| Boss | Name | Personality | Key Info |
+|------|------|-------------|----------|
+| **Stage 1** | Seedy Sammy (Innkeeper) | Remorseful thief | Stole to pay gambling debts to ATOM; silenced by arrow mid-confession |
+| **Stage 2** | Crooked Chester (Guard) | Confused young zealot | ATOM operative monitoring ground-level; reveals General Heimer |
+| **Stage 3** | General Heimer | Bloodthirsty true believer | Persuaded King Robert into ATOM; may have known Pal |
+| **Stage 4** | King Robert | Evil, confused, corrupted | Consumed summoning BOMB; fake victory before portal opens |
+| **Stage 5** | B.O.M.B. | Cold robotic cosmic entity | "Threat detected. Prophecy-following suspected." Realizes the futility of his mission upon defeat |
+
+---
+
+## Future Content Ideas
+
+**"EGGS" Game Mode**
 - Players use d12s instead of d20s
 - Core mechanic: Often need to hit EXACTLY 12 to succeed
-- Creates interesting tension where low numbers still suck, but players sometimes need to prioritize getting low numbers to fill out their "dozen"
-- Filling a complete dozen (hitting all 12 values?) grants bonuses
-- Flips the usual "high = good" dice psychology on its head
-- Could be an alternate campaign, challenge mode, or unlockable difficulty
-
----
-
-## BRAINSTORMING ZONE: The Heart of the Game
-
-*Last updated: 1/6/26 - Claude's prompts for fleshing out the narrative, dialogue, and humanity*
-
-The mechanics are scaffolding. The HEART is what makes players care. This section is for you to work through - write, sketch, muse, rant. I'll incorporate your answers into the game.
-
----
-
-### PAL (Your Ally-Mentor)
-
-Pal is the emotional core of the tutorial. He's the one who gives the heroes their prophecy, teaches them to fight, and then... leaves. This needs to hit hard.
-
-**Character Questions:**
-| Question | Your Notes |
-|----------|------------|
-| What does Pal look like? (Old wizard? Tired knight? Former adventurer with a limp?) | He should be a greying D20 with a beard and a staff, decrepit, derelict, crumbling and soft-edged. |
-| Why did Pal give up being an adventurer himself? What's his regret? | He was a fervent adventurer to the very end but he was too old and weak and lost to the enemy (at the end of Stage 0). |
-| What's Pal's relationship to the prophecy? Did he try and fail? Did he pass it down to someone he loves? | The prophecy was that he ultimately would fail but the circumstances of his failure would allow for The Colors to assume stewardship of the prophecy and bring about its portent. |
-| What pet name or catchphrase does Pal use for the heroes? ("my little dice", "Chosen Ones", "you colorful idiots") | Little Dice is cute as hell. Dicelings. Pips. Things like that. |
-| How does Pal die/disappear? Sacrifice? Illness? Called away? Simply too old to continue? | At the end of Stage 0 Pal is struck down/consumed by a curse/poisoned, and passes on the ancient scroll to The Colors. |
-| What's the LAST thing Pal says to them? (This is the line they'll remember at the end of Stage 5) | "I am... And forever shall be... Your Pal..." and he goes still. |
-
-**Pal's Key Dialogue Moments (write 2-3 lines each):**
-
-1. **When the heroes first meet Pal:**
-   - *What does Pal say when he hands them the prophecy? THIS IS WRONG BUT YOU WILL KNOW THAT, ANSWERING FIRST QUESTION ANYWAY*
-   -This is unlikely to ever be explicit but they were all sort of orphaned dice, street thief ragamuffin Oliver Twist types, before Pal found them and took them in. He is 1 part Aragorn, 1 Robin Hood, 1 part Guildmaster, and 2 parts Dad. His first line would be something along the lines of  "Bad luck, eh? I know a thing or two about changing luck. Interested?" This scene is distinct but may be used as a refrain at the middle/end of Stage 0, when he introduces intertwining.
-
-2. **When teaching them about their "BEST" die:**
-   - *How does Pal frame this as finding their true talent?*
-   -"You've all been training for months, by now you must know what you're best at! What's your gut-instinct, go-to approach?
-
-3. **When teaching them about their "WORST" die:**
-   - *How does Pal make this feel like wisdom, not failure? ("Even the sharpest sword has a dull edge...")*
-   -"There's only so much time in a day.. Which of these did you not get a chance to practice as much as you liked?"
-
-4. **When teaching them about Intertwining:**
-   - *How does Pal explain this cosmic gift? Why are the heroes special?*
-   - "Now remember, Dicelings, the number one thing you have going for you is the other two Dice watching your back. After months of training, I think you are finally ready to learn the Secret Art... The one I devoted my life to studying, as the prophecy bade I do, all so I could pass the knowledge along to you... IN....TER.....TWINE! (When dice really trust each other, they can sometimes entangle their fates! Choose a segment on this die (2 or 3) to replace with a _new roll_ on your ally's die!__
-
-5. **When DOOM is first introduced:**
-   - *How does Pal react to seeing the DOOM meter? Fear? Resignation? Determination?*
-   -Oh. Oh, no. That's bad. I was hoping you wouldn't have to worry about this... The DOOM meter. We'll talk about it in a minute - focus on the task at hand, Pipsqueaks!"
-
-6. **When bestowing HOPE:**
-   - *What does Pal say about HOPE? Is it faith? Love? Spite? Refusal to die?*
-   -"If there's one thing I taught you, it's this - even in the darkest situations, there is HOPE. Even the surest DOOM can be staved off with just a little... HOPE!" (Flickering animation, "HOPE" added to all 20s!).
-
-7. **Pal's final words:**
-   - *What does Pal say as he passes the torch? What wisdom does he leave behind?*
-   -"Gah, bad luck.... Well, this might be it for me... I failed my DOOM roll... Before I go - Stay together. Trust each other. Roll for each other. I am, and forever shall be, your Pal.."
-
----
-
-### THE PROPHECY
-
-The prophecy is what drives everything. What does it actually SAY?
-DRAFT 1:
-The colors of momentous day-
-Red and blue and green and grey,
-Less but one, a Pal forgotten,
-Walk fate's rope and feel it tauten
-Botch and crit and fail and roll
-The mentor's death, inciting toll
-Then dielines blur and Colors sort,
-Thus, Fate's Intertwined Cohort;
-Together, Lucky Trio, shall,
-Behold The Future Sought by Pal.
-DOOM be damned, HOPE unforesaken,
-The Colors Powers shall awaken.
-To save the very planet's soul
-Defeat the BOMB, achieve your goal.
-```
-
-**Prophecy Questions:**
-| Question | Your Notes |
-|----------|------------|
-| Why were there 20 prophecies? What happened to the other 19 groups? | They all went corrupt or died or the prophecy got lost or forgotten. |
-| Is the prophecy literal or metaphorical? | It's a little of both but mostly literal. |
-| Does the prophecy reference the heroes directly, or are they just interpreting it? | It definitely references them, though indirectly |
-| Is there a twist? (The heroes ARE the prophecy? BOMB wrote it? Pal was one of the failed 19?) | Ooh, interesting. Perhaps all 19 actually did succeed and Pal assumed that none of them did because "the bad things" still existed. All of the previous attempts made it to BOMB but he was I like the idea that the BOMB is a galaxy-black d20 with a fuse, and he has been sort of forcing luck in his favor, like he rolls intimidation and it's an automatic 20. Something that Pal told them or taught them will help THEM snap this streak. |
-| How does the prophecy connect to DOOM thematically? | DOOM is the prophecy failing, or its users failing, and its directly referenced in the prophecy. |
-
----
-
-### ENCOUNTER PERSONALITY
-
-Each encounter NPC needs a voice. Currently they're mechanical - let's give them HEART.
-
-**THE MATHEMATICIAN**
-| Prompt | Your Notes |
-|--------|------------|
-| Personality: Absent-minded professor? Obsessive number-lover? Weary scholar? | Just like a middle-school nerd |
-| Catchphrase or verbal tic when doing math on dice: | Astounding! According to my calculations, this upgrade is Completely OP! |
-| What does he say when you leave WITHOUT taking his offer? | Whoa, looks like someone's not a mathlete! |
-| Does he have a tragic backstory? (Used to be an adventurer? Lost someone to bad probability?) | No, he just a big ol nerd |
-
-**THE ALCHEMIST**
-| Prompt | Your Notes |
-|--------|------------|
-| Personality: Mad scientist? Gentle healer? Creepy experimentalist? | Mad scientist vibe for sure, wants to do weird experiments on peoples bodies and those bodies just happen to be dice |
-| How does she describe the feeling of dice-splicing? (Painful? Euphoric? Strange?) | Euphoric, damn near orgasmic, let's really push what we can do with her language |
-| What does she mutter while working? | In ecstatic fervor about remaking bodies and what's inside of a die and pontificating about loaded dice |
-| What happens if players ask why she does this? | She just cackles |
-
-**THE PRIEST**
-| Prompt | Your Notes |
-|--------|------------|
-| Personality: Serene monk? Zealous preacher? Quietly faithful? | I think he should be a poor priest who seems to have nothing to offer |
-| What god or force does the Priest serve? | Serves the forces of HOPE and opposes DOOM |
-| How does the Priest describe HOPE? | All that is good, and noble! Love, friendship, trust! |
-| What does the Priest think about DOOM? | We must be diligent to prevent DOOM from creeping into our hearts! |
-
-**THE GAMBLER**
-| Prompt | Your Notes |
-|--------|------------|
-| Personality: Flashy showman? Quiet shark? Addicted and broken? | Something between a carnival barker and a shady 3-card Monty dealer |
-| What does the Gambler say when you WIN big? | Eyy wouldja lookithat bigwinner bigwinner wannagoagain? |
-| What does the Gambler say when you LOSE? | Tough luck, but you gotta play to win, let's play again! |
-| Does the Gambler have stakes in ATOM, the heroes, or neither? | |
-
-**THE FERRYMAN**
-| Prompt | Your Notes |
-|--------|------------|
-| Personality: Ancient and bored? Cryptic and wise? Menacing? | Yeah tall and menacing and quiet, like Charon from Hades |
-| What does the Ferryman know about the prophecy? | Nothing, he is quiet, he just wants his payment one way or another. |
-| Why does the Ferryman mark dice? What do the marks mean? | He uses maybe a fishhook or something to scratch away segments and replace them with other segments (maybe?) |
-| What does the Ferryman say when someone rolls a natural 20 in his presence? | Nothing but you can tell he's impressed. |
-
----
-
-### BOSS FLAVOR
-
-Each boss needs more than combat stats - they need PRESENCE.
-
-**STAGE 1: THE DIRTY INNKEEPER**
-| Prompt | Your Notes |
-|--------|------------|
-| Name (if you want one): | Seedy Sammy |
-| Why did he steal from the heroes specifically? | No reason, he had been stealing from non-regulars with regularity |
-| What does he say when caught? (Remorseful? Defiant? Terrified?) | He is remorseful and guilty and feels bad and insists (honestly) he just stole to pay off his own debts |
-| What does ATOM have on him? Debt? Family? Threat? | Debt, just gambling debt or something like that |
-| What are his last words before the arrow silences him? | "Fine, I'll tell you. But you have to promise to help keep me safe. The people I owe money to, they're called --" and then the arrow silences him |
-
-**STAGE 2: THE CORRUPT GUARD**
-| Prompt | Your Notes |
-|--------|------------|
-| Name (if you want one): | Crooked Chester |
-| Why did he shoot the Innkeeper? Orders? Panic? Cruelty? | He is a mid-level ATOM operative stationed as a low-level guard as to monitor ground-level situations and intervene where necessary to guarantee the secrecy of the organization. |
-| What does he say when cornered? | He divulges that it goes all the way to the top (General Heimer) |
-| Does he believe in ATOM's cause, or is he just following orders? | He's a confused young zealot who believes in ATOMs cause without knowing what it was, he really just wanted the glory and the position and they gave him all that. |
-| What information does defeating him reveal? | The next link in the chain, General Heimer, as well as a reference to the BOMB or to the ultimate goals of ATOM. |
-
-**STAGE 3: GENERAL HEIMER**
-| Prompt | Your Notes |
-|--------|------------|
-| Full name and title: | Heimer |
-| Is Heimer a true believer, or a pawn? | One of the key lieutenants of the BOMB operation, he is smart as a whip and has been promised a position of immense honor and power once ATOM wins |
-| What does Heimer's army look like? (Human? Corrupted? Mixed?) | Lots of good people who are just normal soldiers (ACAB or whatever but they are generally chill) but then he has his various plants at different levels where they are super loyal to him or incredibly evil or whatever. |
-| What does Heimer say about the King? Loyalty? Fear? Disgust? | Heimer thinks that the King is noble and worth of respect but that he lacks ambition, that it was Heimer who had to persuade King Robert into seeing the benefits of ATOM and ultimatley throwing the weight of the monarchy behind the movement |
-| Does Heimer have any redeemable qualities? | Not really, he is a bloodthirsty evil cultist enabler. Maybe he knew Pal back in the day and, in his dying breaths, he regrets that things went so wrong to be fighting Pal's own disciples? |
-
-**STAGE 4: KING ROBERT**
-| Prompt | Your Notes |
-|--------|------------|
-| What title does Robert prefer? | Your Highness? Your Diceliness (if he's a die)? |
-| How long has Robert been working with ATOM? | Since Heimer talked him into it 20 years ago |
-| What does Robert say in the fake "victory" moment? | "So... You've struck me down... And defeated ATOM.... Heh. That's what you're thinking right now, I'd bet. Oh, how little you understand... See what TRUE power looks like! RISE! RISE AND ENTER THIS REALM!" |
-| What happens to Robert when the portal opens? (Consumed? Transformed? Abandoned?) | I think he is consumed or obliterated into dust in the process of summoning |
-| Is Robert AWARE of what BOMB is, or did he think he was summoning something else? | He knew it was bad but he was evil and confused and corrupted. |
-
-**STAGE 5: B.O.M.B.**
-| Prompt | Your Notes |
-|--------|------------|
-| What does BOMB look like? (Eldritch horror? Cosmic entity? Beautiful and terrifying?) | I think this should be a cold/robotic cosmic entity, sort of like if there was a computer program that was devoted to entropy. "Like Threat detected. Prophecy-following suspected. Initiating intimidation roll". |
-| Does BOMB speak? If so, what's his/its voice like? | Cool... Beepy. Measured and robotic and certain, cold methodical death. |
-| What does BOMB want? (Destruction? Consumption? To exist? To unmake?) | Entropy must win. BOMB must survive. Without BOMB there is no limit on the universe. BOMB must limit the universe. BOMB has an evolutionary imperative to stop prophecies and nip coincidence in the bud. (THIS NEEDS WORK BECAUSE ITS BORING ASS MOTIVATION) |
-| What is the connection between BOMB and the prophecy? | Maybe bomb originally wrote all 20 prophecies, when he was created he rolled 20 times and each side printed a prophecy. |
-| What happens in the final moment of victory? (BOMB screams? Fades? Thanks the heroes?) | BOMB realizes as he dies that what he had been doing is unneccessary. He encourages the players to push past entropy and achieve the impossible, now that's he's gone it should be a lot easier. The end! |
-
----
-NOT YET COMPLETED AT ALL, CLAUDE: 
-### DIE-SPECIFIC FLAVOR
-
-Each die type should have personality in how it's described during rolls. Write a SUCCESS and FAILURE line for each:
-
-| Die | Success Flavor | Failure Flavor |
-|-----|----------------|----------------|
-| **Slash** | | |
-| **Stab** | | |
-| **Bonk** | | |
-| **Threaten** | | |
-| **Deceive** | | |
-| **Persuade** | | |
-| **Bribe** | | |
-| **Hide** | | |
-| **Grapple** | | |
-
----
-
-### EMOTIONAL BEATS
-
-What are the BIG moments in this game? Write the feeling you want players to have:
-
-| Moment | Desired Emotion | How to Achieve It |
-|--------|-----------------|-------------------|
-| Pal's farewell | | |
-| First DOOM roll that could end the game | | |
-| Using HOPE to save a friend | | |
-| Realizing King Robert was the puppet, not the puppeteer | | |
-| The fake victory screen before the portal opens | | |
-| Seeing the 19 darkened prophecy lines | | |
-| The final hit that destroys BOMB | | |
-
----
-
-### DIALOGUE SNIPPETS TO WRITE
-
-Quick dialogue lines that would make the game feel alive:
-
-**Player Idles (when someone takes too long):**
--
--
--
-
-**Natural 1 Reactions:**
--
--
--
-
-**Natural 20 Reactions:**
--
--
--
-
-**Low DOOM (everything's fine):**
--
--
-
-**High DOOM (getting scary):**
--
--
-
-**HOPE Spent:**
--
--
-
----
-
-### WORLDBUILDING QUESTIONS
-
-| Question | Your Notes |
-|----------|------------|
-| What's the world called? | |
-| What's ATOM's full name and philosophy? | |
-| Are there other adventurers in this world? If so, what happened to them? | |
-| What's the relationship between the 20 prophecies and BOMB? | |
-| Is there magic in this world beyond dice and intertwining? | |
-| What year is it? What era? | |
-| What do common people think about the prophecies? (Legend? Joke? Forgotten?) | |
-
----
-
-### ITEMS I (CLAUDE) CREATED THAT NEED YOUR TOUCH
-
-These are things I implemented mechanically but need your creative input:
-
-**Draft Mode Options (Alchemist Potions):**
-Currently generic names like "Potion of Boosting", "Elixir of Balance", etc.
-- What should these actually be called?
-- What do they look like?
-- What does the Alchemist say when offering them?
-
-**Boss Rewards (Snake Draft):**
-Currently: "+3 to Lowest Face", "+3 HOPE", etc.
-- Should these be narrative artifacts? ("The Innkeeper's Lucky Coin", "A Shard of Pal's Wisdom")
-- What do they look like when claimed?
-
-**Mathematician Options:**
-Currently: "Sculpt: The Safe Bet", "Sculpt: The Climber", etc.
-- How does the Mathematician describe these choices?
-- Are these formulas? Philosophies? Diagrams he draws?
-
----
-
-### PLACEHOLDER TEXT THAT NEEDS REPLACEMENT
-
-Search the codebase for these and replace with real content:
-
-- [ ] All encounter descriptions in `config.js` (currently functional but bland)
-- [ ] Tutorial dialogue (Pal's lines)
-- [ ] Boss defeat messages
-- [ ] Natural 1 and Natural 20 flavor text
-- [ ] DOOM roll survival/failure messages
-- [ ] Stage transition text
-- [ ] Victory screen text
-- [ ] Game over text
-
----
-
-### YOUR ADDITIONS
-
-*Add your own brainstorming notes below:*
+- Flips the usual "high = good" dice psychology
