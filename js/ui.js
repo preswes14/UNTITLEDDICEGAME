@@ -853,3 +853,326 @@ function refreshSoloDicePanel() {
         renderSoloDicePanel();
     }
 }
+
+// ==================== FAVOR SHOP SYSTEM ====================
+
+// Calculate total favor available for current stage
+function calculateTotalFavor() {
+    const stage = gameState.currentStage;
+    const baseFavor = STAGE_FAVOR[stage] || 0;
+    const goldBonus = Math.floor(gameState.gold / 10); // 10G -> 1F
+    return baseFavor + goldBonus;
+}
+
+// Calculate how much favor is currently assigned
+function getAssignedFavorTotal() {
+    return gameState.assignedFavor.reduce((sum, upgradeId) => {
+        const upgrade = FAVOR_UPGRADES[upgradeId];
+        return sum + (upgrade ? upgrade.cost : 0);
+    }, 0);
+}
+
+// Check if a favor tier is unlocked based on assigned favor
+function isFavorTierUnlocked(tier) {
+    if (tier <= 1) return true;
+    const assigned = getAssignedFavorTotal();
+    const threshold = FAVOR_TIER_UNLOCKS[tier] || 999;
+    return assigned >= threshold;
+}
+
+// Check if a favor upgrade can be assigned
+function canAssignFavorUpgrade(upgradeId) {
+    const upgrade = FAVOR_UPGRADES[upgradeId];
+    if (!upgrade) return false;
+
+    // Check if already assigned
+    if (gameState.assignedFavor.includes(upgradeId)) return false;
+
+    // Check tier unlock
+    if (!isFavorTierUnlocked(upgrade.tier)) return false;
+
+    // Check cost
+    const totalFavor = gameState.totalFavor;
+    const assignedFavor = getAssignedFavorTotal();
+    if (assignedFavor + upgrade.cost > totalFavor) return false;
+
+    // Check prerequisites
+    if (upgrade.requires) {
+        for (const req of upgrade.requires) {
+            if (!gameState.assignedFavor.includes(req)) return false;
+        }
+    }
+
+    return true;
+}
+
+// Show the Favor Shop screen
+function showFavorShop() {
+    // Calculate and set total favor
+    gameState.totalFavor = calculateTotalFavor();
+
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'FAVOR Shop';
+
+    renderFavorShopContent();
+    modal.classList.add('show');
+}
+
+// Render the Favor Shop content
+function renderFavorShopContent() {
+    const totalFavor = gameState.totalFavor;
+    const assignedFavor = getAssignedFavorTotal();
+    const availableFavor = totalFavor - assignedFavor;
+
+    document.getElementById('upgradeDescription').innerHTML = `
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+            <div style="text-align:center;">
+                <div style="color:#c084fc; font-size:1.5rem; font-weight:bold;">${totalFavor}</div>
+                <div style="color:#888; font-size:0.8rem;">Total FAVOR</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="color:#4ade80; font-size:1.5rem; font-weight:bold;">${assignedFavor}</div>
+                <div style="color:#888; font-size:0.8rem;">Assigned</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="color:#ffd700; font-size:1.5rem; font-weight:bold;">${availableFavor}</div>
+                <div style="color:#888; font-size:0.8rem;">Available</div>
+            </div>
+        </div>
+        <p style="color:#aaa; font-size:0.85rem;">Assign FAVOR to unlock upgrades. Upgrades can be unassigned and reassigned freely.</p>
+        <div style="color:#888; font-size:0.75rem; margin-top:5px;">
+            Tier unlock thresholds: 2★ at 3F | 3★ at 5F | 4★ at 8F | 5★ at 12F
+        </div>
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    // Group upgrades by tier
+    const tiers = [1, 2, 3, 4, 5];
+
+    tiers.forEach(tier => {
+        const tierUnlocked = isFavorTierUnlocked(tier);
+        const tierUpgrades = Object.values(FAVOR_UPGRADES).filter(u => u.tier === tier);
+
+        if (tierUpgrades.length === 0) return;
+
+        // Tier header
+        const tierHeader = document.createElement('div');
+        tierHeader.className = 'favor-tier-header';
+        tierHeader.style.cssText = `
+            background: ${tierUnlocked ? 'rgba(192, 132, 252, 0.2)' : 'rgba(100, 100, 100, 0.2)'};
+            padding: 8px 12px;
+            margin: 10px 0 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid ${tierUnlocked ? '#c084fc' : '#666'};
+            font-weight: bold;
+            color: ${tierUnlocked ? '#c084fc' : '#666'};
+        `;
+        tierHeader.textContent = `${tier}★ FAVOR (Cost: ${tier} each)${tierUnlocked ? '' : ' [LOCKED]'}`;
+        options.appendChild(tierHeader);
+
+        // Tier upgrades
+        tierUpgrades.forEach(upgrade => {
+            const isAssigned = gameState.assignedFavor.includes(upgrade.id);
+            const canAssign = canAssignFavorUpgrade(upgrade.id);
+            const meetsPrereqs = !upgrade.requires || upgrade.requires.every(r => gameState.assignedFavor.includes(r));
+
+            const opt = document.createElement('div');
+            opt.className = 'upgrade-option';
+            opt.style.cssText = `
+                opacity: ${(tierUnlocked && (canAssign || isAssigned)) ? '1' : '0.5'};
+                border: 2px solid ${isAssigned ? '#4ade80' : 'transparent'};
+                background: ${isAssigned ? 'rgba(74, 222, 128, 0.1)' : ''};
+                cursor: ${(canAssign || isAssigned) ? 'pointer' : 'not-allowed'};
+            `;
+
+            let statusText = '';
+            if (isAssigned) {
+                statusText = '<span style="color:#4ade80;">✓ ASSIGNED</span>';
+            } else if (!tierUnlocked) {
+                statusText = '<span style="color:#666;">Tier Locked</span>';
+            } else if (!meetsPrereqs) {
+                statusText = '<span style="color:#f87171;">Missing Prerequisites</span>';
+            } else if (!canAssign) {
+                statusText = '<span style="color:#888;">Not Enough Favor</span>';
+            }
+
+            opt.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4>${upgrade.name}</h4>
+                    ${statusText}
+                </div>
+                <p style="color:#aaa; font-size:0.85rem;">${upgrade.description}</p>
+                ${upgrade.requires ? `<p style="color:#888; font-size:0.75rem;">Requires: ${upgrade.requires.join(', ')}</p>` : ''}
+            `;
+
+            if (isAssigned) {
+                opt.onclick = () => unassignFavorUpgrade(upgrade.id);
+            } else if (canAssign) {
+                if (upgrade.requiresHeroSelection) {
+                    opt.onclick = () => showHeroSelectionForFavor(upgrade);
+                } else {
+                    opt.onclick = () => assignFavorUpgrade(upgrade.id);
+                }
+            }
+
+            options.appendChild(opt);
+        });
+    });
+
+    // Continue button
+    const continueBtn = document.createElement('button');
+    continueBtn.className = 'option-btn primary';
+    continueBtn.style.marginTop = '20px';
+    continueBtn.textContent = 'Continue to Stage';
+    continueBtn.onclick = () => {
+        applyAllFavorEffects();
+        document.getElementById('upgradeModal').classList.remove('show');
+        continueFromFavorShop();
+    };
+    options.appendChild(continueBtn);
+}
+
+// Show hero selection modal for hero-specific upgrades
+function showHeroSelectionForFavor(upgrade) {
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = `Select Hero for ${upgrade.name}`;
+    document.getElementById('upgradeDescription').innerHTML = `
+        <p>${upgrade.description}</p>
+        <p style="color:#888; margin-top:10px;">Choose which hero receives this upgrade:</p>
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    gameState.players.forEach((player, idx) => {
+        const opt = document.createElement('div');
+        opt.className = 'upgrade-option';
+        opt.innerHTML = `<h4>${player.name}</h4>`;
+        opt.onclick = () => {
+            assignFavorUpgrade(upgrade.id, idx);
+            showFavorShop(); // Return to favor shop
+        };
+        options.appendChild(opt);
+    });
+
+    // Back button
+    const backBtn = document.createElement('button');
+    backBtn.className = 'option-btn secondary';
+    backBtn.style.marginTop = '10px';
+    backBtn.textContent = 'Cancel';
+    backBtn.onclick = () => showFavorShop();
+    options.appendChild(backBtn);
+}
+
+// Assign a favor upgrade
+function assignFavorUpgrade(upgradeId, heroIndex = null) {
+    const upgrade = FAVOR_UPGRADES[upgradeId];
+    if (!upgrade || !canAssignFavorUpgrade(upgradeId)) return;
+
+    // Store with hero index if applicable
+    if (heroIndex !== null) {
+        gameState.assignedFavor.push({ id: upgradeId, hero: heroIndex });
+    } else {
+        gameState.assignedFavor.push(upgradeId);
+    }
+
+    log(`Assigned: ${upgrade.name}`, 'success');
+    renderFavorShopContent();
+}
+
+// Unassign a favor upgrade
+function unassignFavorUpgrade(upgradeId) {
+    const idx = gameState.assignedFavor.findIndex(a =>
+        (typeof a === 'string' && a === upgradeId) ||
+        (typeof a === 'object' && a.id === upgradeId)
+    );
+
+    if (idx !== -1) {
+        gameState.assignedFavor.splice(idx, 1);
+        const upgrade = FAVOR_UPGRADES[upgradeId];
+        log(`Unassigned: ${upgrade.name}`, 'info');
+        renderFavorShopContent();
+    }
+}
+
+// Apply all assigned favor effects
+function applyAllFavorEffects() {
+    // Reset modifiers
+    gameState.favorModifiers = {
+        dcReduction: 0,
+        bossDcReduction: 0,
+        bossThresholdReduction: 0,
+        startingDoom: 1,
+        startingGold: 0,
+        startingShields: 0
+    };
+
+    // Apply each assigned upgrade
+    gameState.assignedFavor.forEach(assignment => {
+        const upgradeId = typeof assignment === 'string' ? assignment : assignment.id;
+        const heroIndex = typeof assignment === 'object' ? assignment.hero : null;
+        const upgrade = FAVOR_UPGRADES[upgradeId];
+
+        if (!upgrade) return;
+
+        const effect = upgrade.effect;
+        switch (effect.type) {
+            case 'max_hope':
+                gameState.maxHope += effect.amount;
+                break;
+            case 'max_shield':
+                gameState.maxShields += effect.amount;
+                break;
+            case 'starting_shields':
+                gameState.favorModifiers.startingShields += effect.amount;
+                break;
+            case 'starting_gold':
+                gameState.favorModifiers.startingGold += effect.amount;
+                break;
+            case 'starting_doom':
+                gameState.favorModifiers.startingDoom = effect.amount;
+                break;
+            case 'dc_reduction':
+                gameState.favorModifiers.dcReduction += effect.amount;
+                break;
+            case 'boss_dc_reduction':
+                gameState.favorModifiers.bossDcReduction += effect.amount;
+                break;
+            case 'boss_threshold_reduction':
+                gameState.favorModifiers.bossThresholdReduction += effect.amount;
+                break;
+            // Hero-specific effects are stored and checked during gameplay
+        }
+    });
+
+    // Apply starting modifiers
+    gameState.shields = Math.min(gameState.favorModifiers.startingShields, gameState.maxShields);
+    gameState.gold += gameState.favorModifiers.startingGold;
+    gameState.doom = gameState.favorModifiers.startingDoom;
+
+    log('Favor effects applied!', 'success');
+}
+
+// Continue from Favor Shop to the stage
+function continueFromFavorShop() {
+    generateMap();
+
+    document.getElementById('gameScreen').classList.remove('hidden');
+
+    renderMap();
+    renderPlayers();
+    renderDiceTray();
+    updateDoomHopeDisplay();
+    updateFloorDisplay();
+
+    gameState.map[0].status = 'available';
+    renderMap();
+
+    const stageInfo = STAGE_INFO[gameState.currentStage];
+    log(`--- Stage ${gameState.currentStage}: ${stageInfo.name} ---`, 'info');
+    log(`You arrive at ${stageInfo.location}...`, 'info');
+
+    autoSave();
+}
