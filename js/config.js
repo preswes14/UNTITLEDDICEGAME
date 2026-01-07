@@ -4,8 +4,7 @@
 const CHARACTER_AVATARS = {
     1: { color: 'Blue Wizard', features: 'Mystical robes, Staff', image: 'assets/blue-wizard.png' },
     2: { color: 'Red Ranger', features: 'Hooded cloak, Bow', image: 'assets/red-ranger.png' },
-    3: { color: 'Green Pirate', features: 'Tricorn hat, Cutlass', image: 'assets/green-pirate.png' },
-    4: { color: 'Pal', features: 'Rainbow light, Ancient wisdom', image: 'assets/pal.png' }
+    3: { color: 'Green Pirate', features: 'Tricorn hat, Cutlass', image: 'assets/green-pirate.png' }
 };
 
 const DICE_TYPES = {
