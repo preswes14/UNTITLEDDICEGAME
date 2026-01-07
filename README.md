@@ -14,7 +14,8 @@ A companion app for collaborative TTRPG action. Designed for 3 players.
 6. [Boss Encounters & Narrative](#boss-encounters--narrative)
 7. [Roguelite Structure](#roguelite-structure)
 8. [Visual & Multiplayer Design](#visual--multiplayer-design)
-9. [Design Notes](#design-notes)
+9. [Characters & Lore](#characters--lore)
+10. [Implementation Status](#implementation-status)
 
 ---
 
@@ -51,12 +52,8 @@ After picking their 3 dice, each player goes through a **Talent Ranking** that t
    - This die gets **double-intertwined with BOTH allies**!
    - Pick a number (6-10) for Ally 1, then a different number for Ally 2
    - Each number triggers that ally's chosen die when rolled
-   - Players walk through the full process, learning the core swap mechanic
 
-This tutorial accomplishes several things:
-- Teaches upgrading, downgrading, and dice swapping before the adventure begins
-- Creates immediate asymmetry between players (someone's Persuade is godlike, another's is cursed)
-- Establishes the cooperative bond through double-intertwining: every player is connected to every other player, creating an irrevocable team
+This tutorial creates immediate asymmetry between players and establishes the cooperative bond through double-intertwining.
 
 ---
 
@@ -65,23 +62,18 @@ This tutorial accomplishes several things:
 **The true unique flavor of this game comes from substituting segments of your own dice with rolls or segments on another player's dice.**
 
 ### Easy Example
-I replace a 2 on my Punch die with a roll on my teammate's Stab die. So if I try to punch and would have rolled a 2, I instead get the result of my teammate immediately rolling their own Stab die. *(Narratively, rather than letting you fail, they step in to help)*
+I replace a 2 on my Punch die with a roll on my teammate's Stab die. So if I try to punch and would have rolled a 2, I instead get the result of my teammate immediately rolling their own Stab die.
 
 ### Medium Example
-You swap segments 2, 3, 4, and 5 on your die with segments 12, 13, 14, and 15 on your ally's die; they do the same. So instead of getting a terrible roll on your own die, you instead get a middling roll on a teammate's - but at the risk of stabbing someone you were hoping to punch, or knocking out someone you were hoping to persuade.
+You swap segments 2, 3, 4, and 5 on your die with segments 12, 13, 14, and 15 on your ally's die; they do the same. So instead of getting a terrible roll on your own die, you instead get a middling roll on a teammate's - but at the risk of stabbing someone you were hoping to punch.
 
 ### Hard Example
-I swap out any fail (1-9) on my die with the WORSE of my teammate's rolls on their own dice. So I try to stab but miss, and trying to save me, my friends both stumble in front - one kinda poorly lies to the enemy and the other grapples them even worse - so THAT is the thing that actually happens.
-
-### Other Examples
-- I replace a 19 on my die with a 20 on my teammate's die
-- I scratch out a number on my die, and when it's rolled, I get to pick any other die to be rolled instead
-- I accept getting 2 more Nat 1s added to my die in exchange for getting 3 more Nat 20s (replacing other numbers)
+I swap out any fail (1-9) on my die with the WORSE of my teammate's rolls on their own dice. So I try to stab but miss, and trying to save me, my friends both stumble in front - one poorly lies to the enemy and the other grapples them even worse - so THAT is the thing that actually happens.
 
 ### Strategic Possibilities
 Teammates could strategize around specific builds:
-- *"Let's soup up Player 1's persuade ability die, then scratch out as many of our other dice numbers as we can, and replace as many segments on our dice with that one supercharged Persuade die!"*
-- *"Let's stack all of our bad numbers onto Stab, Slash, and Bash - we're trying to play pacifist and want to resolve things, even combat, nonviolently if possible."*
+- *"Let's soup up Player 1's persuade ability die, then replace as many segments on our dice with that one supercharged Persuade die!"*
+- *"Let's stack all of our bad numbers onto Stab, Slash, and Bash - we're trying to play pacifist!"*
 
 ---
 
@@ -107,18 +99,12 @@ Players permanently improve their dice, allowing them to progressively clear mor
 
 ### Late Game Complex Upgrades
 - **Middle Out** - All numbers between 5 and 15 (inclusive) are scratched out
-- **Bottoms Up** - Your 1 becomes a 20. Subtract 1 from all other faces (powerful if player has already buffed 2-5)
+- **Bottoms Up** - Your 1 becomes a 20. Subtract 1 from all other faces
 - **Tops Down** - Remove your Nat 20. 14, 15, 16, 17, and 18 become 19
 
 ---
 
 ## DOOM & HOPE System
-
-### Damage Mechanic
-Instead of traditional health, hits work differently based on the situation:
-- **Single-target hits** (smaller enemies, individual effects): Often just add +1 DOOM to the meter
-- **Party-wide hits** (big attacks, boss abilities): Trigger DOOM Rolls for affected players
-- **Rare permanent damage**: Some effects reduce die faces for the battle or longer (special enemy abilities only) 
 
 ### The DOOM Meter
 The party has a shared DOOM meter that fills as bad things happen:
@@ -127,23 +113,21 @@ The party has a shared DOOM meter that fills as bad things happen:
 - Ferryman's crossed marks triggering: +2 DOOM
 - Other misfortunes and curses
 
-The DOOM meter indicates that the heroes are unable to overcome the forces of darkness and avoid the prophesied danger. **The DOOM meter affects all DOOM rolls but NOT ANY standard rolls** - every point of DOOM subtracts 1 from each roll result (except natural 20s).
+**DOOM affects only DOOM rolls, not standard rolls** - every point of DOOM subtracts 1 from each DOOM roll result (except natural 20s).
 
 ### The DOOM Roll (Enemy Attacks)
-When an **enemy lands a hit** on a player, they will sometimes be required to make a **DOOM Roll** - a special d20 roll that determines their fate:
+When an **enemy lands a hit** on a player, they make a **DOOM Roll** - a special d20 roll:
 
 - Roll a d20, subtract current DOOM from the result (except natural 20)
 - **Roll a 1** (natural or DOOM-modified): **The journey ends.** The prophecy has failed.
-- **Roll a 20** (natural): Remove HALF of the current DOOM - a moment of divine favor!
-- Any other result: You survive the hit but feel the weight of DOOM
+- **Roll a 20** (natural): +1 HOPE - a moment of divine favor!
+- Any other result: You survive but +1 DOOM
 
-This is where the tension lies, especially in boss battles. A boss with multiple attacks means multiple DOOM Rolls per turn - each hit is a brush with oblivion. With high DOOM, even rolling a 5 or 6 becomes deadly.
-
-**Note:** DOOM Rolls are reserved specifically for enemy attacks. Other bad outcomes simply add to the DOOM meter, making future DOOM Rolls more dangerous.
+DOOM Rolls are reserved specifically for enemy attacks. Other bad outcomes simply add to the DOOM meter.
 
 ### DOOM Resets
 - DOOM resets between Stages
-- Players can strategically reduce DOOM through natural 20s on DOOM Rolls
+- Natural 20s on DOOM Rolls grant HOPE
 
 ### HOPE
 HOPE offsets accumulated DOOM:
@@ -156,76 +140,54 @@ HOPE offsets accumulated DOOM:
 
 ## Encounters & Map Structure
 
-Encounters are set up similar to **Slay the Spire** or **Inscryption** - players advance through a basic overworld, following a generally linear path but making choices at forks. Simple icons indicate encounter types.
+Encounters are set up similar to **Slay the Spire** or **Inscryption** - players advance through a basic overworld, following a generally linear path but making choices at forks.
 
 ### Encounter Reference Chart
 
-| Encounter | Type | Situation | Risks | Rewards | Stage 5 Modification |
-|-----------|------|-----------|-------|---------|---------------------|
-| **The Mathematician** | Good | Old man offers dice adjustments | None (all free) | FREE: +2 to lowest, -1 high/+4 low, or SCULPT 3 faces | *Replaced by Memory Fragment* |
-| **The Alchemist** | Good | Wild-eyed woman splices dice | None (all free) | Basic: Link low roll. Risky: Random link +2. Double: Link to BOTH allies! | *Replaced by Pocket of Reality* |
-| **The Priest** | Good | Serene figure offers blessing | None | +3 HOPE, or +5 HOPE (mark die), or bless a segment | *N/A in Stage 5* |
-| **The Gambler** | Good | Craps-style range betting | None | Pick IN/OUT of range, roll. Win = +5 choice, Lose = +3 random | *N/A in Stage 5* |
-| **Bandits** | Bad | Three thugs block your path | DOOM Rolls on misses | 30G, DC 12, Thresholds: P:2/V:2/Pr:1 | *Replaced by Echo of BOMB* |
-| **Corrupt Guards** | Bad | Guards demand "peace tax" | DOOM Rolls on misses | 25G, DC 13, Thresholds: P:2/V:1/Pr:2 | *Replaced by Void Creatures* |
-| **Miniboss (Thug)** | Bad | Massive bouncer blocks stairs | DOOM Rolls on misses | 40G, DC 14, Thresholds: P:3/V:2/Pr:2 | *N/A in Stage 5* |
-| **The Ferryman** | Neutral | Ancient boatman judges fate | Free: 27% die marked. Paid 5G: guaranteed +2 HOPE | Free: 47% +2 HOPE, 27% safe | *Replaced by The 19 Darkened Lines* |
-| **The Trapper** | Neutral | Hunter offers exotic dice trade | Trade based on die power | 3 exotic dice offered. Best→best, worst→worst. Paid 8G: pick any | *N/A in Stage 5* |
-| **The Drunk Priest** | Neutral | Stumbling priest offers blessing | Free: 27% net DOOM | Free: 47% +3-4 HOPE. Paid 3G: guaranteed +3 HOPE | *N/A in Stage 5* |
-| **The Cultist** | Neutral | Robed figure offers purple drink | Free: 27% bad swap + DOOM | Free: 47% swap + +5. Paid 10G: guaranteed good | *N/A in Stage 5* |
+| Encounter | Type | Situation | Risks | Rewards |
+|-----------|------|-----------|-------|---------|
+| **The Mathematician** | Good | Old man offers dice adjustments | None | FREE: +2 to lowest, -1 high/+4 low, or SCULPT 3 faces |
+| **The Alchemist** | Good | Wild-eyed woman splices dice | None | Basic: Link low roll. Risky: Random link +2. Double: Link to BOTH allies! |
+| **The Priest** | Good | Serene figure offers blessing | None | +3 HOPE, or +5 HOPE (mark die), or bless a segment |
+| **The Gambler** | Good | Craps-style range betting | None | Pick IN/OUT of range, roll. Win = +5 choice, Lose = +3 random |
+| **Bandits** | Bad | Three thugs block your path | DOOM Rolls on misses | 30G, DC 12, Thresholds: P:2/V:2/Pr:1 |
+| **Corrupt Guards** | Bad | Guards demand "peace tax" | DOOM Rolls on misses | 25G, DC 13, Thresholds: P:2/V:1/Pr:2 |
+| **Miniboss (Thug)** | Bad | Massive bouncer blocks stairs | DOOM Rolls on misses | 40G, DC 14, Thresholds: P:3/V:2/Pr:2 |
+| **The Ferryman** | Neutral | Ancient boatman judges fate | Free: 27% die marked | Free: 47% +2 HOPE, 27% safe. Paid 5G: guaranteed +2 HOPE |
+| **The Trapper** | Neutral | Hunter offers exotic dice trade | Trade based on die power | 3 exotic dice offered. Best→best, worst→worst. Paid 8G: pick any |
+| **The Drunk Priest** | Neutral | Stumbling priest offers blessing | Free: 27% net DOOM | Free: 47% +3-4 HOPE. Paid 3G: guaranteed +3 HOPE |
+| **The Cultist** | Neutral | Robed figure offers purple drink | Free: 27% bad swap + DOOM | Free: 47% swap + +5. Paid 10G: guaranteed good |
 
 ### Stage 5 Unique Encounters (Warped Dimension)
 
-| Encounter | Type | Situation | Risks | Rewards |
-|-----------|------|-----------|-------|---------|
-| **The Rift** | Start | Reality tears apart, falling into somewhere else | None | Continue |
-| **Memory Fragment** | Good | Shard of your past pulses with warmth | None | Restore a damaged die face |
-| **Pocket of Reality** | Good | Bubble of normal space, a moment to breathe | None | +2 HOPE |
-| **Reality Tear** | Good | Another tear in reality, warmth seeps through | None | +1 HOPE |
-| **Echo of BOMB** | Bad | Shadow of the final boss | DOOM Rolls on misses | 40G, DC 15, Thresholds: P:3/V:3/Pr:2 |
-| **Void Creatures** | Bad | Shapeless horrors attack | DOOM Rolls on misses | 45G, DC 15, Thresholds: P:3/V:2/Pr:3 |
-| **The Shard of BOMB** | Miniboss | Fragment of cosmic horror blocks path | DOOM Rolls on misses | 50G, DC 15, Thresholds: P:4/V:4/Pr:3 |
-| **The 19 Darkened Lines** | Neutral | See 19 failed prophecies, yours remains lit | None | Accept destiny: +3 HOPE |
+| Encounter | Type | Situation | Rewards |
+|-----------|------|-----------|---------|
+| **The Rift** | Start | Reality tears apart | Continue |
+| **Memory Fragment** | Good | Shard of your past pulses with warmth | Restore a damaged die face |
+| **Pocket of Reality** | Good | Bubble of normal space | +2 HOPE |
+| **Reality Tear** | Good | Another tear, warmth seeps through | +1 HOPE |
+| **Echo of BOMB** | Bad | Shadow of the final boss | 40G, DC 15, Thresholds: P:3/V:3/Pr:2 |
+| **Void Creatures** | Bad | Shapeless horrors attack | 45G, DC 15, Thresholds: P:3/V:2/Pr:3 |
+| **The Shard of BOMB** | Miniboss | Fragment of cosmic horror | 50G, DC 15, Thresholds: P:4/V:4/Pr:3 |
+| **The 19 Darkened Lines** | Neutral | See 19 failed prophecies | Accept destiny: +3 HOPE |
 
-### Good Encounters
-*Little to no risk (gifts, upgrades, games, etc.)*
-
-- **The Mathematician** - Adds, subtracts, etc. to dice. Players must take a negative to get a positive but usually come out ahead (e.g., halving 4 to 2 but doubling 8 to 16)
-- **The Alchemist** - Weird dice-splicing: replacing your segments with your friends' dice
-- **The Gambler** - Offers target ranges; players guess HIT or MISS. Smaller reward for likely outcomes, larger reward for unlikely ones
-- **The Priest** - Offers to add HOPE to random segments (weighted towards lower rolls)
-
-### Bad Encounters
-*Fight or overcome obstacles to earn Gold*
-
-**Variable DCs:** Each combat encounter has **different DCs for each approach** (Physical, Verbal, Preventative). DCs are randomized within ranges:
-- **Regular enemies:** DC 5-8 (easy), DC 10-13 (medium), DC 14-17 (hard) - randomly assigned to approaches
-- **Bosses:** DC 10-12, DC 13-15, DC 15-18 - always challenging but still varied
+### Variable DCs
+Each combat encounter has **different DCs for each approach** (Physical, Verbal, Preventative). DCs are randomized within ranges:
+- **Regular enemies:** DC 5-8 (easy), DC 10-13 (medium), DC 14-17 (hard) - randomly assigned
+- **Bosses:** Variable by stage, always challenging but varied
 
 This encourages strategic die selection: a low DC 5 for Physical might make your weak Stab die worth using!
 
-- **Bandits** - Can be killed, mugged, or persuaded
-- **Evil People** - Best rewards for killing them
-- **City Guards** - Best rewards for winning/escaping but NOT killing them
-- **Beasts, Monsters, Dragons** - Stage 1 has 1-2 enemy types; each new stage introduces 1-2 new ones and phases out older ones
-
-### Neutral Encounters
-*Risk vs reward - outcomes weighted toward good but with real consequences. Gold spending removes risk.*
-
+### Neutral Encounter Probability
 **Probability Distribution:** ~47% good outcome, ~27% neutral outcome, ~27% bad outcome
 
-- **The Ferryman** - Pay the toll and let the river judge your fate. Free: 47% good (+2 HOPE), 27% neutral (safe), 27% bad (die marked). *Pay 15G for guaranteed good outcome. Wade for +1 DOOM.*
-- **The Trapper** - Trade your worst die face for a mystery value. Free: 47% good (+5+), 27% neutral (similar), 27% bad (worse). *Pay 20G for guaranteed +6 to +10 upgrade.*
-- **The Drunk Priest** - Accept a sloppy blessing. Free: 47% good (+3-4 HOPE), 27% neutral (wash), 27% bad (more DOOM). *Pay 10G for guaranteed +3 HOPE, no DOOM.*
-- **The Cultist** - Drink the cosmic goblet. Free: 47% good (swap + +5), 27% neutral (just swap), 27% bad (bad swap + DOOM). *Pay 25G for guaranteed good outcome.*
-
-**Design Philosophy:** Neutral encounters offer genuine choice with weighted randomness. Players *usually* come out ahead (~74% non-negative), but bad outcomes create memorable moments. **Gold spending option** lets combat rewards translate into guaranteed safety - defeating bandits earns gold that can buy certainty at later neutrals.
+Gold spending removes risk entirely - defeating bandits earns gold that can buy certainty at later neutrals.
 
 ---
 
 ## Boss Encounters & Narrative
 
-Each Stage has a designated Boss shaping the narrative. This is a 5-stage campaign with each Stage consisting of:
+Each Stage has a designated Boss. This is a 5-stage campaign with each Stage consisting of:
 - An introduction
 - Several random encounters
 - A miniboss
@@ -233,15 +195,13 @@ Each Stage has a designated Boss shaping the narrative. This is a 5-stage campai
 - A boss
 - A conclusion
 
-Boss encounters change minimally over each playthrough. Other encounters are randomly generated (with balance caveats). Each stage features a "miniboss" where players can set themselves up for an easier or harder final boss.
-
 ### Main Narrative
 
 One prophecy can be hard enough to unravel. So when 20 prophecies appeared overnight - in the hands of soldiers and shepherds and princes, purple lettering emblazoned on thick vellum - chaos ensued. That was 20 years ago; hoping to make it rich, all manner of bandits and charlatans have chased these prophecies, and as with so many of their names and deeds, the prophecies themselves were lost to history.
 
 Our heroes are some of the few noble-hearted individuals who still hold one of these prophecies, and its cryptic clues have brought them here, to the Dirtbag Inn, where our story begins.
 
-The party learns of ATOM ('Assemble The Others' Movement) - a doomsday cult seeking to bestow our world unto the evil gods of the universe. Through increasingly obvious hints and decreasingly safe situations, the party must follow the threads and thwart this plot to fulfill the prophecy and save the world.
+The party learns of ATOM ('Assemble The Others' Movement) - a doomsday cult seeking to bestow our world unto the evil gods of the universe. Through increasingly obvious hints and decreasingly safe situations, the party must follow the threads and thwart this plot.
 
 ### Stage Breakdown
 
@@ -251,11 +211,11 @@ The party learns of ATOM ('Assemble The Others' Movement) - a doomsday cult seek
 | 2 | **Corrupt Guard** | After the assassination, the party investigates which guard killed the informant. *Miniboss: Drawbridge/Operator.* They breach the castle, dispose of the guard, and match his sigil to General Heimer in an adjacent city. |
 | 3 | **General Heimer** | Heroes arrive at the Capitol but face Heimer's army outside. They must fight through to confront him. *Miniboss: The Daytime (soldiers) OR The Nighttime (infiltration).* Heimer declares he was following the King's orders. |
 | 4 | **Chthonic King Robert** | Only the capital streets and Royal Guard remain. *Royal Guard: The Jester (games of chance), The Chef (cooking DOOM), The Counselor (persuasion).* Upon defeating the King, a fake "you did it!" screen appears - then the pentagram on the floor activates. |
-| 5 | **BOMB (Big Obviously Malicious Boss)** | The portal pulls players into a warped dimension. *Miniboss: Early BOMB encounter that brutally changes player dice.* ~3 neutral encounters to restore functionality before the final fight. The stage shows 19 "darkened" prophecy lines and heroes on the single lit one - this is the last chance to save the world. |
+| 5 | **BOMB (Big Obviously Malicious Boss)** | The portal pulls players into a warped dimension. *Miniboss: Early BOMB encounter that brutally changes player dice.* ~3 neutral encounters to restore functionality before the final fight. The stage shows 19 "darkened" prophecy lines and heroes on the single lit one. |
 
 ### Boss Combat Mechanics
 
-Bosses use a **success counter system** instead of HP. Players must accumulate enough successful rolls in a chosen approach to defeat the boss:
+Bosses use a **success counter system** instead of HP. Players must accumulate enough successful rolls in ANY approach to defeat the boss.
 
 **The Three Approaches:**
 - **Physical** (Slash, Stab, Bonk) - Direct combat. Harder early on, becomes more efficient against cosmic horrors.
@@ -265,25 +225,21 @@ Bosses use a **success counter system** instead of HP. Players must accumulate e
 **Combat Round Flow:**
 1. Each hero chooses a die and rolls (3 rolls per round)
 2. Successful rolls add to the approach's success counter
-3. Usually, the enemy gets a turn after each of the 3 heroes do. If any hero **misses**, the enemy attacks and forces the heroes to make a **DOOM Roll**. However, if all 3 players log a success with their roll, they effectively SKIP the enemy turn and get to immediately go again.
-4. Repeat until one approach reaches its threshold or the players make an unsuccessful DOOM roll that cannot be mitigated by HOPE or any other special abilities.
+3. If any hero **misses**, the enemy attacks and forces DOOM Rolls. If all 3 players succeed, they skip the enemy turn.
+4. Repeat until one approach reaches its threshold or party wipe.
 
 **Boss Thresholds (by Stage):**
 
-| Boss | DC | Physical | Verbal | Preventative | Attacks/Round |
-|------|:--:|:--------:|:------:|:------------:|:-------------:|
-| **1. Dirty Innkeeper** | 10 | 4 | 3 | 2 | 1 |
-| **2. Corrupt Guard** | 12 | 5 | 4 | 3 | 1 |
-| **3. General Heimer** | 14 | 6 | 6 | 5 | 1 |
-| **4. King Robert** | 15 | 7 | 7 | 7 | 1 |
-| **5. BOMB** | 16 | 8x | 10x | 9x | 2 | 
+| Boss | DC Range | Physical | Verbal | Preventative | Attacks/Round |
+|------|:--------:|:--------:|:------:|:------------:|:-------------:|
+| **1. Dirty Innkeeper** | 9-12 | 4 | 3 | 2 | 1 |
+| **2. Corrupt Guard** | 10-14 | 5 | 4 | 3 | 1 |
+| **3. General Heimer** | 12-15 | 6 | 6 | 5 | 1 |
+| **4. King Robert** | 13-16 | 7 | 7 | 7 | 1 |
+| **5. BOMB** | 15-17 | 8 | 10 | 9 | 2 |
 
-*Design philosophy: Early bosses reward peaceful resolution (Verbal/Preventative). By King Robert, all approaches are equal - he's beyond reason. BOMB is a cosmic horror who will turn OFF one type of vulnerability on each of his attacks (like Magus in Chrono Trigger or Bowyer in Super Mario RPG, BOMB randomly invalidates one type of attempt against him and this "immunity" cycles to a new random one on each of BOMB's turns.*
-
-**Mathematical Balance Notes:**
-- Innkeeper: Preventative needs only 2 successes (~1-2 rounds). Physical needs 4 (~3-4 rounds). DCs should be set within a range for each boss and enemy but there should be some slight or moderate variability to add intrigue and unpredictability.
-- BOMB: This combat will be different each time it's played. Combat is actually the "smart" choice against cosmic evil.
-- BOMB's 2 attacks mean roughly 1-2 DOOM Rolls per round at end game.
+### BOMB's Immunity Cycling
+BOMB is a cosmic horror who **turns OFF one type of vulnerability each round** (like Magus in Chrono Trigger or Bowyer in Super Mario RPG). When BOMB attacks, the immunity randomly cycles to a different approach. Players must adapt their strategy each round based on which approach is currently blocked.
 
 ---
 
@@ -300,9 +256,8 @@ Various upgrades unlock based on how earlier stages were cleared, plus base bonu
 - Base up-floor upgrades
 - Varying up-floor upgrades
 - Per-run temporary bumps
-*This may be the most complicated part of the game.*
-- In most situations where an upgrade is granted, all heroes receive it (e.g. Mathemetician's Offer)
-- In some situations, the group determines who gets the upgrade
+
+In most situations where an upgrade is granted, all heroes receive it (e.g. Mathematician's Offer). In some situations, the group determines who gets the upgrade.
 
 ---
 
@@ -313,99 +268,16 @@ Various upgrades unlock based on how earlier stages were cleared, plus base bonu
 - **Encounters:** Map rolls up; 3D dice-roller-catcher on bottom, text/art explaining the encounter on top
 
 ### Multiplayer Interface
-*Ideally:*
-
-Only one player needs to purchase the game (making it perfect for Discord or couch co-op). Players interface on their own devices (à la **Jackbox** or **Sunderfolk**). This allows fine-tuned decisions for each die without slowing the game.
-
-
--
+Only one player needs to purchase the game (making it perfect for Discord or couch co-op). Players interface on their own devices (à la **Jackbox** or **Sunderfolk**).
 
 **Player Interface:**
 - Three dice displayed in 3D in one segment of the player UI that can be rotated and zoomed
 - Clicking one zooms in and brings up the list modal describing each segment/possibility on that die
-- Interacting will often require the player to drag a die into the middle of the screen in order to roll it (drag die in, then tap to confirm, little rolling animation plays ON MAIN SCREEN not player screen - encourages players to keep looking back/forth and interacting)
+- Rolling requires dragging a die into the middle of the screen, then tap to confirm (rolling animation plays ON MAIN SCREEN)
 
 ---
 
-## Design Notes
-
-### Core Design Principles
-
-**Inscryption-Style Progression:** Every non-combat encounter is an opportunity for upgrades. The map lets players choose their path - targeting specific upgrade types or engaging in combat for gold rewards.
-
-**Risk Lives in Combat:** DOOM accumulates arround every corner - every 1 rolled adds to the counter! DOOM Rolls occur primarily through combat, but that's how you'll earn gold. Good encounters are low-risk upgrade opportunities. Neutral encounters have a wide range of outcomes but can often be beneficial -- made more so if you're willing to spend hard-earned gold.
-
-**Intertwined Fates:** The dice-swapping mechanic creates deep cooperation. Players should constantly be linking their dice together, creating a web of dependencies that makes every roll exciting.
-
-### DOOM System Details
-
-The DOOM die is **separate** from the 9 hero dice. Key clarifications:
-
-1. **DOOM Rolls are forced** - Only triggered when enemies attack (combat misses) or specific narrative events
-2. **DOOM does NOT affect regular rolls** - Hero dice roll normally; DOOM only subtracts from DOOM Rolls
-3. **All Natural 1s add +1 DOOM** - Displayed in RED on the die
-4. **All Natural 20s add +1 HOPE** - Displayed in GOLD on the die
-5. **DOOM Rolls at 0 DOOM** = only 5% chance of failure (rolling a natural 1)
-
-### Encounter Design Philosophy
-
-**Good Encounters (Green):**
-- Always free, always beneficial
-- At most: trade a small negative for a larger positive
-- Examples:
-  - The Gambler: Craps-style betting. Pick "in range" or "out of range", roll any die. Hitting the less likely option = +5 to chosen segment; more likely = +3 to random segment. No cost, no punishment.
-  - The Priest: HOPE added to a dice segment in exchange for a "donation" (permanent lowering of a chosen number over 10 by 1d10 (random roll 1-10).
-  - The Mathematician: Free +2 to lowest face, or trade -1 on a high for +4 to a low
-
-**Bad Encounters (Red):**
-- Combat - earns Gold but risks DOOM Rolls
-- Primary source of Gold (incentivizes engaging)
-- DOOM accumulates on misses
-
-**Neutral Encounters (Yellow):**
-- Weighted probability: 47% good / 27% neutral / 27% bad (~7/15, 4/15, 4/15)
-- Gold spending removes risk entirely
-- Examples:
-  - The Trapper: Offers 3 exotic dice to trade for. Ranked by power - best requires trading your strongest die, worst trades your weakest.
-
-### Economy
-
-**Gold Costs (Lower Tier First):**
-- Basic upgrades: 1-2 Gold
-- Standard upgrades: 3-5 Gold
-- Powerful upgrades: 8-15 Gold
-- Legendary upgrades: 20+ Gold
-
-Combat rewards scale: 2-10G (early), 10-25G (mid), 25-60G (late/boss)
-
-### Exotic Dice (for The Trapper)
-
-Ranked from most to least powerful:
-
-1. **The d6** - Faces: 1, 2, 6, 12, 19, 20 (great for manipulation)
-2. **Lucky 7s** - All 7s become 17s, all 17s become 20s
-3. **The Doubler** - Faces 1-10; double your result
-4. **The Coin Flip** - 10 faces of 20, 10 faces of 1 (high risk/reward)
-5. **The 6996** - All 6s and 9s are flipped (weak, needs work)
-6. **The Cursed** - One 1 becomes a 20, but one 20 becomes a 1
-7. **The Weighted** - Faces 8-15 only (consistent but capped)
-8. **The Low Roller** - Faces 1-10 only, but lowest becomes 15
-9. **The Shifter** - All odd numbers +3, all even -3
-10. **The Wild Card** - Roll triggers a random ally's die instead
-
-### TODO: Features Needing Development
-
-- [ ] Start-of-Stage Upgrade Shop - balanced economy for early identity building
-- [ ] Dice Draft pageantry - make it exciting and dramatic
-- [ ] Ability-specific outcomes - text/consequences for each die type in each situation
-- [x] Variable DCs per approach - encourages using all dice strategically
-- [x] Dice Sculpting - set specific face values (d6-style customization)
-- [x] More intertwine rewards (Double Link, Exotic Dice trades)
-- [ ] Visual flourishes for 1s (red) and 20s (gold) on dice display
-
----
-
-## Characters
+## Characters & Lore
 
 ### The Colors (Playable Heroes)
 
@@ -417,8 +289,6 @@ The three playable characters are humanoid d20 dice, each with a distinctive sty
 | Player 2 | Red | Ranger (hooded cloak, bow) | Red |
 | Player 3 | Green | Pirate (tricorn hat, cutlass) | Green |
 
-Players can rename their characters but the color identities remain.
-
 ### Pal (Ally-Mentor)
 
 Pal is the emotional core of the tutorial - a greying d20 with a beard and staff, decrepit and soft-edged. He found the Colors as orphaned street dice and raised them. He's 1 part Gandalf, 1 part Robin Hood, 1 part Guildmaster, and 2 parts Dad.
@@ -429,9 +299,7 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 - At tutorial's end, he's struck down and passes the prophecy to the Colors
 - Final words: *"I am... And forever shall be... Your Pal..."*
 
----
-
-## The Prophecy
+### The Prophecy
 
 *The colors of momentous day—*
 *Red and blue and green and grey,*
@@ -454,9 +322,7 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 - BOMB is a galaxy-black d20 with a fuse who has been forcing luck in his favor
 - Something Pal taught the Colors will help them break BOMB's streak
 
----
-
-## NPC Personalities
+### NPC Personalities
 
 | NPC | Personality | Voice/Quirks |
 |-----|-------------|--------------|
@@ -466,9 +332,7 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 | **The Gambler** | Carnival barker meets 3-card Monty dealer | "Eyy wouldja lookithat bigwinner bigwinner wannagoagain?" |
 | **The Ferryman** | Tall, menacing, silent (like Charon from Hades) | Wants payment one way or another; visibly impressed by nat 20s |
 
----
-
-## Boss Details
+### Boss Details
 
 | Boss | Name | Personality | Key Info |
 |------|------|-------------|----------|
@@ -478,6 +342,54 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 | **Stage 4** | King Robert | Evil, confused, corrupted | Consumed summoning BOMB; fake victory before portal opens |
 | **Stage 5** | B.O.M.B. | Cold robotic cosmic entity | "Threat detected. Prophecy-following suspected." Realizes the futility of his mission upon defeat |
 
+### Exotic Dice (for The Trapper)
+
+Ranked from most to least powerful:
+
+1. **The d6** - Faces: 1, 2, 6, 12, 19, 20 (great for manipulation)
+2. **Lucky 7s** - All 7s become 17s, all 17s become 20s
+3. **The Doubler** - Faces 1-10; double your result
+4. **The Coin Flip** - 10 faces of 20, 10 faces of 1 (high risk/reward)
+5. **The 6996** - All 6s and 9s are flipped (weak, needs work)
+6. **The Cursed** - One 1 becomes a 20, but one 20 becomes a 1
+7. **The Weighted** - Faces 8-15 only (consistent but capped)
+8. **The Low Roller** - Faces 1-10 only, but lowest becomes 15
+9. **The Shifter** - All odd numbers +3, all even -3
+10. **The Wild Card** - Roll triggers a random ally's die instead
+
+---
+
+## Implementation Status
+
+### Completed Features
+- [x] Variable DCs per approach (regular combat and boss combat)
+- [x] Dice Sculpting (set specific face values)
+- [x] Intertwine rewards (Double Link, Exotic Dice trades)
+- [x] BOMB immunity cycling (blocks one approach per round, cycles after attacks)
+- [x] Boss combat shows all three approach progress bars
+- [x] Tutorial system with Pal
+- [x] Multiplayer support (Jackbox-style)
+- [x] Save/load system
+
+### Needs Implementation
+
+#### Start-of-Stage Upgrade Shop
+**[NEEDS DESIGN]** Before each stage begins, players should have access to an upgrade shop where they can spend gold/favor on permanent improvements. This establishes early identity and allows for strategic planning.
+
+Questions to resolve:
+- What currency? Gold carried over? New "Favor" currency?
+- What upgrades are available? Tier-locked by stage?
+- How does this interact with the existing post-boss shop?
+- Should this replace post-boss shop or supplement it?
+
+#### Ability-Specific Outcomes
+**[NEEDS CONTENT]** Each die type (Slash, Stab, Bonk, Threaten, Deceive, Persuade, Bribe, Hide, Grapple) should have unique narrative text for each encounter situation. What does it LOOK like when you Stab a bandit vs Deceive them vs Bribe them?
+
+#### Visual Flourishes (Low Priority)
+- [ ] Red glow/styling for Natural 1s on dice display
+- [ ] Gold glow/styling for Natural 20s on dice display
+- [ ] Dice face preview showing swaps and modifications
+
 ---
 
 ## Future Content Ideas
@@ -486,3 +398,40 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 - Players use d12s instead of d20s
 - Core mechanic: Often need to hit EXACTLY 12 to succeed
 - Flips the usual "high = good" dice psychology
+
+---
+
+## Prompts to Continue Development
+
+Use these prompts to continue developing narrative, plot, and game substance:
+
+### Narrative & Story
+> "Write the full intro sequence for Stage [X], including: opening narration, first NPC dialogue, and the hook that pulls players into the stage's conflict."
+
+> "Develop the confrontation dialogue for [Boss Name]. Include: their motivation reveal, mid-fight taunts, and defeat speech. Make them sympathetic/complex where appropriate."
+
+> "Write Pal's tutorial dialogue for teaching [mechanic]. He should explain it simply, use his pet names for the heroes, and foreshadow his eventual fate."
+
+### Encounter Content
+> "Create ability-specific outcome text for the [Encounter Name] encounter. For each of the 9 dice types (Slash, Stab, Bonk, Threaten, Deceive, Persuade, Bribe, Hide, Grapple), write: attempt text, success text, and failure text."
+
+> "Design a new Neutral encounter for Stage [X]. Include: NPC description, the choice offered, probability outcomes (47/27/27 split), gold cost for guaranteed outcome, and narrative flavor."
+
+### Systems & Balance
+> "Design the Start-of-Stage Upgrade Shop for Stage [X]. Include: available upgrades, costs, restrictions, and how it fits the narrative moment."
+
+> "Create a new Exotic Die for The Trapper. Include: name, face values (20 faces), power ranking, and strategic use case."
+
+> "Balance check: Review the DC ranges and success thresholds for Stage [X] boss. Consider: average party power at this point, expected DOOM accumulation, and dramatic tension."
+
+### Stage-Specific Development
+> "Flesh out Stage [X] completely: all unique encounters, miniboss mechanics, environmental flavor, and how the stage's theme affects dice/upgrades."
+
+> "Write the transition scene between Stage [X] and Stage [X+1]. How do players get from one location to the next? What narrative beats need to land?"
+
+### Polish & Feel
+> "Write 10 unique Gambler voice lines for different roll outcomes."
+
+> "Create loading screen tips that teach mechanics while staying in-character for the game's tone."
+
+> "Design the 'fake victory' screen for Stage 4. What does it say? How long before the twist?"
