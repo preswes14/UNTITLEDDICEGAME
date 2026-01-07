@@ -119,8 +119,31 @@ function startBossCombat(option, node) {
     const stage = gameState.currentStage || 1;
     const bossData = BOSSES[stage];
 
+    // Generate variable DCs for each approach (like regular combat)
+    let approachDCs;
+    if (stage === 5) {
+        // BOMB has higher, tighter DC ranges
+        const dcOptions = [
+            Math.floor(Math.random() * 2) + 15,  // 15-16
+            Math.floor(Math.random() * 2) + 16,  // 16-17
+            Math.floor(Math.random() * 3) + 15   // 15-17
+        ];
+        const shuffled = dcOptions.sort(() => Math.random() - 0.5);
+        approachDCs = { physical: shuffled[0], verbal: shuffled[1], preventative: shuffled[2] };
+    } else {
+        // Other bosses have varied DCs based on stage
+        const baseMin = 8 + stage;
+        const dcOptions = [
+            Math.floor(Math.random() * 3) + baseMin,
+            Math.floor(Math.random() * 3) + baseMin + 2,
+            Math.floor(Math.random() * 3) + baseMin + 1
+        ];
+        const shuffled = dcOptions.sort(() => Math.random() - 0.5);
+        approachDCs = { physical: shuffled[0], verbal: shuffled[1], preventative: shuffled[2] };
+    }
+
     gameState.canRoll = true;
-    gameState.targetDC = bossData.dc;
+    gameState.targetDC = bossData.dc; // Keep as fallback
     gameState.allowedDiceTypes = option.types;
     gameState.encounterState = {
         type: 'boss_combat',
@@ -128,17 +151,27 @@ function startBossCombat(option, node) {
         reward: node.reward,
         successThresholds: { ...bossData.successThresholds },
         successCounters: { physical: 0, verbal: 0, preventative: 0 },
+        approachDCs: approachDCs,
         attacksPerRound: bossData.attacksPerRound,
         chosenApproach: option.types[0],
         roundMisses: 0,
         rollsThisRound: 0,
         playersRolledThisRound: [],
-        roundNumber: 1
+        roundNumber: 1,
+        // BOMB immunity cycling - only for Stage 5
+        immuneApproach: stage === 5 ? getRandomApproach() : null,
+        isBOMB: stage === 5
     };
 
     updateBossCombatUI();
     document.getElementById('encounterOptions').innerHTML = '';
     renderDiceTray();
+}
+
+// Get a random approach type
+function getRandomApproach() {
+    const approaches = ['physical', 'verbal', 'preventative'];
+    return approaches[Math.floor(Math.random() * approaches.length)];
 }
 
 // Update boss combat UI
@@ -148,7 +181,7 @@ function updateBossCombatUI() {
 
     const stage = gameState.currentStage || 1;
     const bossData = BOSSES[stage];
-    const threshold = state.successThresholds[state.chosenApproach];
+    const dcs = state.approachDCs || { physical: bossData.dc, verbal: bossData.dc, preventative: bossData.dc };
 
     const needToRoll = gameState.players
         .filter((p, idx) => !state.playersRolledThisRound.includes(idx) && p.hp > 0)
@@ -158,21 +191,45 @@ function updateBossCombatUI() {
         ? `<strong>${needToRoll.join(', ')}</strong> - your turn to roll!`
         : 'Round complete!';
 
+    // Build progress display for all approaches
+    const buildProgress = (type, color) => {
+        const needed = state.successThresholds[type];
+        const current = state.successCounters[type];
+        const dc = dcs[type];
+        const isImmune = state.immuneApproach === type;
+        let dots = '';
+        for (let i = 0; i < needed; i++) {
+            dots += i < current ? '\u25CF' : '\u25CB';
+        }
+        const dcColor = dc < 12 ? '#4ade80' : dc < 15 ? '#ffd700' : '#f87171';
+        const immuneStyle = isImmune ? 'text-decoration: line-through; opacity: 0.5;' : '';
+        const immuneLabel = isImmune ? ' <span style="color:#f87171; font-size:0.8em;">[IMMUNE]</span>' : '';
+        return `<span style="color:${color}; ${immuneStyle}">${type.charAt(0).toUpperCase() + type.slice(1)} <span style="color:${dcColor}; font-size:0.85em;">(DC ${dc})</span>: ${dots}${immuneLabel}</span>`;
+    };
+
+    // BOMB immunity warning
+    const immuneWarning = state.isBOMB && state.immuneApproach
+        ? `<div style="background:rgba(248,113,113,0.2); padding:8px; border-radius:5px; margin:10px 0; border-left:3px solid #f87171;">
+             <p style="color:#f87171; margin:0; font-size:0.9rem;">
+               <strong>BOMB is IMMUNE to ${state.immuneApproach.toUpperCase()}</strong> this round!
+             </p>
+           </div>`
+        : '';
+
     document.getElementById('encounterDescription').innerHTML = `
         <p>${bossData.description}</p>
         <div style="margin-top:20px; padding:15px; background:rgba(139,0,139,0.2); border-radius:10px; border-left:4px solid #9333ea;">
             <h3 style="color:#c084fc;">BOSS: ${bossData.name}</h3>
-            <div id="bossSuccessDisplay" style="margin:15px 0;">
-                <p style="font-size:1.1rem;">
-                    <span style="color:#4ade80;">Success</span> <strong>${state.chosenApproach.toUpperCase()}</strong> Progress:
-                    <span id="successCounter" style="color:#4ade80; font-size:1.3rem;">${state.successCounters[state.chosenApproach]}</span> / ${threshold}
-                </p>
+            ${immuneWarning}
+            <div id="bossSuccessDisplay" style="margin:15px 0; display:flex; flex-direction:column; gap:8px;">
+                ${buildProgress('physical', 'var(--physical-primary, #f87171)')}
+                ${buildProgress('verbal', 'var(--verbal-primary, #60a5fa)')}
+                ${buildProgress('preventative', 'var(--preventative-primary, #4ade80)')}
             </div>
             <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:5px; margin:10px 0;">
                 <p style="color:#ffd700; margin:0;">Round ${state.roundNumber} | Roll ${state.rollsThisRound + 1}/3</p>
                 <p style="color:#88ccff; margin:5px 0 0 0; font-size:0.95rem;">${waitingText}</p>
             </div>
-            <p style="color:#aaa; font-size:0.9rem;">DC to succeed: ${bossData.dc}</p>
         </div>
     `;
 }
@@ -193,6 +250,10 @@ function processBossRoundEnd(state) {
         let attackIndex = 0;
         function executeNextAttack() {
             if (attackIndex >= attacksToMake) {
+                // BOMB cycles immunity after attacking
+                if (state.isBOMB) {
+                    cycleBombImmunity(state);
+                }
                 startNewBossRound(state);
                 return;
             }
@@ -211,8 +272,24 @@ function processBossRoundEnd(state) {
         setTimeout(executeNextAttack, 1000);
     } else {
         log('All attacks landed! The boss staggers!', 'success');
+        // BOMB still cycles immunity even when staggered
+        if (state.isBOMB) {
+            cycleBombImmunity(state);
+        }
         startNewBossRound(state);
     }
+}
+
+// Cycle BOMB's immunity to a different approach
+function cycleBombImmunity(state) {
+    const approaches = ['physical', 'verbal', 'preventative'];
+    const currentImmune = state.immuneApproach;
+
+    // Get a different approach
+    const otherApproaches = approaches.filter(a => a !== currentImmune);
+    state.immuneApproach = otherApproaches[Math.floor(Math.random() * otherApproaches.length)];
+
+    log(`BOMB shifts! Now IMMUNE to ${state.immuneApproach.toUpperCase()}!`, 'doom');
 }
 
 // Start new boss round
@@ -373,13 +450,20 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
     } else if (state.type === 'boss_combat') {
         state.rollsThisRound++;
         state.playersRolledThisRound.push(playerIndex);
-        const threshold = state.successThresholds[state.chosenApproach];
 
-        if (result >= gameState.targetDC || result === 20) {
-            state.successCounters[state.chosenApproach]++;
-            const current = state.successCounters[state.chosenApproach];
+        const approach = die.category;
+        const threshold = state.successThresholds[approach];
+        const approachDC = state.approachDCs ? state.approachDCs[approach] : gameState.targetDC;
 
-            log(`${player.name}'s ${die.name} scores a success! (${current}/${threshold})`, result === 20 ? 'crit' : 'success');
+        // Check if this approach is immune (BOMB only)
+        if (state.immuneApproach === approach) {
+            log(`${player.name}'s ${die.name} is BLOCKED! BOMB is immune to ${approach}!`, 'fail');
+            state.roundMisses++;
+        } else if (result >= approachDC || result === 20) {
+            state.successCounters[approach]++;
+            const current = state.successCounters[approach];
+
+            log(`${player.name}'s ${die.name} hits DC ${approachDC}! (${current}/${threshold} ${approach})`, result === 20 ? 'crit' : 'success');
 
             if (current >= threshold) {
                 gameState.canRoll = false;
@@ -392,7 +476,7 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
             }
         } else {
             state.roundMisses++;
-            log(`${player.name} misses! (${state.roundMisses} miss this round)`, 'fail');
+            log(`${player.name}'s ${result} misses DC ${approachDC}! (${state.roundMisses} miss this round)`, 'fail');
         }
 
         updateBossCombatUI();
