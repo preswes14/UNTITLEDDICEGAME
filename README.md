@@ -1,4 +1,4 @@
-# UNTITLED DICE GAME
+<img width="785" height="335" alt="image" src="https://github.com/user-attachments/assets/8019b08b-e7c2-4cd8-a772-ac143b94b9e4" /># UNTITLED DICE GAME
 
 A companion app for collaborative TTRPG action. Designed for 3 players.
 
@@ -150,13 +150,13 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 | **The Alchemist** | Good | Wild-eyed woman splices dice | None | Basic: Link low roll. Risky: Random link +2. Double: Link to BOTH allies! |
 | **The Priest** | Good | Serene figure offers blessing | None | +3 HOPE, or +5 HOPE (mark die), or bless a segment |
 | **The Gambler** | Good | Craps-style range betting | None | Pick IN/OUT of range, roll. Win = +5 choice, Lose = +3 random |
-| **Bandits** | Bad | Three thugs block your path | DOOM Rolls on misses | 30G, DC 12, Thresholds: P:2/V:2/Pr:1 |
-| **Corrupt Guards** | Bad | Guards demand "peace tax" | DOOM Rolls on misses | 25G, DC 13, Thresholds: P:2/V:1/Pr:2 |
-| **Miniboss (Thug)** | Bad | Massive bouncer blocks stairs | DOOM Rolls on misses | 40G, DC 14, Thresholds: P:3/V:2/Pr:2 |
-| **The Ferryman** | Neutral | Ancient boatman judges fate | Free: 27% die marked | Free: 47% +2 HOPE, 27% safe. Paid 5G: guaranteed +2 HOPE |
+| **Bandits** | Bad | Three thugs block your path | DOOM Rolls on misses | 5G each, DCs 5/10/15, Thresholds: P:2/V:2/Pr:1 |
+| **Corrupt Guards** | Bad | Guards demand "peace tax" | DOOM Rolls on misses | 10G each, DCs 6/11/16, Thresholds: P:2/V:1/Pr:2 |
+| **Miniboss (Thug)** | Bad | Massive bouncer blocks stairs | DOOM Rolls on misses | 25G, DCs 7/12/17, Thresholds: P:3/V:2/Pr:2 |
+| **The Ferryman** | Neutral | Ancient boatman judges fate | Free: 27% die marked | Free: 47% +1 HOPE, 27% safe. Paid 5G: guaranteed +1 HOPE |
 | **The Trapper** | Neutral | Hunter offers exotic dice trade | Trade based on die power | 3 exotic dice offered. Best→best, worst→worst. Paid 8G: pick any |
 | **The Drunk Priest** | Neutral | Stumbling priest offers blessing | Free: 27% net DOOM | Free: 47% +3-4 HOPE. Paid 3G: guaranteed +3 HOPE |
-| **The Cultist** | Neutral | Robed figure offers purple drink | Free: 27% bad swap + DOOM | Free: 47% swap + +5. Paid 10G: guaranteed good |
+| **The Cultist** | Neutral | Robed figure offers purple drink | Free: 27% bad swap + DOOM | Free: 47% swap + +5. Paid 5G: guaranteed good |
 
 ### Stage 5 Unique Encounters (Warped Dimension)
 
@@ -229,7 +229,7 @@ Bosses use a **success counter system** instead of HP. Players must accumulate e
 4. Repeat until one approach reaches its threshold or party wipe.
 
 **Boss Thresholds (by Stage):**
-
+CLAUDE I want the DCs to work like this. Every enemy or encounter has a Easy/Medium/Hard set of DCs across the 3 types of moves. Sometimes it is set which is which (eg: physical is easy, preventive is medium, verbal is hard) but usually these will be randomly assigned. DCs should vary within a given range for a given enemy but generally an EASY should be in the 5-10 range, a Medium should be 11-15, and a Hard should be 16-20. Each enemy should have a "Total DC Sum" that is rigid and indicates the total number of points that can be allocated across the 3 DCs. If, for example, the most basic enemy (bandit?) has a Total DC of 35, and he has DCs of 7 on his Easy and 12 on his Medium, he should have a 16 on his Hard (7+12+16=35). If, instead, he rolled a super easy 5 and 11 on his Easy and Medium, he should have a much more difficult 19 for the Hard one. Each enemy should have their own Total DC Sum as well as their own ranges for where easy/medium/hard should fall.
 | Boss | DC Range | Physical | Verbal | Preventative | Attacks/Round |
 |------|:--------:|:--------:|:------:|:------------:|:-------------:|
 | **1. Dirty Innkeeper** | 9-12 | 4 | 3 | 2 | 1 |
@@ -245,19 +245,16 @@ BOMB is a cosmic horror who **turns OFF one type of vulnerability each round** (
 
 ## Roguelite Structure
 
-This is not a true roguelike but has roguelite elements.
+This is not a true roguelike but has some minor roguelite elements. Generally it is a cohesive, cooperative campaign: heroes clear Stage 1, then play Stage 2 until beaten, then Stage 3. No returning to Stage 1 each time.
 
-Generally a progressive campaign: once heroes clear Stage 1, they play Stage 2 until beaten, then Stage 3. No returning to Stage 1 each time.
-
-Various upgrades unlock based on how earlier stages were cleared, plus base bonuses for starting higher-level stages.
+Various upgrades unlock based on how earlier stages were cleared (how much gold/FAVOR is accrued), plus base bonuses to FAVOR for starting higher-level stages. FAVOR can be unspent and respent at round start without penalty so that heroes can construct a viable build.
 
 **Upgrade Types:**
-- Permanent hero upgrades
-- Base up-floor upgrades
-- Varying up-floor upgrades
-- Per-run temporary bumps
+- Permanent hero upgrades (granted through story progression)
+- "Good" up-floor upgrades (usually free, weak effects. Often can enhance effect by spending Gold)
+- "Neutral" up-floor upgrades (sometimes free, sometimes costly. Usually can guarantee success by spending Gold)
 
-In most situations where an upgrade is granted, all heroes receive it (e.g. Mathematician's Offer). In some situations, the group determines who gets the upgrade.
+In most situations where an upgrade is granted, all heroes receive it (e.g. Mathematician's Offer). In some situations, the group determines who gets the upgrade (like in spending FAVOR, or at the merchant)
 
 ---
 
@@ -348,14 +345,14 @@ Ranked from most to least powerful:
 
 1. **The d6** - Faces: 1, 2, 6, 12, 19, 20 (great for manipulation)
 2. **Lucky 7s** - All 7s become 17s, all 17s become 20s
-3. **The Doubler** - Faces 1-10; double your result
+3. **The Doubler** - Faces 1-10; double your result (except on nat 1)
 4. **The Coin Flip** - 10 faces of 20, 10 faces of 1 (high risk/reward)
-5. **The 6996** - All 6s and 9s are flipped (weak, needs work)
-6. **The Cursed** - One 1 becomes a 20, but one 20 becomes a 1
-7. **The Weighted** - Faces 8-15 only (consistent but capped)
-8. **The Low Roller** - Faces 1-10 only, but lowest becomes 15
-9. **The Shifter** - All odd numbers +3, all even -3
-10. **The Wild Card** - Roll triggers a random ally's die instead
+5. **The 6996** - All 6s become 9s (including on modified dice)
+6. **The Cursed Hope** - +1DOOM on Nat20, +1HOPE on Nat1
+7. **The BlackJack Dealer** - 2-9 are normal, 10, 11, 12, 13 become 10. 13, 14, 15, and 16 become scratched out.
+8. **The Low Roller** - Remove DOOM from 1; 11-20 become 10.
+9. **The Odd Couple** - All odd numbers +3, all even numbers -3
+10. **The Wild Card** - Roll triggers a random ally's die instead (everything is scratched out)
 
 ---
 
@@ -375,16 +372,71 @@ Ranked from most to least powerful:
 
 #### Start-of-Stage Upgrade Shop
 **[NEEDS DESIGN]** Before each stage begins, players should have access to an upgrade shop where they can spend gold/favor on permanent improvements. This establishes early identity and allows for strategic planning.
+Here's what I'm thinking. Gold should be used for the spot-level upgrades and then any leftover gold after the Stage is over gets converted into Favor (I'm currently thinking 10G->1F, rounded down). In addition to gaining 1 Favor per hero (collective pool) to spend at the start of the next stage, having gold can up Favor gained. Unlike gold which is spent on upgrades and consumed, Favor is more like Skill Points which aren't quite "spent" but can be unequipped and re-equipped to make for a specific build. The team will share this currency and there will be more options than they could possibly spend their favor on, allowing for tough choices and interesting build attempts. Stage 2 would grant 3 favor by default, Stage 3 grants 6, 4 grants 9, and 5 grants 12 - in addition to whatever gold the party accrued and successfully cashed in over the course of the run.
+**
+FAVOR STORE FIRST DRAFT- 
+1 FAVOR:
+STILL PRETTY GOOD Choose a hero. When this hero rolls a failure on [best dice] , instead count it as a success on [worst dice]
+PRACTICED INTERTWINER - Intertwined rolls granted BY this hero gain +5
+PRACTICED INTERTWINEE - Intertwined rolls granted TO this hero gain +5
+HOPEFUL NOVICES The party gains +1 Max Hope (from 1 to 2)
+GEAR: SHIELD The party starts with 1 Shield
+GEAR: CASH The party starts with 5 Gold
+GOOD NIGHT OF SLEEP The party starts with 0 Doom instead of 1.
+BUNCH OF CHUMPS Non-boss enemies in this Stage have their DCs reduced by 2
 
-Questions to resolve:
+
+2 FAVOR:
+SHIELD NOVICES The party gains +1 Max Shield (from 1 to 2, requires previous SHIELD unlock)
+HOPEFUL ADEPTS The Party gains +1 Max HOPE (from 2 to 3, requires previous HOPE unlock)
+EXPERT INTERTWINER Choose a hero. Intertwined rolls granted BY this hero negate any DOOM rolled
+EXPERT INTERTWINEE Choose a hero. Intertwined rolls granted TO this hero negate any DOOM rolled
+ONE BIG CHUMP The boss of this Stage has its DCs reduced by 2.
+EARLY ALCHEMIST The Alchemist appears immediately after FAVOR shop
+
+3 FAVOR:
+GETTING BETTER Choose a hero. When this hero rolls a failure on [worst dice] , instead count it as a success on [best dice]
+SHIELD ADEPTS The party gains +1 Max Shield (from 2 to 3, requires previous SHIELD unlock)
+MASTERS OF HOPING Party gains +1 Max HOPE (from 3 to 4, requires previous HOPE unlock)
+WEAK POINT The boss of this Stage requires 1 less success of each type to win
+
+4 FAVOR:
+DOOMLESS Choose a hero. Remove DOOM from this hero's dice
+HOPEFUL INTERTWINING Choose a hero. All intertwined rolls TO or FROM this hero have a 50% chance to grant +1 HOPE.
+DOOM BUFFER Each hero rerolls the first +1 DOOM they would have otherwise rolled.
+MASTERS OF SHIELDING  The party gains +1 Max Shield (from 3 to 4, requires previous SHIELD unlock)
+
+5 FAVOR:
+DOOMVANTAGE The Party gains advantage on all DOOM checks
+CHAOTIC FAVOR Gain 4-9 (3+1d6) FAVOR and randomly assign it to Favor upgrades (heroes and dice chosen randomly)
+**
+And then after they had cleared the game we would add CLOUT, which is a free-add-difficulty mechanic like Skulls in Halo or Path of Pain in Hades.
+Questions to resolve: MIGHT HAVE ALREADY ANSWERED THE BELOW BUT WILL ANSWER EXPLICITLY AS A DOUBLE-CHECK EXERCISE WITH YOU
+
 - What currency? Gold carried over? New "Favor" currency?
+  Gold is indirectly carried over between stages in the form of FAVOR. Bosses award gold (technically?) but this is added to the wallet which is then converted into Favor. gold spent on dice upgrades will usually persist between rounds though, making that a good use of gold.
 - What upgrades are available? Tier-locked by stage?
-- How does this interact with the existing post-boss shop?
+  -For the favor upgrades, I think that assigning 3 favor should open up the 2-favor options. Assigning 5 favor opens up the 3-favor options. Assigning 8 favor opens up the 4-favor options. And assigning 12 Favor opens up the 5-favor options.
+  -For the gold upgrades, specifically at the Merchant, all the options are unlocked from the beginning (but possibly prohibitively expensive). I would like to guarantee that EXACTLY ONE avenue on the overworld map always has a merchant immediately before the Boss. There may be other merchants by chance on the other avenues but they won't be right before the boss. If players want to plan on spending gold right before the boss they should always have that option.
+  - How does this interact with the existing post-boss shop?
 - Should this replace post-boss shop or supplement it?
-
+- - This should entirely replace whatever currently exists for a post-boss shop.
+**Merchant**
+The merchant is guaranteed to appear as an option on every Stage at least once, at the very end (before the boss) as well as potentially earlier in the overworld trudge. Merchant operates around the most basic of principles: Pay 1 gold to raise 1 number on 1 die by 1. This first number increases by 1 each time the upgrade is bought (so after the first purchase, pay 2 gold to raise 1 number on 1 die by 1) But each trip to the merchant, this resets again to 1. So the party entering with 10 gold would be able to get 4 numbers bumped by 1, or 1 number bumped by 4, for all 10 G (1+2+3+4), or just get 2 upgrades for 3 Gold and "save up" til the next Merchant.
+Important - Merchant can ONLY affect segment faces that have received no changes other than from the merchant - so 1 (DOOM) and 20 (HOPE) are immediately always excluded from availability for Merchanting, and the Merchant can't turn a 19 into a 20 (caps at 19). Any segment that has been manipulated by any other force (starting upgrades, alchemist, mathemetician, etc) is INELIGIBLE to be upgraded at the Merchant (he can mutter something about aftermarket upgrades voiding the die's warranty). Merchant CAN repeatedly upgrade segments that have only previously been upgraded by the Merchant.
+The merchant should also offer a Spin On The Wheel for 5 Gold (5 gold each time, repeatable as many times as the player can pay) that has a fair and visible range of outcomes (picturing 5 wheel outcomes- Double segment (caps at 19), Half segment (minimum 2), Add +1 Hope, Add +1 Doom, and Intertwine.) Player will choose to use the wheel and then choose the segment they are "gambling" and the wheel will spin and the requested effect will apply. *AS WITH MOST UPGRADES IN THIS GAME A SEGMENT THAT HAS BEEN UPGRADED BY THE WHEEL CANNOT BE UPGRADED AGAIN EXCEPT BY THE WHEEL*
 #### Ability-Specific Outcomes
 **[NEEDS CONTENT]** Each die type (Slash, Stab, Bonk, Threaten, Deceive, Persuade, Bribe, Hide, Grapple) should have unique narrative text for each encounter situation. What does it LOOK like when you Stab a bandit vs Deceive them vs Bribe them?
-
+You're right this is necessary but it is uninteresting to write. In general it should be the basic, expected outcome you would anticipate - the difference between:
+STAB - Hands covering deep wounds, the bandits retreat to find makeshift bandages
+BONK - A well-placed bonk to the noggin knocks the last bandit out cold
+SLASH - Wounded and bloody, the bandits collapse to the ground 
+THREATEN - You looked smaller from farther away. The bandits quickly realize they are outmatched, and retreat.
+DECEIVE - Despite looking behind them right when you pointed, the bandits did not see the dragon you promised was totally right there a second ago.
+PERSUADE - Perhaps a life of crime isn't the answer. The bandit sets down his sword and immediately begins work on his resume.
+BRIBE - Heads swimming with promises of gold, the bandits don't realize you've absconded until you're long out of sight.
+HIDE - These guys must not have played enough hide-and-seek as kids. They stumble past you, completely unaware you're there.
+GRAPPLE - A simple Full Nelson was enough to make these lowlife ruffians throw down their knives and scamper away
 #### Visual Flourishes (Low Priority)
 - [ ] Red glow/styling for Natural 1s on dice display
 - [ ] Gold glow/styling for Natural 20s on dice display
@@ -406,8 +458,11 @@ Questions to resolve:
 Use these prompts to continue developing narrative, plot, and game substance:
 
 ### Narrative & Story
-> "Write the full intro sequence for Stage [X], including: opening narration, first NPC dialogue, and the hook that pulls players into the stage's conflict."
-
+> "Write the full intro sequence for Stage [X], including: opening narration, first NPC dialogue, and the hook that pulls players into the stage's conflict." I AM GOING TO WRITE THE SHELLS OF THESE AND WE CAN FLESH THEM OUT LATER.
+> STAGE 0 and it is primarily there so that Pal can teach the Colors/players the basics of the game and the universe. 
+It starts at the "hideout" the 4 of them call home, and Pal shows up and tells them that the real adventure starts today if they can prove themselves! He seems sort of distant and melancholy, he mentions ATOM (bad guys). This framework - demonstrate your skills - allows Pal to train the player on how to operate the controls while also letting the Colors pick their good/med/bad dice with some narrative thrust. Throughout the process Pal is increasingly worried and paranoid leading all the way to him revealing the prophecy to them and handing it off, bidding them follow it in his name. He beckons them out of the hideout where there they can just barely make out a muffled conversation where Pal curses ATOM, before the whole thing EXPLODES. Bits of home and hero rain down on our protagonists and we see the Title Screen (pre-stage 1).
+> STAGE 1 - The heroes explore the area around their old hideout searching for clues or people who Pal might have given any information to. This leads them to the Dirtbag Inn run by Seedy Sammy, who was an old friend of Pal's from way way back. He offers to help them more after a good night of sleep but they awaken to find nearly all of their gear missing, leaving them just the numbers on their backs! Scampering around the city on his trail they ultimately find him near the capitol castle. They triumph over him and he is immensely remorseful, Pal meant the world to him back in the day and he can't believe he's done this. He offers to do whatever he can to help them and reveals that he was in debt to ATOM and the person he owed was ---" and that's when the arrow silences him and Stage 1 ends.
+> STAGE 2-5: These are basically written shells already, with the details of the stage boss, their motivations, etc. Can you write up descriptions just like in my style for Stage 0 and Stage 1 for what 2-5 should be like? Use mostly my ideas and tone, just fill in the blanks where I didn't write anything explicitly.
 > "Develop the confrontation dialogue for [Boss Name]. Include: their motivation reveal, mid-fight taunts, and defeat speech. Make them sympathetic/complex where appropriate."
 
 > "Write Pal's tutorial dialogue for teaching [mechanic]. He should explain it simply, use his pet names for the heroes, and foreshadow his eventual fate."
@@ -428,10 +483,33 @@ Use these prompts to continue developing narrative, plot, and game substance:
 > "Flesh out Stage [X] completely: all unique encounters, miniboss mechanics, environmental flavor, and how the stage's theme affects dice/upgrades."
 
 > "Write the transition scene between Stage [X] and Stage [X+1]. How do players get from one location to the next? What narrative beats need to land?"
-
+0 to 1, we have to figure out this prophecy! Let's explore the city!
+> 1 to 2, oh no Seedy Sammy was murdered! Who could have done this? Let's track down where that arrow came from!
+> 2 to 3, we avenged Seedy Sammy but how deep does this conspiracy go?? We have to infiltrate the miltary!
+> 3 to 4, gulp! We'll have to take on the actual KING himself to stop all this! To the Castle we go!
+> 4 to 5, WAIT, the king was just a puppet who summoned BOMB? Wait, that must be what killed Pax! Let's kill it!!!
+> 
 ### Polish & Feel
-> "Write 10 unique Gambler voice lines for different roll outcomes."
-
+> "Write 10 unique Gambler voice lines for different roll outcomes." INSTEAD, WRITING 5-10 STUBS FOR THE BEGINNING AND 5-10 STUBS FOR RESULT THAT YOU CAN MIX/MATCH
+Beginning Stubs:
+> Step right up step right up.... 
+> Swing batter batter swing... OOF. Rough.
+> Big Bucks...No whammies... 
+> Gotta play to win!....
+> Shuffle shuffle shuffle...
+> Round and round the gambling die goes...
+> Result Stubs:
+> oof sorry better luck next time!
+> Woof. That's rough.
+> > You are the weakest link, goodbye.
+> Yeehaw! Congrats!
+> Oh, we got a lucky guy over here, huh?
+> > Wow! You're on a roll! Get it! Haha!
 > "Create loading screen tips that teach mechanics while staying in-character for the game's tone."
+Intertwining is powerful. Use it.
+> There's nothing wrong with being a sidekick.
+> > High floor or high ceiling? Porque no los dos?
+> >
 
 > "Design the 'fake victory' screen for Stage 4. What does it say? How long before the twist?"
+Not too long, players will "win" against the king and he will give dialogue about how he is slain but that the forces of ATOM will persist... and then he plunges a knife(?) into his heart(?) and that summons BOMB.
