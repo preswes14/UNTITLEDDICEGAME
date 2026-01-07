@@ -216,6 +216,7 @@ const TUTORIAL_ENCOUNTERS = {
         name: "Pal's Dream",
         description: "You awaken in a shimmering dreamscape. A floating figure made of rainbow light greets you. 'Hello, Chosen Ones. I am Pal. Soon I will leave this world... but first, I must prepare you for what comes next.'",
         icon: '?',
+        image: 'assets/pal.png',
         options: [
             { text: '"Why are you leaving?"', action: 'pal_explain' },
             { text: '"What is the prophecy?"', action: 'pal_prophecy' },
@@ -227,6 +228,7 @@ const TUTORIAL_ENCOUNTERS = {
         name: 'The First Trial',
         description: "A shadowy obstacle manifests before you. Pal's voice echoes: 'Show me your strongest skill. Roll the die you are BEST at.'",
         icon: '?',
+        image: 'assets/pal.png',
         dc: 8,
         tutorialPhase: 'strong_die',
         options: [
@@ -238,6 +240,7 @@ const TUTORIAL_ENCOUNTERS = {
         name: 'The Second Trial',
         description: "Another obstacle appears, darker than before. Pal speaks gravely: 'Now face your weakness. Roll the die you are WORST at.'",
         icon: '!',
+        image: 'assets/pal.png',
         dc: 15,
         forceFailure: true,
         tutorialPhase: 'weak_die',
@@ -250,6 +253,7 @@ const TUTORIAL_ENCOUNTERS = {
         name: 'The Intertwining',
         description: "Pal glows brighter. 'You see? Alone, you have weaknesses. But together... you can cover for each other. Let me show you the power of INTERTWINING your fates.'",
         icon: '?',
+        image: 'assets/pal.png',
         options: [
             { text: 'Learn Intertwining', action: 'start_intertwine' }
         ]
@@ -259,6 +263,7 @@ const TUTORIAL_ENCOUNTERS = {
         name: 'Shadow of Pal',
         description: "A dark version of Pal materializes. 'One final test. Work together. Use your swaps. Show me you are ready for the real world.'",
         icon: '!',
+        image: 'assets/pal.png',
         dc: 10,
         successThresholds: { physical: 3, verbal: 3, preventative: 3 },
         attacksPerRound: 1,
@@ -271,6 +276,7 @@ const TUTORIAL_ENCOUNTERS = {
         name: "Pal's Farewell",
         description: "Pal's form begins to fade. 'You are ready. The 20 prophecies await. 19 have failed before you... but you... you are different. Farewell, my Chosen Ones. May HOPE light your path.'",
         icon: '?',
+        image: 'assets/pal.png',
         options: [
             { text: 'Awaken to the Real World', action: 'end_tutorial' }
         ]

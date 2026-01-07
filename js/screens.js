@@ -1007,8 +1007,14 @@ function showTutorialEncounter(encounterId) {
     gameState.tutorial.currentEncounter = encounterId;
 
     document.getElementById('encounterTitle').textContent = encounter.name;
+
+    // Show PAL's image if encounter has one, otherwise show icon
+    const imageHtml = encounter.image
+        ? `<img src="${encounter.image}" alt="Pal" style="width: 80px; height: 80px; border-radius: 12px; object-fit: contain; background: rgba(147, 51, 234, 0.2); border: 2px solid #a855f7; margin-bottom: 15px;">`
+        : `<p style="font-size: 2rem; margin-bottom: 15px;">${encounter.icon}</p>`;
+
     document.getElementById('encounterDescription').innerHTML = `
-        <p style="font-size: 2rem; margin-bottom: 15px;">${encounter.icon}</p>
+        ${imageHtml}
         <p>${encounter.description}</p>
     `;
 
