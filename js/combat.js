@@ -5,37 +5,46 @@ function startCombat(option, node) {
     gameState.canRoll = true;
     gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
 
-    // Generate variable DCs for each approach type
+    // Generate DCs using Total DC Sum system
     const isBoss = node.type === 'boss';
+    let approachDCs;
+    let rewardPerSuccess = 5; // Default
 
-    let dcOptions;
-    if (isBoss) {
-        dcOptions = [
-            Math.floor(Math.random() * 3) + 10,
-            Math.floor(Math.random() * 3) + 13,
-            Math.floor(Math.random() * 4) + 15
-        ];
+    if (node.dcConfig && ENEMY_DC_CONFIG[node.dcConfig]) {
+        // Use the new Total DC Sum system
+        const config = ENEMY_DC_CONFIG[node.dcConfig];
+        approachDCs = generateTotalDCSumDCs(config);
+        rewardPerSuccess = config.rewardPerSuccess || 5;
+
+        // Apply favor DC reduction for non-boss enemies
+        const dcReduction = gameState.favorModifiers?.dcReduction || 0;
+        if (dcReduction > 0) {
+            Object.keys(approachDCs).forEach(key => {
+                approachDCs[key] = Math.max(1, approachDCs[key] - dcReduction);
+            });
+        }
     } else {
-        dcOptions = [
+        // Fallback to old system for backwards compatibility
+        const dcOptions = [
             Math.floor(Math.random() * 4) + 5,
             Math.floor(Math.random() * 4) + 10,
             Math.floor(Math.random() * 4) + 14
         ];
+        const shuffled = dcOptions.sort(() => Math.random() - 0.5);
+        approachDCs = {
+            physical: shuffled[0],
+            verbal: shuffled[1],
+            preventative: shuffled[2]
+        };
     }
 
-    const shuffled = dcOptions.sort(() => Math.random() - 0.5);
-    const approachDCs = {
-        physical: shuffled[0],
-        verbal: shuffled[1],
-        preventative: shuffled[2]
-    };
-
     const thresholds = node.successThresholds || { physical: 2, verbal: 2, preventative: 2 };
+    const totalSuccessesNeeded = Object.values(thresholds).reduce((a, b) => Math.min(a, b), Infinity);
 
     gameState.encounterState = {
         type: 'combat',
         enemyName: node.name,
-        reward: node.reward,
+        rewardPerSuccess: rewardPerSuccess,
         successThresholds: { ...thresholds },
         successCounters: { physical: 0, verbal: 0, preventative: 0 },
         approachDCs: approachDCs,
@@ -119,19 +128,12 @@ function startBossCombat(option, node) {
     const stage = gameState.currentStage || 1;
     const bossData = BOSSES[stage];
 
-    // Generate variable DCs for each approach (like regular combat)
+    // Generate DCs using Total DC Sum system
     let approachDCs;
-    if (stage === 5) {
-        // BOMB has higher, tighter DC ranges
-        const dcOptions = [
-            Math.floor(Math.random() * 2) + 15,  // 15-16
-            Math.floor(Math.random() * 2) + 16,  // 16-17
-            Math.floor(Math.random() * 3) + 15   // 15-17
-        ];
-        const shuffled = dcOptions.sort(() => Math.random() - 0.5);
-        approachDCs = { physical: shuffled[0], verbal: shuffled[1], preventative: shuffled[2] };
+    if (bossData.dcConfig) {
+        approachDCs = generateTotalDCSumDCs(bossData.dcConfig);
     } else {
-        // Other bosses have varied DCs based on stage
+        // Fallback for backwards compatibility
         const baseMin = 8 + stage;
         const dcOptions = [
             Math.floor(Math.random() * 3) + baseMin,
@@ -142,14 +144,31 @@ function startBossCombat(option, node) {
         approachDCs = { physical: shuffled[0], verbal: shuffled[1], preventative: shuffled[2] };
     }
 
+    // Apply favor boss DC reduction
+    const bossDcReduction = gameState.favorModifiers?.bossDcReduction || 0;
+    if (bossDcReduction > 0) {
+        Object.keys(approachDCs).forEach(key => {
+            approachDCs[key] = Math.max(1, approachDCs[key] - bossDcReduction);
+        });
+    }
+
+    // Apply favor boss threshold reduction
+    const thresholdReduction = gameState.favorModifiers?.bossThresholdReduction || 0;
+    const modifiedThresholds = { ...bossData.successThresholds };
+    if (thresholdReduction > 0) {
+        Object.keys(modifiedThresholds).forEach(key => {
+            modifiedThresholds[key] = Math.max(1, modifiedThresholds[key] - thresholdReduction);
+        });
+    }
+
     gameState.canRoll = true;
-    gameState.targetDC = bossData.dc; // Keep as fallback
+    gameState.targetDC = Math.min(...Object.values(approachDCs));
     gameState.allowedDiceTypes = option.types;
     gameState.encounterState = {
         type: 'boss_combat',
         enemyName: bossData.name,
         reward: node.reward,
-        successThresholds: { ...bossData.successThresholds },
+        successThresholds: modifiedThresholds,
         successCounters: { physical: 0, verbal: 0, preventative: 0 },
         approachDCs: approachDCs,
         attacksPerRound: bossData.attacksPerRound,

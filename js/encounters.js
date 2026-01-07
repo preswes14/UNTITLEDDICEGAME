@@ -306,6 +306,17 @@ function handleOption(option, node) {
             log('Warmth flows through the tear. You feel hope. +1 HOPE', 'hope');
             completeEncounter();
             break;
+        // Merchant encounter actions
+        case 'merchant_browse':
+            showMerchantBrowse();
+            break;
+        case 'merchant_wheel':
+            if (spendGold(5)) {
+                showMerchantWheel();
+            } else {
+                log('Not enough gold! You need 5G.', 'fail');
+            }
+            break;
     }
 }
 
@@ -1366,4 +1377,347 @@ function applyMathematicianUpgrade(item) {
     }
 
     renderDiceTray();
+}
+
+// ==================== MERCHANT ENCOUNTER ====================
+
+// Track merchant upgrade cost (escalates each purchase, resets each visit)
+let merchantUpgradeCost = 1;
+
+// Show merchant browse interface
+function showMerchantBrowse() {
+    merchantUpgradeCost = 1; // Reset cost on new visit
+
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = 'The Merchant';
+
+    renderMerchantBrowse();
+    modal.classList.add('show');
+}
+
+// Check if a die face is "virgin" (unmodified except by merchant)
+function isDieFaceVirgin(die, faceIndex) {
+    const faceValue = die.faces[faceIndex];
+
+    // 1 and 20 are never eligible
+    if (faceValue === 1 || faceValue === 20) return false;
+
+    // Can't go above 19
+    if (faceValue >= 19) return false;
+
+    // Check if face is in baseFaces at same position (unmodified)
+    if (die.baseFaces && die.baseFaces[faceIndex] !== die.faces[faceIndex]) {
+        // Face was modified - check if only by merchant
+        if (!die.merchantUpgrades || !die.merchantUpgrades.includes(faceIndex)) {
+            return false; // Modified by something other than merchant
+        }
+    }
+
+    // Check swaps - swapped segments are not virgin
+    if (die.swaps && die.swaps.some(s => s.myValue === faceValue)) {
+        return false;
+    }
+
+    // Check hope segments
+    if (die.hopeSegments && die.hopeSegments.includes(faceValue)) {
+        return false;
+    }
+
+    // Check crossed/marked segments
+    if (die.crossedSegments && die.crossedSegments.includes(faceValue)) {
+        return false;
+    }
+
+    return true;
+}
+
+// Render merchant browse content
+function renderMerchantBrowse() {
+    const nextCost = merchantUpgradeCost;
+    const canAfford = gameState.gold >= nextCost;
+
+    document.getElementById('upgradeDescription').innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+            <div style="text-align:center;">
+                <div style="color:#ffd700; font-size:1.5rem; font-weight:bold;">${gameState.gold}G</div>
+                <div style="color:#888; font-size:0.8rem;">Your Gold</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="color:#4ade80; font-size:1.5rem; font-weight:bold;">${nextCost}G</div>
+                <div style="color:#888; font-size:0.8rem;">Next Upgrade Cost</div>
+            </div>
+        </div>
+        <p style="color:#aaa; font-size:0.85rem;">Select an unmodified die face to increase by 1. Cost increases each purchase.</p>
+        <p style="color:#888; font-size:0.75rem;">Only "virgin" faces can be upgraded (no prior modifications, not 1, 20, or 19+).</p>
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    // List all players and their dice faces
+    gameState.players.forEach((player, pIdx) => {
+        Object.entries(player.dice).forEach(([dieType, die]) => {
+            const virginFaces = [];
+
+            die.faces.forEach((faceValue, faceIndex) => {
+                if (isDieFaceVirgin(die, faceIndex)) {
+                    virginFaces.push({ value: faceValue, index: faceIndex });
+                }
+            });
+
+            if (virginFaces.length > 0) {
+                const dieSection = document.createElement('div');
+                dieSection.style.cssText = 'margin-bottom:15px; padding:10px; background:rgba(0,0,0,0.2); border-radius:8px;';
+
+                dieSection.innerHTML = `
+                    <h4 style="color:var(--${die.category}-primary); margin-bottom:8px;">${player.name}'s ${die.name}</h4>
+                    <div style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+                `;
+
+                const facesContainer = dieSection.querySelector('div');
+
+                virginFaces.forEach(face => {
+                    const faceBtn = document.createElement('button');
+                    faceBtn.className = 'option-btn';
+                    faceBtn.style.cssText = `
+                        padding: 8px 16px;
+                        min-width: 50px;
+                        opacity: ${canAfford ? '1' : '0.5'};
+                        cursor: ${canAfford ? 'pointer' : 'not-allowed'};
+                    `;
+                    faceBtn.textContent = `${face.value} -> ${face.value + 1}`;
+
+                    if (canAfford) {
+                        faceBtn.onclick = () => purchaseMerchantUpgrade(player, die, face.index);
+                    }
+
+                    facesContainer.appendChild(faceBtn);
+                });
+
+                options.appendChild(dieSection);
+            }
+        });
+    });
+
+    // Check if any faces are available
+    if (options.children.length === 0) {
+        const noFaces = document.createElement('p');
+        noFaces.style.cssText = 'color:#888; text-align:center; padding:20px;';
+        noFaces.textContent = 'No eligible die faces available. All faces have been modified by other upgrades.';
+        options.appendChild(noFaces);
+    }
+
+    // Done button
+    const doneBtn = document.createElement('button');
+    doneBtn.className = 'option-btn secondary';
+    doneBtn.style.marginTop = '15px';
+    doneBtn.textContent = 'Done Shopping';
+    doneBtn.onclick = () => {
+        document.getElementById('upgradeModal').classList.remove('show');
+        completeEncounter();
+    };
+    options.appendChild(doneBtn);
+}
+
+// Purchase merchant upgrade
+function purchaseMerchantUpgrade(player, die, faceIndex) {
+    if (gameState.gold < merchantUpgradeCost) return;
+
+    // Spend gold
+    gameState.gold -= merchantUpgradeCost;
+    updateGoldDisplay();
+
+    // Upgrade the face
+    const oldValue = die.faces[faceIndex];
+    die.faces[faceIndex] = Math.min(19, oldValue + 1);
+
+    // Track that merchant upgraded this face
+    if (!die.merchantUpgrades) die.merchantUpgrades = [];
+    if (!die.merchantUpgrades.includes(faceIndex)) {
+        die.merchantUpgrades.push(faceIndex);
+    }
+
+    log(`${player.name}'s ${die.name}: ${oldValue} -> ${die.faces[faceIndex]} (${merchantUpgradeCost}G)`, 'success');
+    trackDiceChange();
+
+    // Increase cost for next purchase
+    merchantUpgradeCost++;
+
+    // Re-render
+    renderMerchantBrowse();
+    renderDiceTray();
+}
+
+// Show merchant wheel
+function showMerchantWheel() {
+    const modal = document.getElementById('upgradeModal');
+    document.getElementById('upgradeTitle').textContent = "Merchant's Wheel of Fortune";
+
+    document.getElementById('upgradeDescription').innerHTML = `
+        <p>Choose a die face to gamble on the wheel!</p>
+        <div style="margin:15px 0; padding:15px; background:rgba(255,215,0,0.1); border-radius:10px; border-left:3px solid #ffd700;">
+            <p style="margin:0; color:#ffd700;"><strong>Wheel Outcomes (20% each):</strong></p>
+            <ul style="margin:10px 0 0 20px; color:#aaa;">
+                <li>Double the face value (caps at 19)</li>
+                <li>Halve the face value (minimum 2)</li>
+                <li>Add +1 HOPE to this segment</li>
+                <li>Add DOOM mark to this segment</li>
+                <li>Create an Intertwine link</li>
+            </ul>
+        </div>
+        <p style="color:#f87171; font-size:0.85rem;">Warning: Wheel-modified faces can only be modified by the wheel again!</p>
+    `;
+
+    const options = document.getElementById('upgradeOptions');
+    options.innerHTML = '';
+
+    // List all die faces (not just virgin ones for wheel)
+    gameState.players.forEach((player, pIdx) => {
+        Object.entries(player.dice).forEach(([dieType, die]) => {
+            const eligibleFaces = [];
+
+            die.faces.forEach((faceValue, faceIndex) => {
+                // Can't wheel 1 or 20
+                if (faceValue === 1 || faceValue === 20) return;
+
+                // Check if already wheeled and can be wheeled again
+                const wasWheeled = die.wheelUpgrades && die.wheelUpgrades.includes(faceIndex);
+                const wasModifiedOtherwise = die.baseFaces &&
+                    die.baseFaces[faceIndex] !== faceValue &&
+                    !wasWheeled &&
+                    (!die.merchantUpgrades || !die.merchantUpgrades.includes(faceIndex));
+
+                // Can wheel if: virgin, or previously wheeled
+                if (!wasModifiedOtherwise || wasWheeled) {
+                    eligibleFaces.push({ value: faceValue, index: faceIndex });
+                }
+            });
+
+            if (eligibleFaces.length > 0) {
+                const dieSection = document.createElement('div');
+                dieSection.style.cssText = 'margin-bottom:15px; padding:10px; background:rgba(0,0,0,0.2); border-radius:8px;';
+
+                dieSection.innerHTML = `
+                    <h4 style="color:var(--${die.category}-primary); margin-bottom:8px;">${player.name}'s ${die.name}</h4>
+                    <div style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+                `;
+
+                const facesContainer = dieSection.querySelector('div');
+
+                eligibleFaces.forEach(face => {
+                    const faceBtn = document.createElement('button');
+                    faceBtn.className = 'option-btn';
+                    faceBtn.style.cssText = 'padding: 8px 16px; min-width: 50px;';
+                    faceBtn.textContent = face.value;
+                    faceBtn.onclick = () => spinMerchantWheel(player, die, face.index);
+                    facesContainer.appendChild(faceBtn);
+                });
+
+                options.appendChild(dieSection);
+            }
+        });
+    });
+
+    // Cancel button
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'option-btn secondary';
+    cancelBtn.style.marginTop = '15px';
+    cancelBtn.textContent = 'Cancel (Keep Gold)';
+    cancelBtn.onclick = () => {
+        // Refund the gold
+        gameState.gold += 5;
+        updateGoldDisplay();
+        document.getElementById('upgradeModal').classList.remove('show');
+    };
+    options.appendChild(cancelBtn);
+}
+
+// Spin the merchant wheel
+function spinMerchantWheel(player, die, faceIndex) {
+    const outcomes = ['double', 'half', 'hope', 'doom', 'intertwine'];
+    const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+    const oldValue = die.faces[faceIndex];
+
+    // Track wheel upgrade
+    if (!die.wheelUpgrades) die.wheelUpgrades = [];
+    if (!die.wheelUpgrades.includes(faceIndex)) {
+        die.wheelUpgrades.push(faceIndex);
+    }
+
+    let resultText = '';
+
+    switch (outcome) {
+        case 'double':
+            die.faces[faceIndex] = Math.min(19, oldValue * 2);
+            resultText = `DOUBLED! ${oldValue} -> ${die.faces[faceIndex]}`;
+            log(`Wheel: ${player.name}'s ${die.name} face ${resultText}!`, 'success');
+            break;
+
+        case 'half':
+            die.faces[faceIndex] = Math.max(2, Math.floor(oldValue / 2));
+            resultText = `HALVED! ${oldValue} -> ${die.faces[faceIndex]}`;
+            log(`Wheel: ${player.name}'s ${die.name} face ${resultText}!`, 'fail');
+            break;
+
+        case 'hope':
+            if (!die.hopeSegments) die.hopeSegments = [];
+            if (!die.hopeSegments.includes(oldValue)) {
+                die.hopeSegments.push(oldValue);
+            }
+            resultText = `+1 HOPE added to face ${oldValue}!`;
+            log(`Wheel: ${player.name}'s ${die.name} ${resultText}`, 'hope');
+            break;
+
+        case 'doom':
+            if (!die.crossedSegments) die.crossedSegments = [];
+            if (!die.crossedSegments.includes(oldValue)) {
+                die.crossedSegments.push(oldValue);
+            }
+            resultText = `DOOM mark added to face ${oldValue}!`;
+            log(`Wheel: ${player.name}'s ${die.name} ${resultText}`, 'doom');
+            break;
+
+        case 'intertwine':
+            // Pick a random ally and create an intertwine
+            const allies = gameState.players.filter((p, i) => p.id !== player.id);
+            if (allies.length > 0) {
+                const ally = allies[Math.floor(Math.random() * allies.length)];
+                const allyDieTypes = Object.keys(ally.dice);
+                const allyDieType = allyDieTypes[Math.floor(Math.random() * allyDieTypes.length)];
+
+                if (!die.swaps) die.swaps = [];
+                die.swaps.push({
+                    myValue: oldValue,
+                    allyIndex: gameState.players.indexOf(ally),
+                    allyDieType: allyDieType
+                });
+
+                resultText = `INTERTWINED! Face ${oldValue} now triggers ${ally.name}'s ${ally.dice[allyDieType].name}!`;
+                log(`Wheel: ${player.name}'s ${die.name} ${resultText}`, 'success');
+            }
+            break;
+    }
+
+    trackDiceChange();
+    renderDiceTray();
+
+    // Show result and close
+    document.getElementById('upgradeDescription').innerHTML = `
+        <div style="text-align:center; padding:30px;">
+            <h2 style="color:#ffd700; margin-bottom:15px;">WHEEL RESULT</h2>
+            <p style="font-size:1.2rem; color:#fff;">${resultText}</p>
+        </div>
+    `;
+
+    document.getElementById('upgradeOptions').innerHTML = '';
+
+    const continueBtn = document.createElement('button');
+    continueBtn.className = 'option-btn primary';
+    continueBtn.textContent = 'Continue';
+    continueBtn.onclick = () => {
+        document.getElementById('upgradeModal').classList.remove('show');
+        // Return to merchant or complete encounter
+        showEncounter(gameState.currentEncounter);
+    };
+    document.getElementById('upgradeOptions').appendChild(continueBtn);
 }

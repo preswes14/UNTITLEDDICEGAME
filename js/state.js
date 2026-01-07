@@ -22,11 +22,22 @@ const gameState = {
     tutorial: { active: false, step: 0, currentEncounter: null },
     voting: { active: false, options: [], votes: {}, round: 1, node: null },
     favor: 0,
+    totalFavor: 0, // Total favor available to spend (base + earned)
+    assignedFavor: [], // Array of assigned favor upgrade IDs
     purchasedUpgrades: [],
     diceChanges: 0, // Track total dice modifications made
     consumables: [], // Inventory of consumable items
     currentSaveSlot: 0, // Which save slot is active (0, 1, or 2)
-    gameMode: 'solo' // 'solo' or 'multiplayer'
+    gameMode: 'solo', // 'solo' or 'multiplayer'
+    // Favor-related modifiers
+    favorModifiers: {
+        dcReduction: 0, // Reduce all non-boss enemy DCs
+        bossDcReduction: 0, // Reduce boss DCs
+        bossThresholdReduction: 0, // Reduce boss success thresholds
+        startingDoom: 1, // Starting doom (default 1, can be 0)
+        startingGold: 0, // Starting gold bonus
+        startingShields: 0 // Starting shields
+    }
 };
 
 // Talent ranking state
