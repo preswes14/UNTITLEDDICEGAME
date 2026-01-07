@@ -241,7 +241,7 @@ One prophecy can be hard enough to unravel. So when 20 prophecies appeared overn
 
 Our heroes are some of the few noble-hearted individuals who still hold one of these prophecies, and its cryptic clues have brought them here, to the Dirtbag Inn, where our story begins.
 
-The party learns of ATOM (Assemble The Others Movement) - a doomsday cult seeking to bestow our world unto the evil gods of the universe. Through increasingly obvious hints and decreasingly safe situations, the party must follow the threads and thwart this plot to fulfill the prophecy and save the world.
+The party learns of ATOM ('Assemble The Others' Movement) - a doomsday cult seeking to bestow our world unto the evil gods of the universe. Through increasingly obvious hints and decreasingly safe situations, the party must follow the threads and thwart this plot to fulfill the prophecy and save the world.
 
 ### Stage Breakdown
 
@@ -251,7 +251,7 @@ The party learns of ATOM (Assemble The Others Movement) - a doomsday cult seekin
 | 2 | **Corrupt Guard** | After the assassination, the party investigates which guard killed the informant. *Miniboss: Drawbridge/Operator.* They breach the castle, dispose of the guard, and match his sigil to General Heimer in an adjacent city. |
 | 3 | **General Heimer** | Heroes arrive at the Capitol but face Heimer's army outside. They must fight through to confront him. *Miniboss: The Daytime (soldiers) OR The Nighttime (infiltration).* Heimer declares he was following the King's orders. |
 | 4 | **Chthonic King Robert** | Only the capital streets and Royal Guard remain. *Royal Guard: The Jester (games of chance), The Chef (cooking DOOM), The Counselor (persuasion).* Upon defeating the King, a fake "you did it!" screen appears - then the pentagram on the floor activates. |
-| 5 | **BOMB (Big Obvious Malicious Boss)** | The portal pulls players into a warped dimension. *Miniboss: Early BOMB encounter that brutally changes player dice.* ~3 neutral encounters to restore functionality before the final fight. The stage shows 19 "darkened" prophecy lines and heroes on the single lit one - this is the last chance to save the world. |
+| 5 | **BOMB (Big Obviously Malicious Boss)** | The portal pulls players into a warped dimension. *Miniboss: Early BOMB encounter that brutally changes player dice.* ~3 neutral encounters to restore functionality before the final fight. The stage shows 19 "darkened" prophecy lines and heroes on the single lit one - this is the last chance to save the world. |
 
 ### Boss Combat Mechanics
 
@@ -265,8 +265,8 @@ Bosses use a **success counter system** instead of HP. Players must accumulate e
 **Combat Round Flow:**
 1. Each hero chooses a die and rolls (3 rolls per round)
 2. Successful rolls add to the approach's success counter
-3. If any hero **misses**, the boss attacks and that hero must make a **DOOM Roll**
-4. Repeat until one approach reaches its threshold
+3. Usually, the enemy gets a turn after each of the 3 heroes do. If any hero **misses**, the enemy attacks and forces the heroes to make a **DOOM Roll**. However, if all 3 players log a success with their roll, they effectively SKIP the enemy turn and get to immediately go again.
+4. Repeat until one approach reaches its threshold or the players make an unsuccessful DOOM roll that cannot be mitigated by HOPE or any other special abilities.
 
 **Boss Thresholds (by Stage):**
 
@@ -276,13 +276,13 @@ Bosses use a **success counter system** instead of HP. Players must accumulate e
 | **2. Corrupt Guard** | 12 | 5 | 4 | 3 | 1 |
 | **3. General Heimer** | 14 | 6 | 6 | 5 | 1 |
 | **4. King Robert** | 15 | 7 | 7 | 7 | 1 |
-| **5. BOMB** | 16 | 8 | 10 | 9 | 2 |
+| **5. BOMB** | 16 | 8x | 10x | 9x | 2 | 
 
-*Design philosophy: Early bosses reward peaceful resolution (Verbal/Preventative). By King Robert, all approaches are equal - he's beyond reason. BOMB is a cosmic horror where combat becomes most efficient; you can't talk down an eldritch abomination.*
+*Design philosophy: Early bosses reward peaceful resolution (Verbal/Preventative). By King Robert, all approaches are equal - he's beyond reason. BOMB is a cosmic horror who will turn OFF one type of vulnerability on each of his attacks (like Magus in Chrono Trigger or Bowyer in Super Mario RPG, BOMB randomly invalidates one type of attempt against him and this "immunity" cycles to a new random one on each of BOMB's turns.*
 
 **Mathematical Balance Notes:**
-- Innkeeper: Preventative needs only 2 successes (~1-2 rounds). Physical needs 4 (~3-4 rounds).
-- BOMB: Physical needs 8 successes, but Verbal needs 10. Combat is actually the "smart" choice against cosmic evil.
+- Innkeeper: Preventative needs only 2 successes (~1-2 rounds). Physical needs 4 (~3-4 rounds). DCs should be set within a range for each boss and enemy but there should be some slight or moderate variability to add intrigue and unpredictability.
+- BOMB: This combat will be different each time it's played. Combat is actually the "smart" choice against cosmic evil.
 - BOMB's 2 attacks mean roughly 1-2 DOOM Rolls per round at end game.
 
 ---
@@ -300,8 +300,9 @@ Various upgrades unlock based on how earlier stages were cleared, plus base bonu
 - Base up-floor upgrades
 - Varying up-floor upgrades
 - Per-run temporary bumps
-
 *This may be the most complicated part of the game.*
+- In most situations where an upgrade is granted, all heroes receive it (e.g. Mathemetician's Offer)
+- In some situations, the group determines who gets the upgrade
 
 ---
 
@@ -314,15 +315,15 @@ Various upgrades unlock based on how earlier stages were cleared, plus base bonu
 ### Multiplayer Interface
 *Ideally:*
 
-Players interface on their own devices (à la **Jackbox** or **Sunderfolk**). This allows fine-tuned decisions for each die without slowing the game.
+Only one player needs to purchase the game (making it perfect for Discord or couch co-op). Players interface on their own devices (à la **Jackbox** or **Sunderfolk**). This allows fine-tuned decisions for each die without slowing the game.
 
-- In most situations where an upgrade is granted, all heroes receive it
-- In some situations, the group determines who gets the upgrade
-- Only one player needs to purchase the game (stream or couch co-op)
+
+-
 
 **Player Interface:**
-- Three dice displayed in 3D that can be rotated and zoomed
-- Clicking one zooms in and brings up the "confirm" option to roll in the dice tray on the big screen
+- Three dice displayed in 3D in one segment of the player UI that can be rotated and zoomed
+- Clicking one zooms in and brings up the list modal describing each segment/possibility on that die
+- Interacting will often require the player to drag a die into the middle of the screen in order to roll it (drag die in, then tap to confirm, little rolling animation plays ON MAIN SCREEN not player screen - encourages players to keep looking back/forth and interacting)
 
 ---
 
@@ -332,7 +333,7 @@ Players interface on their own devices (à la **Jackbox** or **Sunderfolk**). Th
 
 **Inscryption-Style Progression:** Every non-combat encounter is an opportunity for upgrades. The map lets players choose their path - targeting specific upgrade types or engaging in combat for gold rewards.
 
-**Risk Lives in Combat:** DOOM accumulates and DOOM Rolls occur primarily through combat. Good encounters are safe upgrade opportunities. Neutral encounters have weighted randomness but are usually beneficial.
+**Risk Lives in Combat:** DOOM accumulates arround every corner - every 1 rolled adds to the counter! DOOM Rolls occur primarily through combat, but that's how you'll earn gold. Good encounters are low-risk upgrade opportunities. Neutral encounters have a wide range of outcomes but can often be beneficial -- made more so if you're willing to spend hard-earned gold.
 
 **Intertwined Fates:** The dice-swapping mechanic creates deep cooperation. Players should constantly be linking their dice together, creating a web of dependencies that makes every roll exciting.
 
@@ -353,8 +354,8 @@ The DOOM die is **separate** from the 9 hero dice. Key clarifications:
 - At most: trade a small negative for a larger positive
 - Examples:
   - The Gambler: Craps-style betting. Pick "in range" or "out of range", roll any die. Hitting the less likely option = +5 to chosen segment; more likely = +3 to random segment. No cost, no punishment.
-  - The Priest: Free HOPE added to dice segments
-  - The Mathematician: Free +2 to lowest face, or trade -1 high for +4 low
+  - The Priest: HOPE added to a dice segment in exchange for a "donation" (permanent lowering of a chosen number over 10 by 1d10 (random roll 1-10).
+  - The Mathematician: Free +2 to lowest face, or trade -1 on a high for +4 to a low
 
 **Bad Encounters (Red):**
 - Combat - earns Gold but risks DOOM Rolls
@@ -375,7 +376,7 @@ The DOOM die is **separate** from the 9 hero dice. Key clarifications:
 - Powerful upgrades: 8-15 Gold
 - Legendary upgrades: 20+ Gold
 
-Combat rewards scale: 5-15G (early), 20-40G (mid), 40-100G (late/boss)
+Combat rewards scale: 2-10G (early), 10-25G (mid), 25-60G (late/boss)
 
 ### Exotic Dice (for The Trapper)
 
@@ -420,7 +421,7 @@ Players can rename their characters but the color identities remain.
 
 ### Pal (Ally-Mentor)
 
-Pal is the emotional core of the tutorial - a greying d20 with a beard and staff, decrepit and soft-edged. He found the Colors as orphaned street dice and raised them. He's part Aragorn, part Robin Hood, part Guildmaster, and two parts Dad.
+Pal is the emotional core of the tutorial - a greying d20 with a beard and staff, decrepit and soft-edged. He found the Colors as orphaned street dice and raised them. He's 1 part Gandalf, 1 part Robin Hood, 1 part Guildmaster, and 2 parts Dad.
 
 **Key Traits:**
 - Pet names for heroes: "Dicelings", "Pips", "Little Dice", "Pipsqueaks"
@@ -443,7 +444,7 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 *Together, Lucky Trio, shall,*
 *Behold The Future Sought by Pal.*
 *DOOM be damned, HOPE unforesaken,*
-*The Colors Powers shall awaken.*
+*The Colors' Powers shall awaken.*
 *To save the very planet's soul*
 *Defeat the BOMB, achieve your goal.*
 
