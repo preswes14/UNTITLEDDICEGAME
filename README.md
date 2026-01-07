@@ -464,12 +464,12 @@ Pal is the emotional core of the tutorial. He's the one who gives the heroes the
 **Character Questions:**
 | Question | Your Notes |
 |----------|------------|
-| What does Pal look like? (Old wizard? Tired knight? Former adventurer with a limp?) | | He should be a greying D20 with a beard and a staff, decrepit, derelict, crubmling and smooth-edged. 
-| Why did Pal give up being an adventurer himself? What's his regret? | | He was a fervent adventurer to the very end but he was too old and weak and lost to the enemy (at the end of Stage 0).
-| What's Pal's relationship to the prophecy? Did he try and fail? Did he pass it down to someone he loves? | | The prohpecy was that he ultimately would fail but the circumstances of his failure would allow for The Colors to assume stewardship of the prohecy and bring about its portent.
-| What pet name or catchphrase does Pal use for the heroes? ("my little dice", "Chosen Ones", "you colorful idiots") | | Little Dice is cute as hell. Dicelings. Pips. Things like that.
-| How does Pal die/disappear? Sacrifice? Illness? Called away? Simply too old to continue? | | At the end of Stage 0 Pal is struck down/consumed by a curse/poisoned, and passes on the ancient scroll to The Colors.
-| What's the LAST thing Pal says to them? (This is the line they'll remember at the end of Stage 5) | | "I am... And forever shall be... Your Pal..." and he goes still.
+| What does Pal look like? (Old wizard? Tired knight? Former adventurer with a limp?) | He should be a greying D20 with a beard and a staff, decrepit, derelict, crumbling and soft-edged. |
+| Why did Pal give up being an adventurer himself? What's his regret? | He was a fervent adventurer to the very end but he was too old and weak and lost to the enemy (at the end of Stage 0). |
+| What's Pal's relationship to the prophecy? Did he try and fail? Did he pass it down to someone he loves? | The prophecy was that he ultimately would fail but the circumstances of his failure would allow for The Colors to assume stewardship of the prophecy and bring about its portent. |
+| What pet name or catchphrase does Pal use for the heroes? ("my little dice", "Chosen Ones", "you colorful idiots") | Little Dice is cute as hell. Dicelings. Pips. Things like that. |
+| How does Pal die/disappear? Sacrifice? Illness? Called away? Simply too old to continue? | At the end of Stage 0 Pal is struck down/consumed by a curse/poisoned, and passes on the ancient scroll to The Colors. |
+| What's the LAST thing Pal says to them? (This is the line they'll remember at the end of Stage 5) | "I am... And forever shall be... Your Pal..." and he goes still. |
 
 **Pal's Key Dialogue Moments (write 2-3 lines each):**
 
@@ -526,11 +526,11 @@ Defeat the BOMB, achieve your goal.
 **Prophecy Questions:**
 | Question | Your Notes |
 |----------|------------|
-| Why were there 20 prophecies? What happened to the other 19 groups? | | They all went corrupt or died or the prophecy got lost or forgotten.
-| Is the prophecy literal or metaphorical? | | It's a little of both but mostly literal.
-| Does the prophecy reference the heroes directly, or are they just interpreting it? | | It definitely references them, though indirectly
-| Is there a twist? (The heroes ARE the prophecy? BOMB wrote it? Pal was one of the failed 19?) | | Ooh, interesting. Perhaps all 19 actually did succeed and Pal assumed that none of them did because "the bad things" still existed. All of the previous attempts made it to BOMB but he was I like the idea that the BOMB is a galaxy-black d20 with a fuse, and he has been sort of forcing luck in his favor, like he rolls intimidation and it's an automatic 20. Something that Pal told them or taught them will help THEM snap this streak.
-| How does the prophecy connect to DOOM thematically? | | DOOM is the prophecy failing, or its users failing, and its directly referenced in the prophecy.
+| Why were there 20 prophecies? What happened to the other 19 groups? | They all went corrupt or died or the prophecy got lost or forgotten. |
+| Is the prophecy literal or metaphorical? | It's a little of both but mostly literal. |
+| Does the prophecy reference the heroes directly, or are they just interpreting it? | It definitely references them, though indirectly |
+| Is there a twist? (The heroes ARE the prophecy? BOMB wrote it? Pal was one of the failed 19?) | Ooh, interesting. Perhaps all 19 actually did succeed and Pal assumed that none of them did because "the bad things" still existed. All of the previous attempts made it to BOMB but he was I like the idea that the BOMB is a galaxy-black d20 with a fuse, and he has been sort of forcing luck in his favor, like he rolls intimidation and it's an automatic 20. Something that Pal told them or taught them will help THEM snap this streak. |
+| How does the prophecy connect to DOOM thematically? | DOOM is the prophecy failing, or its users failing, and its directly referenced in the prophecy. |
 
 ---
 
@@ -541,42 +541,42 @@ Each encounter NPC needs a voice. Currently they're mechanical - let's give them
 **THE MATHEMATICIAN**
 | Prompt | Your Notes |
 |--------|------------|
-| Personality: Absent-minded professor? Obsessive number-lover? Weary scholar? | | Just like a middle-school nerd
-| Catchphrase or verbal tic when doing math on dice: | | Astounding! According to my calculations, this upgrade is Completely OP!
-| What does he say when you leave WITHOUT taking his offer? | | Whoa, looks like someone's not a mathlete!
-| Does he have a tragic backstory? (Used to be an adventurer? Lost someone to bad probability?) | | No, he just a big ol nerd
+| Personality: Absent-minded professor? Obsessive number-lover? Weary scholar? | Just like a middle-school nerd |
+| Catchphrase or verbal tic when doing math on dice: | Astounding! According to my calculations, this upgrade is Completely OP! |
+| What does he say when you leave WITHOUT taking his offer? | Whoa, looks like someone's not a mathlete! |
+| Does he have a tragic backstory? (Used to be an adventurer? Lost someone to bad probability?) | No, he just a big ol nerd |
 
 **THE ALCHEMIST**
 | Prompt | Your Notes |
 |--------|------------|
-| Personality: Mad scientist? Gentle healer? Creepy experimentalist? | | Mad scientist vibe for sure, wants to do weird experiments on peoples bodies and those bodies just happen to  be dice
-| How does she describe the feeling of dice-splicing? (Painful? Euphoric? Strange?) | | Euphoric, damn near orgasmic, let's really push what we can do with her language
-| What does she mutter while working? | | In ecstatic fervor about remaking bodies and what's inside of a die and pontificating about loaded dice
-| What happens if players ask why she does this? | | She just cackles
+| Personality: Mad scientist? Gentle healer? Creepy experimentalist? | Mad scientist vibe for sure, wants to do weird experiments on peoples bodies and those bodies just happen to be dice |
+| How does she describe the feeling of dice-splicing? (Painful? Euphoric? Strange?) | Euphoric, damn near orgasmic, let's really push what we can do with her language |
+| What does she mutter while working? | In ecstatic fervor about remaking bodies and what's inside of a die and pontificating about loaded dice |
+| What happens if players ask why she does this? | She just cackles |
 
 **THE PRIEST**
 | Prompt | Your Notes |
 |--------|------------|
-| Personality: Serene monk? Zealous preacher? Quietly faithful? | | I think he should be a poor priest who seems to have nothing to offer
-| What god or force does the Priest serve? | | Serves the forces of HOPE and opposes DOOM
-| How does the Priest describe HOPE? | | All that is good, and noble! Love, friendship, trust!
-| What does the Priest think about DOOM? | | We must be diligent to prevent DOOM from creeping into our hearts!
+| Personality: Serene monk? Zealous preacher? Quietly faithful? | I think he should be a poor priest who seems to have nothing to offer |
+| What god or force does the Priest serve? | Serves the forces of HOPE and opposes DOOM |
+| How does the Priest describe HOPE? | All that is good, and noble! Love, friendship, trust! |
+| What does the Priest think about DOOM? | We must be diligent to prevent DOOM from creeping into our hearts! |
 
 **THE GAMBLER**
 | Prompt | Your Notes |
 |--------|------------|
-| Personality: Flashy showman? Quiet shark? Addicted and broken? | | Something between a carnival barker and a shady 3-card Monty dealer
-| What does the Gambler say when you WIN big? | | Eyy wouldja lookithat bigwinner bigwinner wannagoagain?
-| What does the Gambler say when you LOSE? | | Tough luck, but you gotta play to win, let's play again!
+| Personality: Flashy showman? Quiet shark? Addicted and broken? | Something between a carnival barker and a shady 3-card Monty dealer |
+| What does the Gambler say when you WIN big? | Eyy wouldja lookithat bigwinner bigwinner wannagoagain? |
+| What does the Gambler say when you LOSE? | Tough luck, but you gotta play to win, let's play again! |
 | Does the Gambler have stakes in ATOM, the heroes, or neither? | |
 
 **THE FERRYMAN**
 | Prompt | Your Notes |
 |--------|------------|
-| Personality: Ancient and bored? Cryptic and wise? Menacing? | | Yeah tall and menacing and quiet, like Charon from Hades
-| What does the Ferryman know about the prophecy? | | Nothing, he is quiet, he just wants his payment one way or another.
-| Why does the Ferryman mark dice? What do the marks mean? | | He uses maybe a fishhook or something to scratch away segments and replace them with other segments (maybe?)
-| What does the Ferryman say when someone rolls a natural 20 in his presence? | | Nothing but you can tell he's impressed.
+| Personality: Ancient and bored? Cryptic and wise? Menacing? | Yeah tall and menacing and quiet, like Charon from Hades |
+| What does the Ferryman know about the prophecy? | Nothing, he is quiet, he just wants his payment one way or another. |
+| Why does the Ferryman mark dice? What do the marks mean? | He uses maybe a fishhook or something to scratch away segments and replace them with other segments (maybe?) |
+| What does the Ferryman say when someone rolls a natural 20 in his presence? | Nothing but you can tell he's impressed. |
 
 ---
 
@@ -587,47 +587,47 @@ Each boss needs more than combat stats - they need PRESENCE.
 **STAGE 1: THE DIRTY INNKEEPER**
 | Prompt | Your Notes |
 |--------|------------|
-| Name (if you want one): | | Seedy Sammy
-| Why did he steal from the heroes specifically? | | No reason, he had been stealing from non-regulars with regularity
-| What does he say when caught? (Remorseful? Defiant? Terrified?) | | He is remorseful and guilty and feels bad and insists (honestly) he just stole to pay off his own debts
-| What does ATOM have on him? Debt? Family? Threat? | | Debt, just gambling debt or something like that
-| What are his last words before the arrow silences him? | | "Fine, I'll tell you. But you have to promise to help keep me safe. The people I owe money to, they're called --" and then the arrow silences him
+| Name (if you want one): | Seedy Sammy |
+| Why did he steal from the heroes specifically? | No reason, he had been stealing from non-regulars with regularity |
+| What does he say when caught? (Remorseful? Defiant? Terrified?) | He is remorseful and guilty and feels bad and insists (honestly) he just stole to pay off his own debts |
+| What does ATOM have on him? Debt? Family? Threat? | Debt, just gambling debt or something like that |
+| What are his last words before the arrow silences him? | "Fine, I'll tell you. But you have to promise to help keep me safe. The people I owe money to, they're called --" and then the arrow silences him |
 
 **STAGE 2: THE CORRUPT GUARD**
 | Prompt | Your Notes |
 |--------|------------|
-| Name (if you want one): | | Crooked Chester
-| Why did he shoot the Innkeeper? Orders? Panic? Cruelty? | | He is a mid-level ATOM operative stationed as a low-level guard as to monitor ground-level situations and intervene where necessary to guarantee the secrecy of the organization.
-| What does he say when cornered? | | He divulges that it goes all the way to the top (General Heimer)
-| Does he believe in ATOM's cause, or is he just following orders? | | He's a confused young zealot who believes in ATOMs cause without knowing what it was, he really just wanted the glory and the position and they gave him all that.
-| What information does defeating him reveal? | | The next link in the chain, General Heimer, as well as a reference to the BOMB or to the ultimate goals of ATOM.
+| Name (if you want one): | Crooked Chester |
+| Why did he shoot the Innkeeper? Orders? Panic? Cruelty? | He is a mid-level ATOM operative stationed as a low-level guard as to monitor ground-level situations and intervene where necessary to guarantee the secrecy of the organization. |
+| What does he say when cornered? | He divulges that it goes all the way to the top (General Heimer) |
+| Does he believe in ATOM's cause, or is he just following orders? | He's a confused young zealot who believes in ATOMs cause without knowing what it was, he really just wanted the glory and the position and they gave him all that. |
+| What information does defeating him reveal? | The next link in the chain, General Heimer, as well as a reference to the BOMB or to the ultimate goals of ATOM. |
 
 **STAGE 3: GENERAL HEIMER**
 | Prompt | Your Notes |
 |--------|------------|
-| Full name and title: | | Heimer 
-| Is Heimer a true believer, or a pawn? | | One of the key lieutenants of the BOMB operation, he is smart as a whip and has been promised a position of immense honor and power once ATOM wins
-| What does Heimer's army look like? (Human? Corrupted? Mixed?) | | Lots of good people who are just normal soldiers (ACAB or whatever but they are generally chill) but then he has his various plants at different levels where they are super loyal to him or incredibly evil or whatever. 
-| What does Heimer say about the King? Loyalty? Fear? Disgust? | | Heimer thinks that the King is noble and worth of respect but that he lacks ambition, that it was Heimer who had to persuade King Robert into seeing the benefits of ATOM and ultimatley throwing the weight of the monarchy behind the movement
-| Does Heimer have any redeemable qualities? | | Not really, he is a bloodthirsty evil cultist enabler. Maybe he knew Pal back in the day and, in his dying breaths, he regrets that things went so wrong to be fighting Pal's own disciples?
+| Full name and title: | Heimer |
+| Is Heimer a true believer, or a pawn? | One of the key lieutenants of the BOMB operation, he is smart as a whip and has been promised a position of immense honor and power once ATOM wins |
+| What does Heimer's army look like? (Human? Corrupted? Mixed?) | Lots of good people who are just normal soldiers (ACAB or whatever but they are generally chill) but then he has his various plants at different levels where they are super loyal to him or incredibly evil or whatever. |
+| What does Heimer say about the King? Loyalty? Fear? Disgust? | Heimer thinks that the King is noble and worth of respect but that he lacks ambition, that it was Heimer who had to persuade King Robert into seeing the benefits of ATOM and ultimatley throwing the weight of the monarchy behind the movement |
+| Does Heimer have any redeemable qualities? | Not really, he is a bloodthirsty evil cultist enabler. Maybe he knew Pal back in the day and, in his dying breaths, he regrets that things went so wrong to be fighting Pal's own disciples? |
 
 **STAGE 4: KING ROBERT**
 | Prompt | Your Notes |
 |--------|------------|
-| What title does Robert prefer? | | Your Highness? Your Diceliness (if he's a die)? 
-| How long has Robert been working with ATOM? | | Since Heimer talked him into it 20 years ago
-| What does Robert say in the fake "victory" moment? | | "So... You've struck me down... And defeated ATOM.... Heh. That's what you're thinking right now, I'd bet. Oh, how little you understand... See what TRUE power looks like! RISE! RISE AND ENTER THIS REALM!"
-| What happens to Robert when the portal opens? (Consumed? Transformed? Abandoned?) | | I think he is consumed or obliterated into dust in the process of summoning
-| Is Robert AWARE of what BOMB is, or did he think he was summoning something else? | | He knew it was bad but he was evil and confused and corrupted.
+| What title does Robert prefer? | Your Highness? Your Diceliness (if he's a die)? |
+| How long has Robert been working with ATOM? | Since Heimer talked him into it 20 years ago |
+| What does Robert say in the fake "victory" moment? | "So... You've struck me down... And defeated ATOM.... Heh. That's what you're thinking right now, I'd bet. Oh, how little you understand... See what TRUE power looks like! RISE! RISE AND ENTER THIS REALM!" |
+| What happens to Robert when the portal opens? (Consumed? Transformed? Abandoned?) | I think he is consumed or obliterated into dust in the process of summoning |
+| Is Robert AWARE of what BOMB is, or did he think he was summoning something else? | He knew it was bad but he was evil and confused and corrupted. |
 
 **STAGE 5: B.O.M.B.**
 | Prompt | Your Notes |
 |--------|------------|
-| What does BOMB look like? (Eldritch horror? Cosmic entity? Beautiful and terrifying?) | | I think this should be a cold/robotic cosmic entity, sort of like if there was a computer program that was devoted to entropy. "Like Threat detected. Prophecy-following suspected. Initiating intimidation roll".
-| Does BOMB speak? If so, what's his/its voice like? | | Cool... Beepy. Measured and robotic and certain, cold methodical death.
-| What does BOMB want? (Destruction? Consumption? To exist? To unmake?) | | Entropy must win. BOMB must survive. Without BOMB there is no limit on the universe. BOMB must limit the universe. BOMB has an evolutionary imperative to stop prophecies and nip coincidence in the bud. (THIS NEEDS WORK BECAUSE ITS BORING ASS MOTIVATION)
-| What is the connection between BOMB and the prophecy? | | Maybe bomb originally wrote all 20 prophecies, when he was created he rolled 20 times and each side printed a prophecy.
-| What happens in the final moment of victory? (BOMB screams? Fades? Thanks the heroes?) | | BOMB realizes as he dies that what he had been doing is unneccessary. He encourages the players to push past entropy and achieve the impossible, now that's he's gone it should be a lot easier. The end!
+| What does BOMB look like? (Eldritch horror? Cosmic entity? Beautiful and terrifying?) | I think this should be a cold/robotic cosmic entity, sort of like if there was a computer program that was devoted to entropy. "Like Threat detected. Prophecy-following suspected. Initiating intimidation roll". |
+| Does BOMB speak? If so, what's his/its voice like? | Cool... Beepy. Measured and robotic and certain, cold methodical death. |
+| What does BOMB want? (Destruction? Consumption? To exist? To unmake?) | Entropy must win. BOMB must survive. Without BOMB there is no limit on the universe. BOMB must limit the universe. BOMB has an evolutionary imperative to stop prophecies and nip coincidence in the bud. (THIS NEEDS WORK BECAUSE ITS BORING ASS MOTIVATION) |
+| What is the connection between BOMB and the prophecy? | Maybe bomb originally wrote all 20 prophecies, when he was created he rolled 20 times and each side printed a prophecy. |
+| What happens in the final moment of victory? (BOMB screams? Fades? Thanks the heroes?) | BOMB realizes as he dies that what he had been doing is unneccessary. He encourages the players to push past entropy and achieve the impossible, now that's he's gone it should be a lot easier. The end! |
 
 ---
 NOT YET COMPLETED AT ALL, CLAUDE: 
