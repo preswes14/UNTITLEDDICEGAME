@@ -269,12 +269,6 @@ function renderPhaseContent() {
         case 'waiting':
             renderWaitingState();
             break;
-        case 'talent_best':
-            renderTalentBestPhase();
-            break;
-        case 'talent_worst':
-            renderTalentWorstPhase();
-            break;
         case 'intertwine':
             renderIntertwinePhase();
             break;
@@ -290,65 +284,6 @@ function renderPhaseContent() {
         default:
             renderWaitingState();
     }
-}
-
-// Talent Ranking - Best selection
-function renderTalentBestPhase() {
-    updatePhaseIndicator('TALENT RANKING', 'Select your BEST die (gets a bonus!)');
-
-    const player = getMyPlayer();
-    if (!player) return;
-
-    const actionsDiv = document.getElementById('pvActions');
-    if (!actionsDiv) return;
-
-    actionsDiv.innerHTML = `
-        <p class="pv-instruction">Tap the die you're BEST at:</p>
-        <div class="pv-talent-options">
-            ${['physical', 'verbal', 'preventative'].map(cat => {
-                const die = player.dice[cat];
-                if (!die) return '';
-                return `
-                    <button class="pv-talent-btn ${cat}" onclick="selectTalentBest('${cat}')">
-                        <span class="talent-icon">${die.icon}</span>
-                        <span class="talent-name">${die.name}</span>
-                    </button>
-                `;
-            }).join('')}
-        </div>
-        <p class="pv-hint">Your best die will have one face upgraded to 20!</p>
-    `;
-}
-
-// Talent Ranking - Worst selection
-function renderTalentWorstPhase() {
-    updatePhaseIndicator('TALENT RANKING', 'Select your WORST die (gets a penalty)');
-
-    const player = getMyPlayer();
-    const ranking = playerViewState.talentRanking || {};
-
-    if (!player) return;
-
-    const actionsDiv = document.getElementById('pvActions');
-    if (!actionsDiv) return;
-
-    actionsDiv.innerHTML = `
-        <p class="pv-instruction">Tap the die you're WORST at:</p>
-        <div class="pv-talent-options">
-            ${['physical', 'verbal', 'preventative'].map(cat => {
-                if (cat === ranking.best) return ''; // Can't pick same as best
-                const die = player.dice[cat];
-                if (!die) return '';
-                return `
-                    <button class="pv-talent-btn ${cat}" onclick="selectTalentWorst('${cat}')">
-                        <span class="talent-icon">${die.icon}</span>
-                        <span class="talent-name">${die.name}</span>
-                    </button>
-                `;
-            }).join('')}
-        </div>
-        <p class="pv-hint">Your worst die will have one face downgraded to 1...</p>
-    `;
 }
 
 // Intertwine phase
@@ -451,50 +386,6 @@ function playerRollDie(category) {
     sendPlayerAction('roll_die', {
         playerIndex: playerIndex,
         dieType: category
-    });
-}
-
-// Select talent best
-function selectTalentBest(category) {
-    playerViewState.talentRanking = playerViewState.talentRanking || {};
-    playerViewState.talentRanking.best = category;
-
-    // Show confirmation
-    showConfirmation({
-        title: 'Confirm Best Die',
-        message: `Set your ${category.toUpperCase()} die as your BEST?\n\nThis will upgrade one face to 20!`,
-        confirmText: 'Confirm',
-        onConfirm: () => {
-            sendPlayerAction('talent_select', {
-                type: 'best',
-                category: category
-            });
-            playerViewState.currentPhase = 'talent_worst';
-            renderPhaseContent();
-        }
-    });
-}
-
-// Select talent worst
-function selectTalentWorst(category) {
-    playerViewState.talentRanking = playerViewState.talentRanking || {};
-    playerViewState.talentRanking.worst = category;
-
-    // Show confirmation
-    showConfirmation({
-        title: 'Confirm Worst Die',
-        message: `Set your ${category.toUpperCase()} die as your WORST?\n\nThis will downgrade one face to 1...`,
-        confirmText: 'Confirm',
-        danger: true,
-        onConfirm: () => {
-            sendPlayerAction('talent_select', {
-                type: 'worst',
-                category: category
-            });
-            // Move to intertwine or wait
-            playerViewState.currentPhase = 'intertwine';
-            renderPhaseContent();
-        }
     });
 }
 

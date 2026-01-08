@@ -38,23 +38,6 @@ A player will have one die from each category.
 
 Players encounter various obstacles or combats that they must proceed through by taking turns choosing dice and rolling to see if they are successful.
 
-### Starting Talent Ranking (Tutorial)
-
-After picking their 3 dice, each player goes through a **Talent Ranking** that teaches them the upgrade system:
-
-1. **"Which are you BEST at?"** - Pick one die
-   - This die gets an upgrade: **One of 2, 3, 4, or 5 becomes a 20!**
-
-2. **"Which are you WORST at?"** - Pick from the remaining two
-   - This die gets a downgrade: **One of 2, 3, 4, or 5 becomes a 1...**
-
-3. **The middle die** - The one not picked
-   - This die gets **double-intertwined with BOTH allies**!
-   - Pick a number (6-10) for Ally 1, then a different number for Ally 2
-   - Each number triggers that ally's chosen die when rolled
-
-This tutorial creates immediate asymmetry between players and establishes the cooperative bond through double-intertwining.
-
 ---
 
 ## The Core Innovation: Dice Swapping

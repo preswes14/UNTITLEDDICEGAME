@@ -515,6 +515,46 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
             return;
         }
     } else if (state.type === 'tutorial_combat') {
+        const dieCategory = die.category;
+
+        // Record and apply best/worst die selection during tutorial
+        if (state.tutorialPhase === 'strong_die') {
+            // This die is their BEST - record it and apply upgrade
+            talentState.playerRankings[playerIndex].best = dieCategory;
+
+            // Upgrade: replace a random 2-5 face with 20
+            const lowFaces = [2, 3, 4, 5];
+            const availableFaces = lowFaces.filter(f => die.faces.includes(f));
+            if (availableFaces.length > 0) {
+                const faceToUpgrade = availableFaces[Math.floor(Math.random() * availableFaces.length)];
+                const faceIndex = die.faces.indexOf(faceToUpgrade);
+                if (faceIndex !== -1) {
+                    die.faces[faceIndex] = 20;
+                    log(`${player.name}'s ${die.name} gains power! A ${faceToUpgrade} becomes a 20!`, 'crit');
+                }
+            }
+        } else if (state.tutorialPhase === 'weak_die') {
+            // This die is their WORST - record it and apply downgrade
+            talentState.playerRankings[playerIndex].worst = dieCategory;
+
+            // Downgrade: replace a random 2-5 face with 1
+            const lowFaces = [2, 3, 4, 5];
+            const availableFaces = lowFaces.filter(f => die.faces.includes(f));
+            if (availableFaces.length > 0) {
+                const faceToDowngrade = availableFaces[Math.floor(Math.random() * availableFaces.length)];
+                const faceIndex = die.faces.indexOf(faceToDowngrade);
+                if (faceIndex !== -1) {
+                    die.faces[faceIndex] = 1;
+                    log(`${player.name}'s ${die.name} reveals weakness... A ${faceToDowngrade} becomes a 1.`, 'doom');
+                }
+            }
+
+            // Derive middle die (the one not picked as best or worst)
+            const categories = ['physical', 'verbal', 'preventative'];
+            const ranking = talentState.playerRankings[playerIndex];
+            ranking.middle = categories.find(c => c !== ranking.best && c !== ranking.worst);
+        }
+
         if (result >= state.dc || result === 20) {
             gameState.canRoll = false;
             log(`Success! The ${state.encounter.name} is overcome!`, 'success');
