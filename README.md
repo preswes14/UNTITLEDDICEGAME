@@ -47,10 +47,10 @@ Players encounter various obstacles or combats that they must proceed through by
 ### Easy Example
 I replace a 2 on my Punch die with a roll on my teammate's Stab die. So if I try to punch and would have rolled a 2, I instead get the result of my teammate immediately rolling their own Stab die.
 
-### Medium Example
+### Medium Example - NO LONGER VALID - Not in line with bigger decisions made.
 You swap segments 2, 3, 4, and 5 on your die with segments 12, 13, 14, and 15 on your ally's die; they do the same. So instead of getting a terrible roll on your own die, you instead get a middling roll on a teammate's - but at the risk of stabbing someone you were hoping to punch.
 
-### Hard Example
+### Hard Example - May not implement
 I swap out any fail (1-9) on my die with the WORSE of my teammate's rolls on their own dice. So I try to stab but miss, and trying to save me, my friends both stumble in front - one poorly lies to the enemy and the other grapples them even worse - so THAT is the thing that actually happens.
 
 ### Strategic Possibilities
@@ -63,7 +63,7 @@ Teammates could strategize around specific builds:
 ## Progression & Rewards
 
 Rewards, goals, and gameplay are oriented around improving dice. For example:
-- Replace the 2 with a 1, but replace the 3 with a 20
+- Replace the 2 with a 1, but replace the 19 with a 20
 - Add 5 to a number of your choosing
 
 Players permanently improve their dice, allowing them to progressively clear more difficult challenges.
@@ -92,8 +92,8 @@ Players permanently improve their dice, allowing them to progressively clear mor
 ### The DOOM Meter
 The party has a shared DOOM meter that fills as bad things happen:
 - Any time a 1 is rolled: +1 DOOM
-- Bad encounter choices: +1-2 DOOM
-- Ferryman's crossed marks triggering: +2 DOOM
+Sometimes, result of failing an encounter: +1 DOOM
+- Ferryman's crossed marks triggering: +2 DOOM (No, I didn't write this, remove this!)
 - Other misfortunes and curses
 
 **DOOM affects only DOOM rolls, not standard rolls** - every point of DOOM subtracts 1 from each DOOM roll result (except natural 20s).
@@ -114,16 +114,17 @@ DOOM Rolls are reserved specifically for enemy attacks. Other bad outcomes simpl
 
 ### HOPE
 HOPE offsets accumulated DOOM:
-- Players can accrue HOPE to offset existing DOOM
+- Players can accrue HOPE to offset a future failed DOOM roll (One HOPE charge is used to prevent a fail on the DOOM die (keeping the players in the game, as failing a DOOM roll results in Stage Loss)).
 - HOPE cannot be "banked" - any HOPE gained when at 0 DOOM is wasted
 - Some dice upgrades add HOPE to specific rolls
 - Example upgrade: "Choose 2 segments between 7 and 15. Reduce both by 5, and add +1 HOPE to both segments"
+-
 
 ---
 
 ## Encounters & Map Structure
 
-Encounters are set up similar to **Slay the Spire** or **Inscryption** - players advance through a basic overworld, following a generally linear path but making choices at forks.
+Encounters are set up similar to **Slay the Spire** or **Inscryption** - players advance through a basic overworld, following a generally linear path but making choices at forks. In general, players should usually have 3 options of different paths at forks, with forks that (usually) lock into a set path for 2-4 encounters before re-forking. Some occasional "path-drift" would be welcome to add randomness and intrigue and style to the game, where one avenue might have more options than another due to paths flowing together/linking.
 
 ### Encounter Reference Chart
 
@@ -141,7 +142,7 @@ Encounters are set up similar to **Slay the Spire** or **Inscryption** - players
 | **The Drunk Priest** | Neutral | Stumbling priest offers blessing | Free: 27% net DOOM | Free: 47% +3-4 HOPE. Paid 3G: guaranteed +3 HOPE |
 | **The Cultist** | Neutral | Robed figure offers purple drink | Free: 27% bad swap + DOOM | Free: 47% swap + +5. Paid 5G: guaranteed good |
 
-### Stage 5 Unique Encounters (Warped Dimension)
+### Stage 5 Unique Encounters (Warped Dimension) - THIS NEEDS WORK, I ASKED YOU TO CREATE THIS BUT IT IS WAY OFF BALANCE WITH THE REST OF THE GAME
 
 | Encounter | Type | Situation | Rewards |
 |-----------|------|-----------|---------|
@@ -159,12 +160,12 @@ Each combat encounter has **different DCs for each approach** (Physical, Verbal,
 - **Regular enemies:** DC 5-8 (easy), DC 10-13 (medium), DC 14-17 (hard) - randomly assigned
 - **Bosses:** Variable by stage, always challenging but varied
 
-This encourages strategic die selection: a low DC 5 for Physical might make your weak Stab die worth using!
+This encourages strategic die selection: a low DC 5 for Physical might make your weak Stab die worth using, rather than your excellent Persuade die which would require a 17 to hit!
 
 ### Neutral Encounter Probability
-**Probability Distribution:** ~47% good outcome, ~27% neutral outcome, ~27% bad outcome
+**Probability Distribution:** ~47% good outcome, ~27% neutral outcome, ~27% bad outcome (not public)
 
-Gold spending removes risk entirely - defeating bandits earns gold that can buy certainty at later neutrals.
+Often, removes risk from neutral encounters will allow you to spend some gold to tip the odds in your favor- defeating enemies grants gold that you can use to buy certainty!
 
 ---
 
@@ -180,11 +181,15 @@ Each Stage has a designated Boss. This is a 5-stage campaign with each Stage con
 
 ### Main Narrative
 
-One prophecy can be hard enough to unravel. So when 20 prophecies appeared overnight - in the hands of soldiers and shepherds and princes, purple lettering emblazoned on thick vellum - chaos ensued. That was 20 years ago; hoping to make it rich, all manner of bandits and charlatans have chased these prophecies, and as with so many of their names and deeds, the prophecies themselves were lost to history.
+One prophecy can be hard enough to unravel. So when 20 prophecies appeared overnight - in the hands of soldiers and shepherds and princes, thick black lettering emblazoned on thick vellum - chaos ensued. All manner of heroes and bandits chased these prophecies, both paladins and charlatans, seeking riches, fame, glory.  
 
-Our heroes are some of the few noble-hearted individuals who still hold one of these prophecies, and its cryptic clues have brought them here, to the Dirtbag Inn, where our story begins.
+The "Icosahedron Incident" was 20 years ago, and despite a flurry of adventure, it doesn't appear that any of those prophecies came true. And so, as with so many names and deeds and legends, even the prophecies themselves were lost to history.
 
-The party learns of ATOM ('Assemble The Others' Movement) - a doomsday cult seeking to bestow our world unto the evil gods of the universe. Through increasingly obvious hints and decreasingly safe situations, the party must follow the threads and thwart this plot.
+Pal - unbeknownst to the players - is one of the few who still holds one of these prophecies. After a lifetime spent adventuring and deciphering it, he evntually found 3 little orphan dice and took them in, forsaking his life's goal.
+
+The Rite - the day wherein the 3 orhpan dice, The Colors, are to test and prove themselves worthy of trust and adventure - is where STAGE 0 of our story begins. (See tutorial for full description)
+
+The party eventually learns of ATOM ('Assemble The Others' Movement) - a doomsday cult seeking to bestow our world unto the great and terrifying BOMB. This force, and its many proponents and agents, serve as the antagonist of this story. The party must wade through increasingly obvious hints and decreasingly safe situations in order to follow the threads, thwart this plot, fulfill the prophecy, and save the world!
 
 ### Stage Breakdown
 
@@ -208,8 +213,8 @@ Bosses use a **success counter system** instead of HP. Players must accumulate e
 **Combat Round Flow:**
 1. Each hero chooses a die and rolls (3 rolls per round)
 2. Successful rolls add to the approach's success counter
-3. If any hero **misses**, the enemy attacks and forces DOOM Rolls. If all 3 players succeed, they skip the enemy turn.
-4. Repeat until one approach reaches its threshold or party wipe.
+3. If any hero **misses**, the enemy attacks and forces DOOM Rolls. If all 3 players succeed, they skip the enemy turn. (There should be a separate visual indicator on the main screen reminjiscent of a sideways street light, indicating greens for successes and reds for fails. 3 Greens results in the whole thing flashing and resetting, giving the players another turn.
+4. Repeat until one approach reaches its threshold (combat SUCCESSFUL) or failed DOOM roll (combat UNSUCCESSFUL).
 
 **Boss Thresholds (by Stage):**
 Like regular enemies, bosses use the **Total DC Sum** and **Total Threshold Sum** system. DCs and thresholds are randomly assigned to approaches (Physical/Verbal/Preventative) at combat start - no approach is inherently easier or harder.
@@ -229,7 +234,7 @@ BOMB is a cosmic horror who **turns OFF one type of vulnerability each round** (
 
 ## Roguelite Structure
 
-This is not a true roguelike but has some minor roguelite elements. Generally it is a cohesive, cooperative campaign: heroes clear Stage 1, then play Stage 2 until beaten, then Stage 3. No returning to Stage 1 each time.
+This is not a true roguelike but has some minor roguelite elements, primarily through the FAVOR system. Generally it is a cohesive, cooperative campaign: heroes clear Stage 1, then play Stage 2 until beaten, then Stage 3. No returning to Stage 1 each time.
 
 Various upgrades unlock based on how earlier stages were cleared (how much gold/FAVOR is accrued), plus base bonuses to FAVOR for starting higher-level stages. FAVOR can be unspent and respent at round start without penalty so that heroes can construct a viable build.
 
@@ -283,7 +288,7 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 ### The Prophecy
 
 *The colors of momentous day—*
-*Red and blue and green and grey,*
+*Red and green and blue and grey,*
 *Less but one, a Pal forgotten,*
 *Walk fate's rope and feel it tauten*
 *Botch and crit and fail and roll*
@@ -295,7 +300,7 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 *DOOM be damned, HOPE unforesaken,*
 *The Colors' Powers shall awaken.*
 *To save the very planet's soul*
-*Defeat the BOMB, achieve your goal.*
+*Defeat ATOM, achieve your goal.*
 
 **Lore Notes:**
 - 20 prophecies appeared overnight, 20 years ago
