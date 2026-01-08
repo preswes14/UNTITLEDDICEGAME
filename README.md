@@ -1,4 +1,4 @@
-<img width="785" height="335" alt="image" src="https://github.com/user-attachments/assets/8019b08b-e7c2-4cd8-a772-ac143b94b9e4" /># UNTITLED DICE GAME
+# UNTITLED DICE GAME
 
 A companion app for collaborative TTRPG action. Designed for 3 players.
 
