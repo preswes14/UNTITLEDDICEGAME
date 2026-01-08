@@ -19,8 +19,66 @@ const DICE_TYPES = {
     grapple: { name: 'Grapple', category: 'preventative', icon: 'GP' }
 };
 
+// Ability-specific flavor text for combat outcomes
+const ABILITY_FLAVOR = {
+    slash: {
+        success: ['The blade finds its mark!', 'A clean cut!', 'Steel sings!'],
+        fail: ['The slash goes wide.', 'Blade meets air.', 'Too slow!'],
+        crit: ['A devastating strike!', 'Blood sprays!']
+    },
+    stab: {
+        success: ['A precise thrust!', 'The point strikes true!', 'Right between the ribs!'],
+        fail: ['The stab is deflected.', 'Too shallow.', 'Armor holds.'],
+        crit: ['A fatal pierce!', 'Straight through!']
+    },
+    bonk: {
+        success: ['BONK! Right on the head!', 'A solid thwack!', 'Stars appear in their eyes!'],
+        fail: ['Swing and a miss.', 'The bonk bounces off.', 'Not enough force.'],
+        crit: ['MEGA BONK! They see stars!', 'Concussive impact!']
+    },
+    threaten: {
+        success: ['They cower before you!', 'Fear takes hold.', 'Intimidation works!'],
+        fail: ['They laugh at your threats.', 'Not scary enough.', 'They call your bluff.'],
+        crit: ['They flee in terror!', 'Absolute dominance!']
+    },
+    deceive: {
+        success: ['They buy the lie!', 'Fooled completely.', 'Misdirection succeeds!'],
+        fail: ['They see through you.', 'Not convincing.', 'Your poker face cracks.'],
+        crit: ['A masterful deception!', 'They believe everything!']
+    },
+    persuade: {
+        success: ['Your words ring true.', 'They see reason.', 'Hearts are swayed!'],
+        fail: ['Your words fall flat.', 'Unconvincing.', 'They remain unmoved.'],
+        crit: ['An inspiring speech!', 'They become allies!']
+    },
+    bribe: {
+        success: ['Gold talks!', 'The coin convinces.', 'Everyone has a price.'],
+        fail: ['They refuse the gold.', 'Not enough coin.', 'Insulted by the offer.'],
+        crit: ['A fortune changes hands!', 'They work for you now!']
+    },
+    hide: {
+        success: ['You slip into shadow.', 'Unseen, unheard.', 'They look right past you.'],
+        fail: ['Spotted!', 'A twig snaps.', 'You cast a shadow.'],
+        crit: ['Invisible!', 'A ghost in the night!']
+    },
+    grapple: {
+        success: ['You have them pinned!', 'A solid hold!', 'They can\'t break free!'],
+        fail: ['They slip away.', 'Too slippery.', 'Your grip fails.'],
+        crit: ['An unbreakable hold!', 'Completely immobilized!']
+    }
+};
+
+// Helper to get random flavor text
+function getAbilityFlavor(dieType, outcome) {
+    const flavors = ABILITY_FLAVOR[dieType]?.[outcome];
+    if (flavors && flavors.length > 0) {
+        return flavors[Math.floor(Math.random() * flavors.length)];
+    }
+    return '';
+}
+
 const STAGE_INFO = {
-    0: { name: 'Stage 0: A Dream of Pal', location: 'The Dreamscape' },
+    0: { name: 'The Rite', location: 'The Hideout' },
     1: { name: 'The Crossroads Inn', location: 'The Inn' },
     2: { name: 'The Guarded City', location: 'The Gates' },
     3: { name: 'The War Camp', location: 'The Front Lines' },
@@ -252,7 +310,7 @@ const ENCOUNTERS = {
         vote: true,
         options: [
             { text: 'Roll for Passage (random outcome)', action: 'ferryman_roll' },
-            { text: 'Pay 5 Gold (+2 HOPE, safe)', cost: 5, action: 'ferryman_paid' },
+            { text: 'Pay 5 Gold (+1 HOPE, safe)', cost: 5, action: 'ferryman_paid' },
             { text: 'Wade Through (+1 DOOM)', action: 'ferryman_wade' }
         ]
     },
@@ -276,7 +334,7 @@ const ENCOUNTERS = {
         vote: true,
         options: [
             { text: 'Accept Blessing (random outcome)', action: 'drunk_blessing' },
-            { text: 'Pay 3 Gold (guaranteed +3 HOPE)', cost: 3, action: 'drunk_paid' }
+            { text: 'Pay 5 Gold (guaranteed +2 HOPE)', cost: 5, action: 'drunk_paid' }
         ]
     },
     cultist: {
@@ -306,20 +364,84 @@ const ENCOUNTERS = {
 const TUTORIAL_ENCOUNTERS = {
     pal_intro: {
         type: 'tutorial',
-        name: "Pal's Dream",
-        description: "You awaken in a shimmering dreamscape. A floating figure made of rainbow light greets you. 'Hello, Chosen Ones. I am Pal. Soon I will leave this world... but first, I must prepare you for what comes next.'",
+        name: "The Rite Begins",
+        description: "The hideout is quiet this morning. Dusty light filters through cracks in the wooden walls. Pal shuffles in, his greying surface catching the light. He looks... tired. Worried. But when he sees you three, his face softens.",
         icon: '?',
         image: 'assets/pal.png',
         options: [
-            { text: '"Why are you leaving?"', action: 'pal_explain' },
-            { text: '"What is the prophecy?"', action: 'pal_prophecy' },
-            { text: '"Let\'s begin the training."', action: 'tutorial_obstacle1' }
+            { text: '"Good morning, Pal!"', action: 'pal_greeting' },
+            { text: '"You look troubled..."', action: 'pal_troubled' },
+            { text: '"What\'s happening today?"', action: 'pal_rite_explain' }
+        ]
+    },
+    pal_greeting: {
+        type: 'tutorial',
+        name: "The Rite Begins",
+        description: "Pal chuckles softly. 'Good morning, my little pipsqueaks. My dicelings.' He pauses, his expression flickering. 'Today is... today is the day. The Rite. If you pass, you'll be ready for real adventure.' His voice drops. 'And I fear you'll need to be.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"We\'re ready!"', action: 'tutorial_obstacle1' },
+            { text: '"What do you mean, need to be?"', action: 'pal_atom_warning' }
+        ]
+    },
+    pal_troubled: {
+        type: 'tutorial',
+        name: "The Rite Begins",
+        description: "Pal sighs heavily. 'You notice too much, little ones. Yes... I've heard troubling things. ATOM stirs again. The cult that seeks to end everything.' He shakes his head. 'But that's not for today. Today is YOUR day. The Rite of Passage.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"What is ATOM?"', action: 'pal_atom_warning' },
+            { text: '"Let\'s begin the Rite!"', action: 'tutorial_obstacle1' }
+        ]
+    },
+    pal_rite_explain: {
+        type: 'tutorial',
+        name: "The Rite Begins",
+        description: "'The Rite of Passage, pips! The day you prove you're ready for the world beyond these walls.' Pal straightens proudly. 'I've taught you everything I know. Now show me what you've learned.' His eyes dart to the window nervously. 'We should... we should begin quickly.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"Why quickly?"', action: 'pal_atom_warning' },
+            { text: '"Let\'s do this!"', action: 'tutorial_obstacle1' }
+        ]
+    },
+    pal_atom_warning: {
+        type: 'tutorial',
+        name: "A Warning",
+        description: "Pal's voice drops to barely a whisper. 'ATOM. The Assemble The Others Movement. A doomsday cult that worships something called BOMB - a force that would unmake our world.' He grips his staff tightly. 'I've spent my life opposing them. And lately... I think they've noticed.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"Are we in danger?"', action: 'pal_danger_response' },
+            { text: '"We\'ll protect you, Pal!"', action: 'pal_protect_response' }
+        ]
+    },
+    pal_danger_response: {
+        type: 'tutorial',
+        name: "A Warning",
+        description: "Pal forces a smile. 'You three? Never. I won't allow it.' He pulls something from his robes - an ancient scroll. 'But if anything happens to me... there's something you need to know. A prophecy. YOUR prophecy.' He tucks it away. 'But first - the Rite. Prove yourselves, dicelings.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: 'Begin the Rite', action: 'tutorial_obstacle1' }
+        ]
+    },
+    pal_protect_response: {
+        type: 'tutorial',
+        name: "A Warning",
+        description: "Pal laughs - a genuine, warm laugh. 'Protect ME? Oh, my brave little dice.' He wipes something from his eye. 'That's... that's exactly why I know you're ready. But first, you must prove it. The Rite awaits.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: 'Begin the Rite', action: 'tutorial_obstacle1' }
         ]
     },
     tutorial_obstacle1: {
         type: 'tutorial',
-        name: 'The First Trial',
-        description: "A shadowy obstacle manifests before you. Pal's voice echoes: 'Show me your strongest skill. Roll the die you are BEST at.'",
+        name: 'Trial of Strength',
+        description: "Pal conjures a shimmering training dummy. 'First trial, pipsqueaks! Show me your greatest talent. Roll the die you're BEST at - the skill you've honed above all others!'",
         icon: '?',
         image: 'assets/pal.png',
         dc: 8,
@@ -330,8 +452,8 @@ const TUTORIAL_ENCOUNTERS = {
     },
     tutorial_obstacle2: {
         type: 'tutorial',
-        name: 'The Second Trial',
-        description: "Another obstacle appears, darker than before. Pal speaks gravely: 'Now face your weakness. Roll the die you are WORST at.'",
+        name: 'Trial of Weakness',
+        description: "The dummy reforms, darker and more menacing. Pal's voice grows serious. 'Now the hard part. Face your weakness. Roll the die you're WORST at. Sometimes in life, you won't have a choice.'",
         icon: '!',
         image: 'assets/pal.png',
         dc: 15,
@@ -343,8 +465,8 @@ const TUTORIAL_ENCOUNTERS = {
     },
     tutorial_intertwine: {
         type: 'tutorial',
-        name: 'The Intertwining',
-        description: "Pal glows brighter. 'You see? Alone, you have weaknesses. But together... you can cover for each other. Let me show you the power of INTERTWINING your fates.'",
+        name: 'The Secret of Intertwining',
+        description: "Pal watches you struggle with approval. 'You felt it, didn't you? That creeping darkness when you fail - that's DOOM.' He gestures to all three of you. 'Alone, you have weaknesses. But TOGETHER... you can cover for each other. This is my greatest teaching: INTERTWINING your fates.'",
         icon: '?',
         image: 'assets/pal.png',
         options: [
@@ -353,8 +475,8 @@ const TUTORIAL_ENCOUNTERS = {
     },
     tutorial_final_battle: {
         type: 'tutorial',
-        name: 'Shadow of Pal',
-        description: "A dark version of Pal materializes. 'One final test. Work together. Use your swaps. Show me you are ready for the real world.'",
+        name: 'The Final Test',
+        description: "Pal raises his staff. A shadowy duplicate of himself materializes - younger, fiercer. 'One final test, dicelings. Face the echo of who I once was. Work together. Use your intertwined fates. Show me the Colors are ready!'",
         icon: '!',
         image: 'assets/pal.png',
         dc: 10,
@@ -366,12 +488,61 @@ const TUTORIAL_ENCOUNTERS = {
     },
     pal_farewell: {
         type: 'tutorial',
-        name: "Pal's Farewell",
-        description: "Pal's form begins to fade. 'You are ready. The 20 prophecies await. 19 have failed before you... but you... you are different. Farewell, my Chosen Ones. May HOPE light your path.'",
+        name: "The Prophecy",
+        description: "Pal beams with pride as the shadow fades. 'You did it. My little dice... no. My COLORS. You're ready.' He pulls out the ancient scroll, hands trembling. 'This prophecy found me 20 years ago. I spent my life trying to fulfill it... but I understand now. It was never about me.'",
         icon: '?',
         image: 'assets/pal.png',
         options: [
-            { text: 'Awaken to the Real World', action: 'end_tutorial' }
+            { text: 'Read the Prophecy', action: 'show_prophecy' }
+        ]
+    },
+    prophecy_reveal: {
+        type: 'tutorial',
+        name: "The Prophecy",
+        description: "",  // Will be filled dynamically with prophecy text
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: 'Continue...', action: 'pal_handoff' }
+        ]
+    },
+    pal_handoff: {
+        type: 'tutorial',
+        name: "The Handoff",
+        description: "Pal presses the scroll into your hands. 'It speaks of Colors - Red, Green, Blue. Of a Pal forgotten. Of defeating ATOM.' Tears stream down his weathered face. 'I was never meant to finish this journey. But YOU three... you ARE the prophecy.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"We won\'t let you down."', action: 'pal_final_moment' }
+        ]
+    },
+    pal_final_moment: {
+        type: 'tutorial',
+        name: "The End of the Beginning",
+        description: "Pal pulls you all into an embrace. 'I know you won't, dicelings. Now go - out the back. Start your adventure. I'll—' He freezes. Outside, footsteps. Many footsteps. 'No... not yet. NOT YET!' He shoves you toward the back door. 'RUN! Find the inn at the crossroads! GO!'",
+        icon: '!',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"Pal, come with us!"', action: 'pal_sacrifice' }
+        ]
+    },
+    pal_sacrifice: {
+        type: 'tutorial',
+        name: "Goodbye",
+        description: "Pal stands at the door, staff raised, facing the entrance. 'This is MY part to play, Colors. The prophecy said a Pal forgotten... this is how I protect you. One last time.' He looks back, smiling through tears. 'I am... and forever shall be... your Pal.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '...', action: 'explosion' }
+        ]
+    },
+    explosion: {
+        type: 'tutorial',
+        name: "...",
+        description: "The door EXPLODES inward. Through the smoke, dark figures bearing the sigil of ATOM. Pal shouts something - a curse, a prayer - and then LIGHT. Blinding, terrible light. The shockwave throws you backward through the rear exit. When you look back... the hideout is gone. Pal is gone. Only rubble and flame remain.",
+        icon: '💥',
+        options: [
+            { text: '...', action: 'end_tutorial' }
         ]
     }
 };

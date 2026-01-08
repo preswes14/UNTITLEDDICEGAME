@@ -1037,26 +1037,42 @@ function showTutorialEncounter(encounterId) {
     document.getElementById('encounterContent').style.display = 'block';
 }
 
+// The Prophecy text
+const PROPHECY_TEXT = `<em>The colors of momentous day—
+Red and green and blue and grey,
+Less but one, a Pal forgotten,
+Walk fate's rope and feel it tauten.
+Botch and crit and fail and roll,
+The mentor's death, inciting toll.
+Then dielines blur and Colors sort,
+Thus, Fate's Intertwined Cohort;
+Together, Lucky Trio, shall,
+Behold The Future Sought by Pal.
+DOOM be damned, HOPE unforsaken,
+The Colors' Powers shall awaken.
+To save the very planet's soul—
+Defeat ATOM, achieve your goal.</em>`;
+
 function handleTutorialAction(action) {
     switch(action) {
-        case 'pal_explain':
-            updateEncounterDescription(
-                "Pal's Words",
-                "PAL",
-                "*Pal's colors dim momentarily* \"I know, little ones. I can feel myself fading. But do not weep for me - I have lived long enough to see the prophecy choose its true champions. You three... you are my legacy. My greatest work.\"",
-                [{ text: 'Continue...', action: 'pal_return' }]
-            );
+        // New Rite narrative branches
+        case 'pal_greeting':
+            showTutorialEncounter('pal_greeting');
             break;
-        case 'pal_prophecy':
-            updateEncounterDescription(
-                "Pal's Words",
-                "PAL",
-                "*Pal reaches out, his translucent hand brushing your face* \"And I am not ready to leave you. But the universe does not ask permission. What matters is that I prepared you well. The years we spent together... they were not wasted.\"",
-                [{ text: 'Continue...', action: 'pal_return' }]
-            );
+        case 'pal_troubled':
+            showTutorialEncounter('pal_troubled');
             break;
-        case 'pal_return':
-            showTutorialEncounter('pal_intro');
+        case 'pal_rite_explain':
+            showTutorialEncounter('pal_rite_explain');
+            break;
+        case 'pal_atom_warning':
+            showTutorialEncounter('pal_atom_warning');
+            break;
+        case 'pal_danger_response':
+            showTutorialEncounter('pal_danger_response');
+            break;
+        case 'pal_protect_response':
+            showTutorialEncounter('pal_protect_response');
             break;
         case 'tutorial_obstacle1':
             showTutorialEncounter('tutorial_obstacle1');
@@ -1076,12 +1092,71 @@ function handleTutorialAction(action) {
         case 'tutorial_combat_final':
             startTutorialFinalCombat();
             break;
+        case 'show_prophecy':
+            showProphecyReveal();
+            break;
+        case 'pal_handoff':
+            showTutorialEncounter('pal_handoff');
+            break;
+        case 'pal_final_moment':
+            showTutorialEncounter('pal_final_moment');
+            break;
+        case 'pal_sacrifice':
+            showTutorialEncounter('pal_sacrifice');
+            break;
+        case 'explosion':
+            showExplosionScene();
+            break;
         case 'end_tutorial':
             endTutorial();
             break;
         default:
             log(`Unknown tutorial action: ${action}`, 'warn');
     }
+}
+
+// Show the prophecy reveal with dramatic styling
+function showProphecyReveal() {
+    document.getElementById('encounterTitle').textContent = 'The Prophecy';
+    document.getElementById('encounterDescription').innerHTML = `
+        <div style="background: rgba(147, 51, 234, 0.15); border: 2px solid #a855f7; border-radius: 12px; padding: 20px; margin: 10px 0;">
+            <p style="text-align: center; color: #ffd700; font-size: 1.1rem; line-height: 1.8;">
+                ${PROPHECY_TEXT}
+            </p>
+        </div>
+        <p style="margin-top: 15px; color: #aaa; font-style: italic;">The ancient words seem to glow with inner light...</p>
+    `;
+    document.getElementById('encounterOptions').innerHTML = `
+        <button class="option-btn" onclick="handleTutorialAction('pal_handoff')">Continue...</button>
+    `;
+}
+
+// Show the explosion scene with dramatic effect
+function showExplosionScene() {
+    const encounter = TUTORIAL_ENCOUNTERS['explosion'];
+
+    document.getElementById('encounterTitle').textContent = encounter.name;
+    document.getElementById('encounterDescription').innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <p style="font-size: 4rem; margin-bottom: 20px;">💥</p>
+            <p style="color: #ff6b6b; font-size: 1.2rem; margin-bottom: 15px;">
+                ${encounter.description}
+            </p>
+        </div>
+    `;
+
+    // Flash effect
+    const gameScreen = document.getElementById('gameScreen');
+    gameScreen.style.animation = 'explosion-flash 0.5s ease-out';
+    setTimeout(() => {
+        gameScreen.style.animation = '';
+    }, 500);
+
+    document.getElementById('encounterOptions').innerHTML = `
+        <button class="option-btn" onclick="handleTutorialAction('end_tutorial')" style="background: rgba(255,50,50,0.3); border-color: #ff6b6b;">
+            Begin the Journey...
+        </button>
+    `;
 }
 
 function startTutorialCombat(encounterId) {
@@ -1151,8 +1226,6 @@ function endTutorial() {
     gameState.tutorial.active = false;
     gameState.doom = 0;
 
-    showPalDialogue("Farewell, Chosen Ones. May HOPE light your path...");
-
     setTimeout(() => {
         generateMap();
         renderMap();
@@ -1160,14 +1233,16 @@ function endTutorial() {
 
         const stageInfo = STAGE_INFO[gameState.currentStage];
         log(`--- STAGE 1: ${stageInfo.name} ---`, 'info');
-        log(`You awaken at ${stageInfo.location}...`, 'info');
+        log(`The smoke clears. You're alone now.`, 'doom');
+        log(`Pal's last words echo: "Find the inn at the crossroads..."`, 'info');
+        log(`You stumble through the forest until you see it - a ramshackle inn.`, 'info');
 
         gameState.map[0].status = 'available';
         renderMap();
 
         selectNode(0);
         autoSave();
-    }, 2000);
+    }, 1500);
 }
 
 // Map generation

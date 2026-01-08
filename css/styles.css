@@ -2538,3 +2538,179 @@ body {
         transform: translateY(30px);
     }
 }
+
+/* ==================== EXPLOSION & DRAMATIC EFFECTS ==================== */
+@keyframes explosion-flash {
+    0% { 
+        filter: brightness(1);
+        background: inherit;
+    }
+    25% { 
+        filter: brightness(3);
+        background: rgba(255, 200, 100, 0.3);
+    }
+    50% { 
+        filter: brightness(5);
+        background: rgba(255, 255, 255, 0.5);
+    }
+    75% { 
+        filter: brightness(2);
+        background: rgba(255, 100, 50, 0.2);
+    }
+    100% { 
+        filter: brightness(1);
+        background: inherit;
+    }
+}
+
+/* ==================== NAT 1/20 VISUAL FLOURISHES ==================== */
+.result-value.crit {
+    animation: crit-glow 1s ease-in-out infinite alternate;
+    text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ff8c00;
+}
+
+@keyframes crit-glow {
+    0% { 
+        color: #ffd700;
+        text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ff8c00;
+        transform: scale(1);
+    }
+    100% { 
+        color: #fff8dc;
+        text-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 90px #ff8c00, 0 0 120px #ffd700;
+        transform: scale(1.1);
+    }
+}
+
+.result-value.fail {
+    animation: fail-pulse 0.5s ease-in-out infinite alternate;
+    text-shadow: 0 0 20px #ff0000, 0 0 40px #8b0000;
+}
+
+@keyframes fail-pulse {
+    0% { 
+        color: #ff4444;
+        text-shadow: 0 0 20px #ff0000, 0 0 40px #8b0000;
+        transform: scale(1);
+    }
+    100% { 
+        color: #ff6666;
+        text-shadow: 0 0 30px #ff0000, 0 0 60px #8b0000, 0 0 80px #ff0000;
+        transform: scale(1.05);
+    }
+}
+
+/* Screen flash effects for nat 1/20 */
+.nat20-flash {
+    animation: nat20-screen-flash 0.8s ease-out;
+}
+
+@keyframes nat20-screen-flash {
+    0% { box-shadow: inset 0 0 0 0 transparent; }
+    30% { box-shadow: inset 0 0 100px 50px rgba(255, 215, 0, 0.4); }
+    100% { box-shadow: inset 0 0 0 0 transparent; }
+}
+
+.nat1-flash {
+    animation: nat1-screen-flash 0.8s ease-out;
+}
+
+@keyframes nat1-screen-flash {
+    0% { box-shadow: inset 0 0 0 0 transparent; }
+    30% { box-shadow: inset 0 0 100px 50px rgba(139, 0, 0, 0.4); }
+    100% { box-shadow: inset 0 0 0 0 transparent; }
+}
+
+/* ==================== COMBAT SUCCESS INDICATOR (Traffic Light) ==================== */
+.combat-success-indicator {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 30px;
+    margin: 10px 0;
+}
+
+.combat-success-indicator .light {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(50, 50, 50, 0.8);
+    border: 2px solid #333;
+    transition: all 0.3s ease;
+}
+
+.combat-success-indicator .light.success {
+    background: radial-gradient(circle at 30% 30%, #7fff7f, #00aa00);
+    border-color: #00ff00;
+    box-shadow: 0 0 15px #00ff00, 0 0 30px rgba(0, 255, 0, 0.5);
+    animation: light-pulse 1s ease-in-out infinite;
+}
+
+.combat-success-indicator .light.miss {
+    background: radial-gradient(circle at 30% 30%, #ff7f7f, #aa0000);
+    border-color: #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+}
+
+.combat-success-indicator .light.pending {
+    background: radial-gradient(circle at 30% 30%, #555, #333);
+    border-color: #444;
+    opacity: 0.5;
+}
+
+@keyframes light-pulse {
+    0%, 100% { box-shadow: 0 0 15px #00ff00, 0 0 30px rgba(0, 255, 0, 0.5); }
+    50% { box-shadow: 0 0 25px #00ff00, 0 0 50px rgba(0, 255, 0, 0.7); }
+}
+
+/* All green - bonus effect! */
+.combat-success-indicator.all-success {
+    animation: all-success-flash 0.5s ease-in-out;
+    background: rgba(0, 100, 0, 0.4);
+    border: 2px solid #00ff00;
+}
+
+@keyframes all-success-flash {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.combat-success-indicator .bonus-text {
+    display: none;
+    color: #00ff00;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-shadow: 0 0 10px #00ff00;
+    margin-left: 10px;
+}
+
+.combat-success-indicator.all-success .bonus-text {
+    display: block;
+    animation: bonus-pulse 1s ease-in-out infinite;
+}
+
+@keyframes bonus-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Combat round indicator */
+.round-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 15px;
+    color: #ffd700;
+    font-size: 0.85rem;
+}
+
+.round-indicator .round-num {
+    font-weight: bold;
+    font-size: 1rem;
+}
