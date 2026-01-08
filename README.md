@@ -229,14 +229,15 @@ Bosses use a **success counter system** instead of HP. Players must accumulate e
 4. Repeat until one approach reaches its threshold or party wipe.
 
 **Boss Thresholds (by Stage):**
-CLAUDE I want the DCs to work like this. Every enemy or encounter has a Easy/Medium/Hard set of DCs across the 3 types of moves. Sometimes it is set which is which (eg: physical is easy, preventive is medium, verbal is hard) but usually these will be randomly assigned. DCs should vary within a given range for a given enemy but generally an EASY should be in the 5-10 range, a Medium should be 11-15, and a Hard should be 16-20. Each enemy should have a "Total DC Sum" that is rigid and indicates the total number of points that can be allocated across the 3 DCs. If, for example, the most basic enemy (bandit?) has a Total DC of 35, and he has DCs of 7 on his Easy and 12 on his Medium, he should have a 16 on his Hard (7+12+16=35). If, instead, he rolled a super easy 5 and 11 on his Easy and Medium, he should have a much more difficult 19 for the Hard one. Each enemy should have their own Total DC Sum as well as their own ranges for where easy/medium/hard should fall.
-| Boss | DC Range | Physical | Verbal | Preventative | Attacks/Round |
-|------|:--------:|:--------:|:------:|:------------:|:-------------:|
-| **1. Dirty Innkeeper** | 9-12 | 4 | 3 | 2 | 1 |
-| **2. Corrupt Guard** | 10-14 | 5 | 4 | 3 | 1 |
-| **3. General Heimer** | 12-15 | 6 | 6 | 5 | 1 |
-| **4. King Robert** | 13-16 | 7 | 7 | 7 | 1 |
-| **5. BOMB** | 15-17 | 8 | 10 | 9 | 2 |
+Like regular enemies, bosses use the **Total DC Sum** and **Total Threshold Sum** system. DCs and thresholds are randomly assigned to approaches (Physical/Verbal/Preventative) at combat start - no approach is inherently easier or harder.
+
+| Boss | Total DC Sum | DC Ranges (Easy/Med/Hard) | Total Threshold Sum | Threshold Ranges | Attacks/Round |
+|------|:------------:|:-------------------------:|:-------------------:|:----------------:|:-------------:|
+| **1. Dirty Innkeeper** | 36 | 7-10 / 11-14 / 14-17 | 9 | 2-3 / 3-4 / 3-4 | 1 |
+| **2. Corrupt Guard** | 38 | 8-11 / 12-14 / 15-17 | 12 | 3-4 / 4-5 / 4-5 | 1 |
+| **3. General Heimer** | 40 | 9-12 / 13-15 / 15-18 | 17 | 5-6 / 5-6 / 5-6 | 1 |
+| **4. King Robert** | 42 | 10-13 / 13-16 / 16-18 | 21 | 6-7 / 7-8 / 7-8 | 1 |
+| **5. BOMB** | 45 | 12-14 / 13-16 / 18-20 | 27 | 8-9 / 9-10 / 9-10 | 2 |
 
 ### BOMB's Immunity Cycling
 BOMB is a cosmic horror who **turns OFF one type of vulnerability each round** (like Magus in Chrono Trigger or Bowyer in Super Mario RPG). When BOMB attacks, the immunity randomly cycles to a different approach. Players must adapt their strategy each round based on which approach is currently blocked.
@@ -341,6 +342,8 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 
 ### Exotic Dice (for The Trapper)
 
+**Each exotic die is unique** - only one copy exists. Once traded to a player, it's no longer available to others. This prevents duplicate exploits.
+
 Ranked from most to least powerful:
 
 1. **The d6** - Faces: 1, 2, 6, 12, 19, 20 (great for manipulation)
@@ -374,11 +377,13 @@ Ranked from most to least powerful:
 **[NEEDS DESIGN]** Before each stage begins, players should have access to an upgrade shop where they can spend gold/favor on permanent improvements. This establishes early identity and allows for strategic planning.
 Here's what I'm thinking. Gold should be used for the spot-level upgrades and then any leftover gold after the Stage is over gets converted into Favor (I'm currently thinking 10G->1F, rounded down). In addition to gaining 1 Favor per hero (collective pool) to spend at the start of the next stage, having gold can up Favor gained. Unlike gold which is spent on upgrades and consumed, Favor is more like Skill Points which aren't quite "spent" but can be unequipped and re-equipped to make for a specific build. The team will share this currency and there will be more options than they could possibly spend their favor on, allowing for tough choices and interesting build attempts. Stage 2 would grant 3 favor by default, Stage 3 grants 6, 4 grants 9, and 5 grants 12 - in addition to whatever gold the party accrued and successfully cashed in over the course of the run.
 **
-FAVOR STORE FIRST DRAFT- 
+FAVOR STORE FIRST DRAFT-
+**All FAVOR upgrades are single-purchase only.** Once bought, they remain equipped (or unequipped and re-equipped) but cannot be purchased again.
+
 1 FAVOR:
 STILL PRETTY GOOD Choose a hero. When this hero rolls a failure on [best dice] , instead count it as a success on [worst dice]
-PRACTICED INTERTWINER - Intertwined rolls granted BY this hero gain +5
-PRACTICED INTERTWINEE - Intertwined rolls granted TO this hero gain +5
+PRACTICED INTERTWINER - Intertwined rolls granted BY this hero gain +3 (stacks with INTERTWINEE)
+PRACTICED INTERTWINEE - Intertwined rolls granted TO this hero gain +3 (stacks with INTERTWINER)
 HOPEFUL NOVICES The party gains +1 Max Hope (from 1 to 2)
 GEAR: SHIELD The party starts with 1 Shield
 GEAR: CASH The party starts with 5 Gold
@@ -401,7 +406,7 @@ MASTERS OF HOPING Party gains +1 Max HOPE (from 3 to 4, requires previous HOPE u
 WEAK POINT The boss of this Stage requires 1 less success of each type to win
 
 4 FAVOR:
-DOOMLESS Choose a hero. Remove DOOM from this hero's dice
+DOOMLESS Choose a hero and one of their dice. Rolling 1 on that die no longer generates DOOM
 HOPEFUL INTERTWINING Choose a hero. All intertwined rolls TO or FROM this hero have a 50% chance to grant +1 HOPE.
 DOOM BUFFER Each hero rerolls the first +1 DOOM they would have otherwise rolled.
 MASTERS OF SHIELDING  The party gains +1 Max Shield (from 3 to 4, requires previous SHIELD unlock)
@@ -424,7 +429,7 @@ Questions to resolve: MIGHT HAVE ALREADY ANSWERED THE BELOW BUT WILL ANSWER EXPL
 **Merchant**
 The merchant is guaranteed to appear as an option on every Stage at least once, at the very end (before the boss) as well as potentially earlier in the overworld trudge. Merchant operates around the most basic of principles: Pay 1 gold to raise 1 number on 1 die by 1. This first number increases by 1 each time the upgrade is bought (so after the first purchase, pay 2 gold to raise 1 number on 1 die by 1) But each trip to the merchant, this resets again to 1. So the party entering with 10 gold would be able to get 4 numbers bumped by 1, or 1 number bumped by 4, for all 10 G (1+2+3+4), or just get 2 upgrades for 3 Gold and "save up" til the next Merchant.
 Important - Merchant can ONLY affect segment faces that have received no changes other than from the merchant - so 1 (DOOM) and 20 (HOPE) are immediately always excluded from availability for Merchanting, and the Merchant can't turn a 19 into a 20 (caps at 19). Any segment that has been manipulated by any other force (starting upgrades, alchemist, mathemetician, etc) is INELIGIBLE to be upgraded at the Merchant (he can mutter something about aftermarket upgrades voiding the die's warranty). Merchant CAN repeatedly upgrade segments that have only previously been upgraded by the Merchant.
-The merchant should also offer a Spin On The Wheel for 5 Gold (5 gold each time, repeatable as many times as the player can pay) that has a fair and visible range of outcomes (picturing 5 wheel outcomes- Double segment (caps at 19), Half segment (minimum 2), Add +1 Hope, Add +1 Doom, and Intertwine.) Player will choose to use the wheel and then choose the segment they are "gambling" and the wheel will spin and the requested effect will apply. *AS WITH MOST UPGRADES IN THIS GAME A SEGMENT THAT HAS BEEN UPGRADED BY THE WHEEL CANNOT BE UPGRADED AGAIN EXCEPT BY THE WHEEL*
+The merchant should also offer a Spin On The Wheel for 3 Gold (3 gold each time, repeatable as many times as the player can pay) that has a fair and visible range of outcomes (picturing 5 wheel outcomes- Double segment (caps at 19), Half segment (minimum 2), Add +1 Hope, Add +1 Doom, and Intertwine (player chooses the link).) Player will choose to use the wheel and then choose the segment they are "gambling" and the wheel will spin and the requested effect will apply. *AS WITH MOST UPGRADES IN THIS GAME A SEGMENT THAT HAS BEEN UPGRADED BY THE WHEEL CANNOT BE UPGRADED AGAIN EXCEPT BY THE WHEEL*
 #### Ability-Specific Outcomes
 **[NEEDS CONTENT]** Each die type (Slash, Stab, Bonk, Threaten, Deceive, Persuade, Bribe, Hide, Grapple) should have unique narrative text for each encounter situation. What does it LOOK like when you Stab a bandit vs Deceive them vs Bribe them?
 You're right this is necessary but it is uninteresting to write. In general it should be the basic, expected outcome you would anticipate - the difference between:
