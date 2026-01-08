@@ -341,6 +341,8 @@ Pal is the emotional core of the tutorial - a greying d20 with a beard and staff
 
 ### Exotic Dice (for The Trapper)
 
+**Each exotic die is unique** - only one copy exists. Once traded to a player, it's no longer available to others. This prevents duplicate exploits.
+
 Ranked from most to least powerful:
 
 1. **The d6** - Faces: 1, 2, 6, 12, 19, 20 (great for manipulation)
@@ -374,7 +376,9 @@ Ranked from most to least powerful:
 **[NEEDS DESIGN]** Before each stage begins, players should have access to an upgrade shop where they can spend gold/favor on permanent improvements. This establishes early identity and allows for strategic planning.
 Here's what I'm thinking. Gold should be used for the spot-level upgrades and then any leftover gold after the Stage is over gets converted into Favor (I'm currently thinking 10G->1F, rounded down). In addition to gaining 1 Favor per hero (collective pool) to spend at the start of the next stage, having gold can up Favor gained. Unlike gold which is spent on upgrades and consumed, Favor is more like Skill Points which aren't quite "spent" but can be unequipped and re-equipped to make for a specific build. The team will share this currency and there will be more options than they could possibly spend their favor on, allowing for tough choices and interesting build attempts. Stage 2 would grant 3 favor by default, Stage 3 grants 6, 4 grants 9, and 5 grants 12 - in addition to whatever gold the party accrued and successfully cashed in over the course of the run.
 **
-FAVOR STORE FIRST DRAFT- 
+FAVOR STORE FIRST DRAFT-
+**All FAVOR upgrades are single-purchase only.** Once bought, they remain equipped (or unequipped and re-equipped) but cannot be purchased again.
+
 1 FAVOR:
 STILL PRETTY GOOD Choose a hero. When this hero rolls a failure on [best dice] , instead count it as a success on [worst dice]
 PRACTICED INTERTWINER - Intertwined rolls granted BY this hero gain +5
@@ -401,7 +405,7 @@ MASTERS OF HOPING Party gains +1 Max HOPE (from 3 to 4, requires previous HOPE u
 WEAK POINT The boss of this Stage requires 1 less success of each type to win
 
 4 FAVOR:
-DOOMLESS Choose a hero. Remove DOOM from this hero's dice
+DOOMLESS Choose a hero and one of their dice. Rolling 1 on that die no longer generates DOOM
 HOPEFUL INTERTWINING Choose a hero. All intertwined rolls TO or FROM this hero have a 50% chance to grant +1 HOPE.
 DOOM BUFFER Each hero rerolls the first +1 DOOM they would have otherwise rolled.
 MASTERS OF SHIELDING  The party gains +1 Max Shield (from 3 to 4, requires previous SHIELD unlock)
