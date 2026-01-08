@@ -674,10 +674,21 @@ function confirmActionAssignment() {
         });
     }
 
-    // Move to talent ranking
+    // Initialize talent state for tracking best/worst (will be set during tutorial)
+    talentState = {
+        currentPlayer: 0,
+        phase: 'best',
+        playerRankings: [
+            { best: null, worst: null, middle: null },
+            { best: null, worst: null, middle: null },
+            { best: null, worst: null, middle: null }
+        ]
+    };
+
+    // Skip talent ranking screen - best/worst selection happens during Pal tutorial
+    // Go directly to game/tutorial
     document.getElementById('actionAssignScreen').classList.add('hidden');
-    document.getElementById('talentScreen').classList.remove('hidden');
-    startTalentRanking();
+    startGame();
 }
 
 // Talent ranking functions
