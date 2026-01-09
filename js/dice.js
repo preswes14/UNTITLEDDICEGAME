@@ -106,6 +106,9 @@ function showRollResult(playerIndex, player, die, result, swapInfo = null, cross
 
     valueEl.className = 'result-value';
 
+    // Get the game screen for flash effects
+    const gameScreen = document.getElementById('gameScreen');
+
     if (result === 20) {
         valueEl.classList.add('crit');
         outcomeEl.textContent = 'NATURAL 20!';
@@ -114,6 +117,11 @@ function showRollResult(playerIndex, player, die, result, swapInfo = null, cross
         doomChangeEl.className = 'doom-change hope-up';
         doomChangeEl.textContent = '+1 HOPE from Natural 20!';
         doomChangeEl.style.color = '#ffd700';
+        // Screen flash gold
+        if (gameScreen) {
+            gameScreen.classList.add('nat20-flash');
+            setTimeout(() => gameScreen.classList.remove('nat20-flash'), 800);
+        }
     } else if (result === 1) {
         valueEl.classList.add('fail');
         outcomeEl.textContent = 'CRITICAL FAIL!';
@@ -122,6 +130,11 @@ function showRollResult(playerIndex, player, die, result, swapInfo = null, cross
         doomChangeEl.className = 'doom-change doom-up';
         doomChangeEl.textContent = '+1 DOOM from Natural 1!';
         doomChangeEl.style.color = '#ff6b6b';
+        // Screen flash red
+        if (gameScreen) {
+            gameScreen.classList.add('nat1-flash');
+            setTimeout(() => gameScreen.classList.remove('nat1-flash'), 800);
+        }
     } else if (result >= gameState.targetDC) {
         valueEl.classList.add('success');
         outcomeEl.textContent = 'Success!';

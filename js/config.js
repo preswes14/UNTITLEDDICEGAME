@@ -19,8 +19,66 @@ const DICE_TYPES = {
     grapple: { name: 'Grapple', category: 'preventative', icon: 'GP' }
 };
 
+// Ability-specific flavor text for combat outcomes
+const ABILITY_FLAVOR = {
+    slash: {
+        success: ['The blade finds its mark!', 'A clean cut!', 'Steel sings!'],
+        fail: ['The slash goes wide.', 'Blade meets air.', 'Too slow!'],
+        crit: ['A devastating strike!', 'Blood sprays!']
+    },
+    stab: {
+        success: ['A precise thrust!', 'The point strikes true!', 'Right between the ribs!'],
+        fail: ['The stab is deflected.', 'Too shallow.', 'Armor holds.'],
+        crit: ['A fatal pierce!', 'Straight through!']
+    },
+    bonk: {
+        success: ['BONK! Right on the head!', 'A solid thwack!', 'Stars appear in their eyes!'],
+        fail: ['Swing and a miss.', 'The bonk bounces off.', 'Not enough force.'],
+        crit: ['MEGA BONK! They see stars!', 'Concussive impact!']
+    },
+    threaten: {
+        success: ['They cower before you!', 'Fear takes hold.', 'Intimidation works!'],
+        fail: ['They laugh at your threats.', 'Not scary enough.', 'They call your bluff.'],
+        crit: ['They flee in terror!', 'Absolute dominance!']
+    },
+    deceive: {
+        success: ['They buy the lie!', 'Fooled completely.', 'Misdirection succeeds!'],
+        fail: ['They see through you.', 'Not convincing.', 'Your poker face cracks.'],
+        crit: ['A masterful deception!', 'They believe everything!']
+    },
+    persuade: {
+        success: ['Your words ring true.', 'They see reason.', 'Hearts are swayed!'],
+        fail: ['Your words fall flat.', 'Unconvincing.', 'They remain unmoved.'],
+        crit: ['An inspiring speech!', 'They become allies!']
+    },
+    bribe: {
+        success: ['Gold talks!', 'The coin convinces.', 'Everyone has a price.'],
+        fail: ['They refuse the gold.', 'Not enough coin.', 'Insulted by the offer.'],
+        crit: ['A fortune changes hands!', 'They work for you now!']
+    },
+    hide: {
+        success: ['You slip into shadow.', 'Unseen, unheard.', 'They look right past you.'],
+        fail: ['Spotted!', 'A twig snaps.', 'You cast a shadow.'],
+        crit: ['Invisible!', 'A ghost in the night!']
+    },
+    grapple: {
+        success: ['You have them pinned!', 'A solid hold!', 'They can\'t break free!'],
+        fail: ['They slip away.', 'Too slippery.', 'Your grip fails.'],
+        crit: ['An unbreakable hold!', 'Completely immobilized!']
+    }
+};
+
+// Helper to get random flavor text
+function getAbilityFlavor(dieType, outcome) {
+    const flavors = ABILITY_FLAVOR[dieType]?.[outcome];
+    if (flavors && flavors.length > 0) {
+        return flavors[Math.floor(Math.random() * flavors.length)];
+    }
+    return '';
+}
+
 const STAGE_INFO = {
-    0: { name: 'Stage 0: A Dream of Pal', location: 'The Dreamscape' },
+    0: { name: 'The Rite', location: 'The Hideout' },
     1: { name: 'The Crossroads Inn', location: 'The Inn' },
     2: { name: 'The Guarded City', location: 'The Gates' },
     3: { name: 'The War Camp', location: 'The Front Lines' },
@@ -115,15 +173,15 @@ function generateTotalDCSumDCs(config) {
 
 const BOSSES = {
     1: {
-        name: 'The Dirty Innkeeper',
-        description: 'The innkeeper blocks the exit, demanding payment for imaginary damages.',
+        name: 'Seedy Sammy',
+        description: 'The innkeeper blocks the exit, eyes wild with desperation. "I\'m sorry! I had no choice - ATOM owns my debts!"',
         dcConfig: BOSS_DC_CONFIG[1],
         successThresholds: { physical: 4, verbal: 3, preventative: 2 },
         attacksPerRound: 1
     },
     2: {
-        name: 'The Corrupt Guard Captain',
-        description: 'The captain demands "taxes" while his men surround you.',
+        name: 'Crooked Chester',
+        description: 'The young guard captain sneers, ATOM\'s sigil glinting beneath his armor. "You\'re asking too many questions about that arrow."',
         dcConfig: BOSS_DC_CONFIG[2],
         successThresholds: { physical: 5, verbal: 4, preventative: 3 },
         attacksPerRound: 1
@@ -155,17 +213,17 @@ const ENCOUNTERS = {
     start: {
         type: 'start',
         name: 'The Journey Begins',
-        description: 'You stand at a crossroads. Multiple paths stretch before you.',
+        description: 'The smoke from the explosion still stings your eyes. Pal is gone. The hideout is rubble. But his last words echo: "Find the inn at the crossroads." You dust off the prophecy scroll and press forward.',
         icon: '?',
         options: [
-            { text: 'Continue', action: 'leave' }
+            { text: 'Honor Pal\'s memory. Find the inn.', action: 'leave' }
         ]
     },
     mathematician: {
         type: 'good',
         name: 'The Mathematician',
-        description: 'A scholarly figure with chalk-covered robes offers to analyze your dice. "Numbers are my domain. I can reshape probability itself."',
-        icon: '?',
+        description: 'A middle-aged scholar with chalk-dusted robes adjusts his spectacles excitedly. "Astounding! According to my calculations, your dice are RIPE for optimization! Numbers are my domain - I can reshape probability itself!"',
+        icon: '📐',
         options: [
             { text: 'Free Analysis (+2 to lowest)', action: 'math_free' },
             { text: 'Trade-off (-1 high, +4 low)', action: 'math_tradeoff' },
@@ -176,8 +234,8 @@ const ENCOUNTERS = {
     alchemist: {
         type: 'good',
         name: 'The Alchemist',
-        description: 'Bubbling potions surround a wild-eyed alchemist. "I can splice your fates together... for a price in chaos."',
-        icon: '?',
+        description: 'A wild-eyed woman cackles over bubbling cauldrons, her fingers stained with strange chemicals. "Ohoho! Fresh dice! Fresh subjects! I can SPLICE your fates together... the bonds will be BEAUTIFUL!"',
+        icon: '🧪',
         options: [
             { text: 'Safe Link (link low roll)', action: 'swap_low_to_ally' },
             { text: 'Risky Splice (random + bonus)', action: 'alchemist_risky' },
@@ -188,8 +246,8 @@ const ENCOUNTERS = {
     priest: {
         type: 'good',
         name: 'The Priest',
-        description: 'A serene figure radiates calm. "HOPE is the light that keeps DOOM at bay."',
-        icon: '?',
+        description: 'A serene figure in humble robes radiates calm despite having nothing to offer but faith. "Weary travelers... I sense DOOM weighing upon you. I have little but HOPE to share - and sometimes, that is everything."',
+        icon: '✨',
         options: [
             { text: 'Receive Blessing (+3 HOPE)', action: 'blessing_hope' },
             { text: 'Greater Blessing (+5 HOPE, risk mark)', action: 'blessing_greater' },
@@ -199,8 +257,8 @@ const ENCOUNTERS = {
     gambler: {
         type: 'good',
         name: 'The Gambler',
-        description: 'A flashy figure shuffles cards made of pure light. "Care to test your luck? The house always wins... but so might you."',
-        icon: '?',
+        description: 'A flashy figure in a garish vest shuffles cards made of pure light, talking a mile a minute. "Step right up, step right up! Care to test your luck? Big bucks, no whammies! The house always wins... but maybe not TODAY, eh?"',
+        icon: '🎰',
         options: [
             { text: 'Play the Range Game', action: 'gamble_range_choice' }
         ]
@@ -247,20 +305,20 @@ const ENCOUNTERS = {
     ferryman: {
         type: 'neutral',
         name: 'The Ferryman',
-        description: 'A hooded figure waits by a dark river. "Passage has a cost. Roll the dice... or pay in gold."',
-        icon: '?',
+        description: 'A towering, hooded figure waits by a dark river. Skeletal fingers extend from tattered robes. No words - only an expectant silence and the faint sound of oars on water. He will be paid. One way or another.',
+        icon: '⚰️',
         vote: true,
         options: [
             { text: 'Roll for Passage (random outcome)', action: 'ferryman_roll' },
-            { text: 'Pay 5 Gold (+2 HOPE, safe)', cost: 5, action: 'ferryman_paid' },
+            { text: 'Pay 5 Gold (+1 HOPE, safe)', cost: 5, action: 'ferryman_paid' },
             { text: 'Wade Through (+1 DOOM)', action: 'ferryman_wade' }
         ]
     },
     trapper: {
         type: 'neutral',
         name: 'The Trapper',
-        description: 'A weathered hunter displays strange dice carved from bone. "Trade your mundane tools for something... exotic."',
-        icon: '?',
+        description: 'A weathered hunter with scars tells tales of impossible odds displays strange dice carved from bone and stranger things. "These ain\'t your ordinary dice. Caught \'em myself in the wild. Trade me yours, and see what fate has in store."',
+        icon: '🪤',
         vote: true,
         options: [
             { text: 'Trade (mystery value)', action: 'trapper_trade' },
@@ -271,19 +329,19 @@ const ENCOUNTERS = {
     drunkPriest: {
         type: 'neutral',
         name: 'The Drunk Priest',
-        description: 'A priest stumbles out of a tavern, blessing everything in sight. "Blessings! *hic* Blessings for all!"',
-        icon: '?',
+        description: 'A priest stumbles out of a tavern, holy symbol askew, blessing everything in sight including a confused cat. "Blessssings! *hic* Blessings for ALL! The light *urp* shines upon... upon EVERYONE tonight!"',
+        icon: '🍺',
         vote: true,
         options: [
             { text: 'Accept Blessing (random outcome)', action: 'drunk_blessing' },
-            { text: 'Pay 3 Gold (guaranteed +3 HOPE)', cost: 3, action: 'drunk_paid' }
+            { text: 'Pay 5 Gold (guaranteed +2 HOPE)', cost: 5, action: 'drunk_paid' }
         ]
     },
     cultist: {
         type: 'neutral',
         name: 'The Cultist',
-        description: 'A robed figure offers a chalice of glowing liquid. "Drink, and your fates shall be bound..."',
-        icon: '?',
+        description: 'A robed figure emerges from shadow, offering a chalice of swirling purple liquid. The ATOM sigil glints on their sleeve. "Drink, travelers... and your fates shall be BOUND together. Forever. Join us."',
+        icon: '🔮',
         vote: true,
         options: [
             { text: 'Drink (random swap effect)', action: 'cultist_drink' },
@@ -293,7 +351,7 @@ const ENCOUNTERS = {
     merchant: {
         type: 'good',
         name: 'The Merchant',
-        description: 'A weathered trader with a cart full of curious wares. "Aftermarket upgrades void the warranty, friend. But for virgin dice? I can work wonders."',
+        description: 'A weathered trader with a cart full of curious wares strokes his beard thoughtfully. "Ah, adventurers! Aftermarket upgrades void the warranty, friend. But for VIRGIN dice? Untouched by magic? I can work wonders. Pay one gold per point. Simple as that."',
         icon: '💰',
         options: [
             { text: 'Browse Upgrades', action: 'merchant_browse' },
@@ -306,20 +364,84 @@ const ENCOUNTERS = {
 const TUTORIAL_ENCOUNTERS = {
     pal_intro: {
         type: 'tutorial',
-        name: "Pal's Dream",
-        description: "You awaken in a shimmering dreamscape. A floating figure made of rainbow light greets you. 'Hello, Chosen Ones. I am Pal. Soon I will leave this world... but first, I must prepare you for what comes next.'",
+        name: "The Rite Begins",
+        description: "The hideout is quiet this morning. Dusty light filters through cracks in the wooden walls. Pal shuffles in, his greying surface catching the light. He looks... tired. Worried. But when he sees you three, his face softens.",
         icon: '?',
         image: 'assets/pal.png',
         options: [
-            { text: '"Why are you leaving?"', action: 'pal_explain' },
-            { text: '"What is the prophecy?"', action: 'pal_prophecy' },
-            { text: '"Let\'s begin the training."', action: 'tutorial_obstacle1' }
+            { text: '"Good morning, Pal!"', action: 'pal_greeting' },
+            { text: '"You look troubled..."', action: 'pal_troubled' },
+            { text: '"What\'s happening today?"', action: 'pal_rite_explain' }
+        ]
+    },
+    pal_greeting: {
+        type: 'tutorial',
+        name: "The Rite Begins",
+        description: "Pal chuckles softly. 'Good morning, my little pipsqueaks. My dicelings.' He pauses, his expression flickering. 'Today is... today is the day. The Rite. If you pass, you'll be ready for real adventure.' His voice drops. 'And I fear you'll need to be.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"We\'re ready!"', action: 'tutorial_obstacle1' },
+            { text: '"What do you mean, need to be?"', action: 'pal_atom_warning' }
+        ]
+    },
+    pal_troubled: {
+        type: 'tutorial',
+        name: "The Rite Begins",
+        description: "Pal sighs heavily. 'You notice too much, little ones. Yes... I've heard troubling things. ATOM stirs again. The cult that seeks to end everything.' He shakes his head. 'But that's not for today. Today is YOUR day. The Rite of Passage.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"What is ATOM?"', action: 'pal_atom_warning' },
+            { text: '"Let\'s begin the Rite!"', action: 'tutorial_obstacle1' }
+        ]
+    },
+    pal_rite_explain: {
+        type: 'tutorial',
+        name: "The Rite Begins",
+        description: "'The Rite of Passage, pips! The day you prove you're ready for the world beyond these walls.' Pal straightens proudly. 'I've taught you everything I know. Now show me what you've learned.' His eyes dart to the window nervously. 'We should... we should begin quickly.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"Why quickly?"', action: 'pal_atom_warning' },
+            { text: '"Let\'s do this!"', action: 'tutorial_obstacle1' }
+        ]
+    },
+    pal_atom_warning: {
+        type: 'tutorial',
+        name: "A Warning",
+        description: "Pal's voice drops to barely a whisper. 'ATOM. The Assemble The Others Movement. A doomsday cult that worships something called BOMB - a force that would unmake our world.' He grips his staff tightly. 'I've spent my life opposing them. And lately... I think they've noticed.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"Are we in danger?"', action: 'pal_danger_response' },
+            { text: '"We\'ll protect you, Pal!"', action: 'pal_protect_response' }
+        ]
+    },
+    pal_danger_response: {
+        type: 'tutorial',
+        name: "A Warning",
+        description: "Pal forces a smile. 'You three? Never. I won't allow it.' He pulls something from his robes - an ancient scroll. 'But if anything happens to me... there's something you need to know. A prophecy. YOUR prophecy.' He tucks it away. 'But first - the Rite. Prove yourselves, dicelings.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: 'Begin the Rite', action: 'tutorial_obstacle1' }
+        ]
+    },
+    pal_protect_response: {
+        type: 'tutorial',
+        name: "A Warning",
+        description: "Pal laughs - a genuine, warm laugh. 'Protect ME? Oh, my brave little dice.' He wipes something from his eye. 'That's... that's exactly why I know you're ready. But first, you must prove it. The Rite awaits.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: 'Begin the Rite', action: 'tutorial_obstacle1' }
         ]
     },
     tutorial_obstacle1: {
         type: 'tutorial',
-        name: 'The First Trial',
-        description: "A shadowy obstacle manifests before you. Pal's voice echoes: 'Show me your strongest skill. Roll the die you are BEST at.'",
+        name: 'Trial of Strength',
+        description: "Pal conjures a shimmering training dummy. 'First trial, pipsqueaks! Show me your greatest talent. Roll the die you're BEST at - the skill you've honed above all others!'",
         icon: '?',
         image: 'assets/pal.png',
         dc: 8,
@@ -330,8 +452,8 @@ const TUTORIAL_ENCOUNTERS = {
     },
     tutorial_obstacle2: {
         type: 'tutorial',
-        name: 'The Second Trial',
-        description: "Another obstacle appears, darker than before. Pal speaks gravely: 'Now face your weakness. Roll the die you are WORST at.'",
+        name: 'Trial of Weakness',
+        description: "The dummy reforms, darker and more menacing. Pal's voice grows serious. 'Now the hard part. Face your weakness. Roll the die you're WORST at. Sometimes in life, you won't have a choice.'",
         icon: '!',
         image: 'assets/pal.png',
         dc: 15,
@@ -343,8 +465,8 @@ const TUTORIAL_ENCOUNTERS = {
     },
     tutorial_intertwine: {
         type: 'tutorial',
-        name: 'The Intertwining',
-        description: "Pal glows brighter. 'You see? Alone, you have weaknesses. But together... you can cover for each other. Let me show you the power of INTERTWINING your fates.'",
+        name: 'The Secret of Intertwining',
+        description: "Pal watches you struggle with approval. 'You felt it, didn't you? That creeping darkness when you fail - that's DOOM.' He gestures to all three of you. 'Alone, you have weaknesses. But TOGETHER... you can cover for each other. This is my greatest teaching: INTERTWINING your fates.'",
         icon: '?',
         image: 'assets/pal.png',
         options: [
@@ -353,8 +475,8 @@ const TUTORIAL_ENCOUNTERS = {
     },
     tutorial_final_battle: {
         type: 'tutorial',
-        name: 'Shadow of Pal',
-        description: "A dark version of Pal materializes. 'One final test. Work together. Use your swaps. Show me you are ready for the real world.'",
+        name: 'The Final Test',
+        description: "Pal raises his staff. A shadowy duplicate of himself materializes - younger, fiercer. 'One final test, dicelings. Face the echo of who I once was. Work together. Use your intertwined fates. Show me the Colors are ready!'",
         icon: '!',
         image: 'assets/pal.png',
         dc: 10,
@@ -366,12 +488,61 @@ const TUTORIAL_ENCOUNTERS = {
     },
     pal_farewell: {
         type: 'tutorial',
-        name: "Pal's Farewell",
-        description: "Pal's form begins to fade. 'You are ready. The 20 prophecies await. 19 have failed before you... but you... you are different. Farewell, my Chosen Ones. May HOPE light your path.'",
+        name: "The Prophecy",
+        description: "Pal beams with pride as the shadow fades. 'You did it. My little dice... no. My COLORS. You're ready.' He pulls out the ancient scroll, hands trembling. 'This prophecy found me 20 years ago. I spent my life trying to fulfill it... but I understand now. It was never about me.'",
         icon: '?',
         image: 'assets/pal.png',
         options: [
-            { text: 'Awaken to the Real World', action: 'end_tutorial' }
+            { text: 'Read the Prophecy', action: 'show_prophecy' }
+        ]
+    },
+    prophecy_reveal: {
+        type: 'tutorial',
+        name: "The Prophecy",
+        description: "",  // Will be filled dynamically with prophecy text
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: 'Continue...', action: 'pal_handoff' }
+        ]
+    },
+    pal_handoff: {
+        type: 'tutorial',
+        name: "The Handoff",
+        description: "Pal presses the scroll into your hands. 'It speaks of Colors - Red, Green, Blue. Of a Pal forgotten. Of defeating ATOM.' Tears stream down his weathered face. 'I was never meant to finish this journey. But YOU three... you ARE the prophecy.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"We won\'t let you down."', action: 'pal_final_moment' }
+        ]
+    },
+    pal_final_moment: {
+        type: 'tutorial',
+        name: "The End of the Beginning",
+        description: "Pal pulls you all into an embrace. 'I know you won't, dicelings. Now go - out the back. Start your adventure. I'll—' He freezes. Outside, footsteps. Many footsteps. 'No... not yet. NOT YET!' He shoves you toward the back door. 'RUN! Find the inn at the crossroads! GO!'",
+        icon: '!',
+        image: 'assets/pal.png',
+        options: [
+            { text: '"Pal, come with us!"', action: 'pal_sacrifice' }
+        ]
+    },
+    pal_sacrifice: {
+        type: 'tutorial',
+        name: "Goodbye",
+        description: "Pal stands at the door, staff raised, facing the entrance. 'This is MY part to play, Colors. The prophecy said a Pal forgotten... this is how I protect you. One last time.' He looks back, smiling through tears. 'I am... and forever shall be... your Pal.'",
+        icon: '?',
+        image: 'assets/pal.png',
+        options: [
+            { text: '...', action: 'explosion' }
+        ]
+    },
+    explosion: {
+        type: 'tutorial',
+        name: "...",
+        description: "The door EXPLODES inward. Through the smoke, dark figures bearing the sigil of ATOM. Pal shouts something - a curse, a prayer - and then LIGHT. Blinding, terrible light. The shockwave throws you backward through the rear exit. When you look back... the hideout is gone. Pal is gone. Only rubble and flame remain.",
+        icon: '💥',
+        options: [
+            { text: '...', action: 'end_tutorial' }
         ]
     }
 };
@@ -381,6 +552,162 @@ const PAL_DIALOGUE = {
     hope_granted: "But there is a counter to DOOM. HOPE. *Pal's light intensifies* When all seems lost, HOPE can save you from the final darkness. I grant you your first spark.",
     intertwine_explain: "Your dice are now LINKED. When one of you rolls a connected number, your ally's die activates instead. Cover each other's weaknesses. This is how you will survive."
 };
+
+// NPC Voice Lines - personality-driven dialogue
+const NPC_VOICE_LINES = {
+    mathematician: {
+        greeting: [
+            "Astounding! According to my calculations, you've arrived at EXACTLY the right time!",
+            "Ah, fellow probability enthusiasts! Let me show you something Completely OP!",
+            "The numbers don't lie - and they're telling me you need an upgrade!"
+        ],
+        working: [
+            "Carry the one... factor in the variance...",
+            "If we adjust the standard deviation HERE...",
+            "Fascinating! The math checks out perfectly!"
+        ],
+        farewell: [
+            "May your dice always roll above the median!",
+            "Remember: probability is on your side! Usually!",
+            "Statistically speaking, you're going to do great!"
+        ]
+    },
+    alchemist: {
+        greeting: [
+            "*cackle* Fresh dice! Fresh subjects for my experiments!",
+            "Ohoho! You want to SPLICE your fates together? Delicious!",
+            "The bubbling grows stronger when you're near... the dice WANT this!"
+        ],
+        working: [
+            "*mad cackling* It's WORKING! The fates are MERGING!",
+            "A little chaos here... a drop of destiny there...",
+            "Soon you'll be ONE! Well, not literally. That would be messy."
+        ],
+        farewell: [
+            "Go! Go and roll your tangled fates! *maniacal laughter*",
+            "When you see the links trigger, think of me! *cackle*",
+            "Your dice are forever changed... and so are YOU!"
+        ]
+    },
+    priest: {
+        greeting: [
+            "Weary travelers... I sense the weight of DOOM upon you.",
+            "The light of HOPE shines in the darkness. Let me share it.",
+            "I have little to offer but faith... and sometimes, that is everything."
+        ],
+        blessing: [
+            "May HOPE shield you from the darkness ahead.",
+            "The forces of light smile upon your journey.",
+            "This blessing carries my prayers with it."
+        ],
+        farewell: [
+            "Walk in HOPE, friends. It is your greatest weapon.",
+            "Remember: even in the deepest DOOM, light persists.",
+            "May your rolls be blessed and your failures few."
+        ]
+    },
+    ferryman: {
+        greeting: [
+            "...",
+            "*extends weathered palm*",
+            "*silent stare*"
+        ],
+        payment: [
+            "*nods slowly*",
+            "*coins disappear into robes*",
+            "*gestures toward boat*"
+        ],
+        impressed: [
+            "*eyebrow raises almost imperceptibly*",
+            "...Impressive.",
+            "*the faintest hint of respect*"
+        ],
+        displeased: [
+            "*cold stare intensifies*",
+            "*marks something in ancient ledger*",
+            "...You will regret this."
+        ]
+    }
+};
+
+// Gambler Voice Lines - beginning and result stubs for mix/match
+const GAMBLER_LINES = {
+    beginning: [
+        "Step right up, step right up!",
+        "Swing batter batter swing...",
+        "Big bucks... no whammies...",
+        "Gotta play to win, friend!",
+        "Shuffle shuffle shuffle...",
+        "Round and round the gambling die goes...",
+        "Lady Luck's in a good mood today, I can feel it!",
+        "Place your bets, place your bets!"
+    ],
+    result_good: [
+        "YEEHAW! Congrats, bigshot!",
+        "Oh, we got a lucky one over here, huh?",
+        "Wow! You're on a ROLL! Get it? Haha!",
+        "Winner winner chicken dinner!",
+        "The house USUALLY wins, but not today!"
+    ],
+    result_bad: [
+        "Oof, sorry pal, better luck next time!",
+        "Woof. That's rough, buddy.",
+        "You are the weakest link. Goodbye!",
+        "The house always wins... eventually.",
+        "Ouch! The dice have spoken!"
+    ],
+    result_neutral: [
+        "Well, you didn't LOSE...",
+        "Could be worse, could be better!",
+        "Not bad, not bad at all!",
+        "Hey, a win's a win in my book!"
+    ]
+};
+
+// Loading Screen Tips - in-character advice
+const LOADING_TIPS = [
+    "Intertwining is powerful. Use it.",
+    "There's nothing wrong with being a sidekick.",
+    "High floor or high ceiling? Porque no los dos?",
+    "When in doubt, roll the die you're best at.",
+    "DOOM only affects DOOM rolls. Your skills remain sharp.",
+    "A Natural 20 on a DOOM roll grants HOPE. Silver linings!",
+    "The Ferryman remembers. Always.",
+    "Three successes in a row means the enemy doesn't get to attack.",
+    "Cover your allies' weaknesses with intertwined dice.",
+    "HOPE can save you from a failed DOOM roll. Cherish it.",
+    "The Mathematician's upgrades are always free. Math is its own reward.",
+    "Some say the Alchemist used to be three people. Nobody asks anymore.",
+    "Natural 1s always add DOOM. Plan accordingly.",
+    "The prophecy chose you. Don't let it down.",
+    "Pal believed in you. Prove him right.",
+    "Gold can buy certainty at neutral encounters.",
+    "Every boss has a different weakness. Adapt your approach.",
+    "BOMB cycles its immunities. Stay flexible.",
+    "Sometimes the preventative approach is the bravest choice.",
+    "Your dice are your identity. Upgrade them wisely."
+];
+
+// Helper functions for voice lines and tips
+function getRandomVoiceLine(npc, context) {
+    const lines = NPC_VOICE_LINES[npc]?.[context];
+    if (lines && lines.length > 0) {
+        return lines[Math.floor(Math.random() * lines.length)];
+    }
+    return '';
+}
+
+function getRandomGamblerLine(type) {
+    const lines = GAMBLER_LINES[type];
+    if (lines && lines.length > 0) {
+        return lines[Math.floor(Math.random() * lines.length)];
+    }
+    return '';
+}
+
+function getRandomLoadingTip() {
+    return LOADING_TIPS[Math.floor(Math.random() * LOADING_TIPS.length)];
+}
 
 const STAGE_5_ENCOUNTERS = {
     start: {

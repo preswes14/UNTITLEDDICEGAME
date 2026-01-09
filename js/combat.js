@@ -177,6 +177,7 @@ function startBossCombat(option, node) {
         rollsThisRound: 0,
         playersRolledThisRound: [],
         roundNumber: 1,
+        roundResults: [], // Track hit/miss for each roll this round for traffic light
         // BOMB immunity cycling - only for Stage 5
         immuneApproach: stage === 5 ? getRandomApproach() : null,
         isBOMB: stage === 5
@@ -226,6 +227,27 @@ function updateBossCombatUI() {
         return `<span style="color:${color}; ${immuneStyle}">${type.charAt(0).toUpperCase() + type.slice(1)} <span style="color:${dcColor}; font-size:0.85em;">(DC ${dc})</span>: ${dots}${immuneLabel}</span>`;
     };
 
+    // Build traffic light indicator for this round
+    const roundResults = state.roundResults || [];
+    const allSuccess = roundResults.length === 3 && roundResults.every(r => r === 'success');
+    const trafficLightClass = allSuccess ? 'combat-success-indicator all-success' : 'combat-success-indicator';
+
+    let trafficLights = '';
+    for (let i = 0; i < 3; i++) {
+        if (i < roundResults.length) {
+            trafficLights += `<div class="light ${roundResults[i]}"></div>`;
+        } else {
+            trafficLights += `<div class="light pending"></div>`;
+        }
+    }
+
+    const trafficLightHTML = `
+        <div class="${trafficLightClass}">
+            ${trafficLights}
+            <span class="bonus-text">PERFECT ROUND!</span>
+        </div>
+    `;
+
     // BOMB immunity warning
     const immuneWarning = state.isBOMB && state.immuneApproach
         ? `<div style="background:rgba(248,113,113,0.2); padding:8px; border-radius:5px; margin:10px 0; border-left:3px solid #f87171;">
@@ -240,6 +262,7 @@ function updateBossCombatUI() {
         <div style="margin-top:20px; padding:15px; background:rgba(139,0,139,0.2); border-radius:10px; border-left:4px solid #9333ea;">
             <h3 style="color:#c084fc;">BOSS: ${bossData.name}</h3>
             ${immuneWarning}
+            ${trafficLightHTML}
             <div id="bossSuccessDisplay" style="margin:15px 0; display:flex; flex-direction:column; gap:8px;">
                 ${buildProgress('physical', 'var(--physical-primary, #f87171)')}
                 ${buildProgress('verbal', 'var(--verbal-primary, #60a5fa)')}
@@ -258,6 +281,20 @@ function processBossRoundEnd(state) {
     let numAttacks = state.attacksPerRound;
     if (Array.isArray(numAttacks)) {
         numAttacks = Math.floor(Math.random() * (numAttacks[1] - numAttacks[0] + 1)) + numAttacks[0];
+    }
+
+    // Check for PERFECT ROUND (all 3 successes)
+    const allSuccess = state.roundResults && state.roundResults.length === 3 &&
+                       state.roundResults.every(r => r === 'success');
+
+    if (allSuccess) {
+        log('PERFECT ROUND! All attacks landed - the boss is stunned!', 'crit');
+        // Boss doesn't attack at all on a perfect round
+        if (state.isBOMB) {
+            cycleBombImmunity(state);
+        }
+        startNewBossRound(state);
+        return;
     }
 
     const attacksToMake = Math.min(state.roundMisses, numAttacks);
@@ -316,6 +353,7 @@ function startNewBossRound(state) {
     state.rollsThisRound = 0;
     state.roundMisses = 0;
     state.playersRolledThisRound = [];
+    state.roundResults = []; // Reset traffic light
     state.roundNumber++;
     gameState.canRoll = true;
     updateBossCombatUI();
@@ -430,7 +468,10 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
             state.successCounters[approach]++;
             const current = state.successCounters[approach];
 
-            log(`${player.name}'s ${die.name} hits DC ${approachDC}! (${current}/${threshold} ${approach})`, result === 20 ? 'crit' : 'success');
+            // Get ability flavor text
+            const flavorType = result === 20 ? 'crit' : 'success';
+            const flavor = getAbilityFlavor(die.type, flavorType);
+            log(`${player.name}'s ${die.name} hits DC ${approachDC}! ${flavor} (${current}/${threshold})`, result === 20 ? 'crit' : 'success');
 
             refreshCombatProgress();
 
@@ -447,7 +488,8 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
                 }
             }
         } else {
-            log(`${result} misses DC ${approachDC}! ${state.enemyName} retaliates!`, 'fail');
+            const flavor = getAbilityFlavor(die.type, 'fail');
+            log(`${result} misses DC ${approachDC}! ${flavor} ${state.enemyName} retaliates!`, 'fail');
             triggerDoomRoll(player, state.enemyName);
         }
     } else if (state.type === 'gamble') {
@@ -455,13 +497,16 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
         const betIn = state.bet === 'in';
         const won = (inRange && betIn) || (!inRange && !betIn);
 
+        // Get gambler voice line based on result
+        const gamblerQuote = getRandomGamblerLine(won ? 'result_good' : 'result_bad');
+
         if (won) {
             const reward = inRange ? state.inRangeReward : state.outRangeReward;
-            log(`YOU WIN! +${reward} to a segment of your choice!`, 'crit');
+            log(`"${gamblerQuote}" YOU WIN! +${reward} to a segment of your choice!`, 'crit');
             showUpgradeModal(reward);
         } else {
             const reward = inRange ? state.inRangeReward : state.outRangeReward;
-            log(`Close! You still get +${reward} to a random segment.`, 'success');
+            log(`"${gamblerQuote}" You still get +${reward} to a random segment.`, 'success');
             applyRandomUpgrade(reward);
             setTimeout(completeEncounter, 1500);
         }
@@ -469,6 +514,9 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
     } else if (state.type === 'boss_combat') {
         state.rollsThisRound++;
         state.playersRolledThisRound.push(playerIndex);
+
+        // Initialize roundResults if not present
+        if (!state.roundResults) state.roundResults = [];
 
         const approach = die.category;
         const threshold = state.successThresholds[approach];
@@ -478,11 +526,16 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
         if (state.immuneApproach === approach) {
             log(`${player.name}'s ${die.name} is BLOCKED! BOMB is immune to ${approach}!`, 'fail');
             state.roundMisses++;
+            state.roundResults.push('miss');
         } else if (result >= approachDC || result === 20) {
             state.successCounters[approach]++;
+            state.roundResults.push('success');
             const current = state.successCounters[approach];
 
-            log(`${player.name}'s ${die.name} hits DC ${approachDC}! (${current}/${threshold} ${approach})`, result === 20 ? 'crit' : 'success');
+            // Get ability flavor text
+            const flavorType = result === 20 ? 'crit' : 'success';
+            const flavor = getAbilityFlavor(die.type, flavorType);
+            log(`${player.name}'s ${die.name} hits DC ${approachDC}! ${flavor} (${current}/${threshold})`, result === 20 ? 'crit' : 'success');
 
             if (current >= threshold) {
                 gameState.canRoll = false;
@@ -495,7 +548,9 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
             }
         } else {
             state.roundMisses++;
-            log(`${player.name}'s ${result} misses DC ${approachDC}! (${state.roundMisses} miss this round)`, 'fail');
+            state.roundResults.push('miss');
+            const flavor = getAbilityFlavor(die.type, 'fail');
+            log(`${player.name}'s ${result} misses DC ${approachDC}! ${flavor}`, 'fail');
         }
 
         updateBossCombatUI();

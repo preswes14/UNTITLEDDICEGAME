@@ -209,8 +209,8 @@ function handleOption(option, node) {
             break;
         case 'ferryman_paid':
             if (spendGold(5)) {
-                addHope(2);
-                log('The Ferryman takes your gold and nods. "The river blesses you." +2 HOPE', 'hope');
+                addHope(1);
+                log('The Ferryman takes your gold and nods. "The river blesses you." +1 HOPE', 'hope');
                 completeEncounter();
             } else {
                 log('Not enough gold! You need 5G.', 'fail');
@@ -238,12 +238,12 @@ function handleOption(option, node) {
             handleDrunkBlessing();
             break;
         case 'drunk_paid':
-            if (spendGold(3)) {
-                addHope(3);
-                log('The priest focuses intently. "BLESSINGS!" A perfect blessing lands. +3 HOPE!', 'hope');
+            if (spendGold(5)) {
+                addHope(2);
+                log('The priest focuses intently. "BLESSINGS!" A powerful blessing lands. +2 HOPE!', 'hope');
                 completeEncounter();
             } else {
-                log('Not enough gold! You need 3G.', 'fail');
+                log('Not enough gold! You need 5G.', 'fail');
             }
             break;
         case 'cultist_drink':
@@ -292,13 +292,13 @@ function handleOption(option, node) {
             break;
         }
         case 'sanctuary_rest':
-            addHope(2);
-            log('A moment of peace in the chaos. The party gathers strength. +2 HOPE', 'success');
+            addHope(1);
+            log('A moment of peace in the chaos. The party gathers strength. +1 HOPE', 'success');
             completeEncounter();
             break;
         case 'accept_destiny':
-            addHope(3);
-            log('You are the chosen ones. The 20th prophecy will succeed.', 'crit');
+            addHope(2);
+            log('You are the chosen ones. The 20th prophecy will succeed. +2 HOPE', 'crit');
             completeEncounter();
             break;
         case 'rift_touch':
@@ -330,8 +330,8 @@ function handleFerrymanRoll() {
     if (outcome === 'good') {
         document.getElementById('upgradeDescription').textContent =
             'The waters glow with approval! The Ferryman smiles. "The river blesses you."';
-        addHope(2);
-        log('The Ferryman grants safe passage with the river\'s blessing! +2 HOPE', 'hope');
+        addHope(1);
+        log('The Ferryman grants safe passage with the river\'s blessing! +1 HOPE', 'hope');
     } else if (outcome === 'neutral') {
         document.getElementById('upgradeDescription').textContent =
             'The Ferryman nods. "The river accepts. You may pass." Nothing more, nothing less.';
@@ -362,7 +362,7 @@ function handleDrunkBlessing() {
     const outcome = getNeutralOutcome();
 
     if (outcome === 'good') {
-        const hopeGain = Math.floor(Math.random() * 2) + 3;
+        const hopeGain = Math.floor(Math.random() * 2) + 1; // 1-2 HOPE
         addHope(hopeGain);
         log(`The blessing lands true! +${hopeGain} HOPE! The drunk priest winks.`, 'hope');
 
@@ -376,17 +376,15 @@ function handleDrunkBlessing() {
         log(`${die.name} blessed! Rolling ${segmentToHope} grants +1 HOPE`, 'hope');
 
     } else if (outcome === 'neutral') {
-        const amount = Math.floor(Math.random() * 2) + 2;
+        const amount = Math.floor(Math.random() * 2) + 1; // 1-2 each
         addHope(amount);
         addDoom(amount, 'Blessing side effect');
         log(`Mixed blessing... +${amount} HOPE but also +${amount} DOOM. It balances out.`, 'info');
 
     } else {
-        const hopeGain = 1;
-        const doomGain = Math.floor(Math.random() * 2) + 2;
-        addHope(hopeGain);
+        const doomGain = Math.floor(Math.random() * 2) + 2; // 2-3 DOOM, no HOPE
         addDoom(doomGain, 'Sloppy blessing went wrong');
-        log(`The blessing goes awry! +${hopeGain} HOPE but +${doomGain} DOOM...`, 'fail');
+        log(`The blessing goes awry! +${doomGain} DOOM... the priest hiccups apologetically.`, 'fail');
     }
 
     completeEncounter();
@@ -895,7 +893,11 @@ function showGambleRangeChoice() {
     const inRangeChance = Math.round((rangeSize / 20) * 100);
     const outRangeChance = 100 - inRangeChance;
 
+    // Get a random gambler voice line
+    const gamblerQuote = getRandomGamblerLine('beginning');
+
     document.getElementById('upgradeDescription').innerHTML = `
+        <p style="color:#ffd700; font-style:italic; margin-bottom:15px;">"${gamblerQuote}"</p>
         <div style="padding:15px; background:rgba(255,215,0,0.15); border-radius:10px; border-left:4px solid #ffd700; margin:10px 0;">
             <h3 style="color:#ffd700;">Range: ${rangeStart} - ${rangeEnd}</h3>
             <p style="margin-top:10px;"><strong>IN RANGE</strong> (${inRangeChance}% chance): <span style="color:#4ade80;">+5 to segment of your choice!</span></p>
