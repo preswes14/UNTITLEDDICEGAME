@@ -173,15 +173,15 @@ function generateTotalDCSumDCs(config) {
 
 const BOSSES = {
     1: {
-        name: 'The Dirty Innkeeper',
-        description: 'The innkeeper blocks the exit, demanding payment for imaginary damages.',
+        name: 'Seedy Sammy',
+        description: 'The innkeeper blocks the exit, eyes wild with desperation. "I\'m sorry! I had no choice - ATOM owns my debts!"',
         dcConfig: BOSS_DC_CONFIG[1],
         successThresholds: { physical: 4, verbal: 3, preventative: 2 },
         attacksPerRound: 1
     },
     2: {
-        name: 'The Corrupt Guard Captain',
-        description: 'The captain demands "taxes" while his men surround you.',
+        name: 'Crooked Chester',
+        description: 'The young guard captain sneers, ATOM\'s sigil glinting beneath his armor. "You\'re asking too many questions about that arrow."',
         dcConfig: BOSS_DC_CONFIG[2],
         successThresholds: { physical: 5, verbal: 4, preventative: 3 },
         attacksPerRound: 1
@@ -213,17 +213,17 @@ const ENCOUNTERS = {
     start: {
         type: 'start',
         name: 'The Journey Begins',
-        description: 'You stand at a crossroads. Multiple paths stretch before you.',
+        description: 'The smoke from the explosion still stings your eyes. Pal is gone. The hideout is rubble. But his last words echo: "Find the inn at the crossroads." You dust off the prophecy scroll and press forward.',
         icon: '?',
         options: [
-            { text: 'Continue', action: 'leave' }
+            { text: 'Honor Pal\'s memory. Find the inn.', action: 'leave' }
         ]
     },
     mathematician: {
         type: 'good',
         name: 'The Mathematician',
-        description: 'A scholarly figure with chalk-covered robes offers to analyze your dice. "Numbers are my domain. I can reshape probability itself."',
-        icon: '?',
+        description: 'A middle-aged scholar with chalk-dusted robes adjusts his spectacles excitedly. "Astounding! According to my calculations, your dice are RIPE for optimization! Numbers are my domain - I can reshape probability itself!"',
+        icon: '📐',
         options: [
             { text: 'Free Analysis (+2 to lowest)', action: 'math_free' },
             { text: 'Trade-off (-1 high, +4 low)', action: 'math_tradeoff' },
@@ -234,8 +234,8 @@ const ENCOUNTERS = {
     alchemist: {
         type: 'good',
         name: 'The Alchemist',
-        description: 'Bubbling potions surround a wild-eyed alchemist. "I can splice your fates together... for a price in chaos."',
-        icon: '?',
+        description: 'A wild-eyed woman cackles over bubbling cauldrons, her fingers stained with strange chemicals. "Ohoho! Fresh dice! Fresh subjects! I can SPLICE your fates together... the bonds will be BEAUTIFUL!"',
+        icon: '🧪',
         options: [
             { text: 'Safe Link (link low roll)', action: 'swap_low_to_ally' },
             { text: 'Risky Splice (random + bonus)', action: 'alchemist_risky' },
@@ -246,8 +246,8 @@ const ENCOUNTERS = {
     priest: {
         type: 'good',
         name: 'The Priest',
-        description: 'A serene figure radiates calm. "HOPE is the light that keeps DOOM at bay."',
-        icon: '?',
+        description: 'A serene figure in humble robes radiates calm despite having nothing to offer but faith. "Weary travelers... I sense DOOM weighing upon you. I have little but HOPE to share - and sometimes, that is everything."',
+        icon: '✨',
         options: [
             { text: 'Receive Blessing (+3 HOPE)', action: 'blessing_hope' },
             { text: 'Greater Blessing (+5 HOPE, risk mark)', action: 'blessing_greater' },
@@ -257,8 +257,8 @@ const ENCOUNTERS = {
     gambler: {
         type: 'good',
         name: 'The Gambler',
-        description: 'A flashy figure shuffles cards made of pure light. "Care to test your luck? The house always wins... but so might you."',
-        icon: '?',
+        description: 'A flashy figure in a garish vest shuffles cards made of pure light, talking a mile a minute. "Step right up, step right up! Care to test your luck? Big bucks, no whammies! The house always wins... but maybe not TODAY, eh?"',
+        icon: '🎰',
         options: [
             { text: 'Play the Range Game', action: 'gamble_range_choice' }
         ]
@@ -305,8 +305,8 @@ const ENCOUNTERS = {
     ferryman: {
         type: 'neutral',
         name: 'The Ferryman',
-        description: 'A hooded figure waits by a dark river. "Passage has a cost. Roll the dice... or pay in gold."',
-        icon: '?',
+        description: 'A towering, hooded figure waits by a dark river. Skeletal fingers extend from tattered robes. No words - only an expectant silence and the faint sound of oars on water. He will be paid. One way or another.',
+        icon: '⚰️',
         vote: true,
         options: [
             { text: 'Roll for Passage (random outcome)', action: 'ferryman_roll' },
@@ -317,8 +317,8 @@ const ENCOUNTERS = {
     trapper: {
         type: 'neutral',
         name: 'The Trapper',
-        description: 'A weathered hunter displays strange dice carved from bone. "Trade your mundane tools for something... exotic."',
-        icon: '?',
+        description: 'A weathered hunter with scars tells tales of impossible odds displays strange dice carved from bone and stranger things. "These ain\'t your ordinary dice. Caught \'em myself in the wild. Trade me yours, and see what fate has in store."',
+        icon: '🪤',
         vote: true,
         options: [
             { text: 'Trade (mystery value)', action: 'trapper_trade' },
@@ -329,8 +329,8 @@ const ENCOUNTERS = {
     drunkPriest: {
         type: 'neutral',
         name: 'The Drunk Priest',
-        description: 'A priest stumbles out of a tavern, blessing everything in sight. "Blessings! *hic* Blessings for all!"',
-        icon: '?',
+        description: 'A priest stumbles out of a tavern, holy symbol askew, blessing everything in sight including a confused cat. "Blessssings! *hic* Blessings for ALL! The light *urp* shines upon... upon EVERYONE tonight!"',
+        icon: '🍺',
         vote: true,
         options: [
             { text: 'Accept Blessing (random outcome)', action: 'drunk_blessing' },
@@ -340,8 +340,8 @@ const ENCOUNTERS = {
     cultist: {
         type: 'neutral',
         name: 'The Cultist',
-        description: 'A robed figure offers a chalice of glowing liquid. "Drink, and your fates shall be bound..."',
-        icon: '?',
+        description: 'A robed figure emerges from shadow, offering a chalice of swirling purple liquid. The ATOM sigil glints on their sleeve. "Drink, travelers... and your fates shall be BOUND together. Forever. Join us."',
+        icon: '🔮',
         vote: true,
         options: [
             { text: 'Drink (random swap effect)', action: 'cultist_drink' },
@@ -351,7 +351,7 @@ const ENCOUNTERS = {
     merchant: {
         type: 'good',
         name: 'The Merchant',
-        description: 'A weathered trader with a cart full of curious wares. "Aftermarket upgrades void the warranty, friend. But for virgin dice? I can work wonders."',
+        description: 'A weathered trader with a cart full of curious wares strokes his beard thoughtfully. "Ah, adventurers! Aftermarket upgrades void the warranty, friend. But for VIRGIN dice? Untouched by magic? I can work wonders. Pay one gold per point. Simple as that."',
         icon: '💰',
         options: [
             { text: 'Browse Upgrades', action: 'merchant_browse' },
@@ -552,6 +552,162 @@ const PAL_DIALOGUE = {
     hope_granted: "But there is a counter to DOOM. HOPE. *Pal's light intensifies* When all seems lost, HOPE can save you from the final darkness. I grant you your first spark.",
     intertwine_explain: "Your dice are now LINKED. When one of you rolls a connected number, your ally's die activates instead. Cover each other's weaknesses. This is how you will survive."
 };
+
+// NPC Voice Lines - personality-driven dialogue
+const NPC_VOICE_LINES = {
+    mathematician: {
+        greeting: [
+            "Astounding! According to my calculations, you've arrived at EXACTLY the right time!",
+            "Ah, fellow probability enthusiasts! Let me show you something Completely OP!",
+            "The numbers don't lie - and they're telling me you need an upgrade!"
+        ],
+        working: [
+            "Carry the one... factor in the variance...",
+            "If we adjust the standard deviation HERE...",
+            "Fascinating! The math checks out perfectly!"
+        ],
+        farewell: [
+            "May your dice always roll above the median!",
+            "Remember: probability is on your side! Usually!",
+            "Statistically speaking, you're going to do great!"
+        ]
+    },
+    alchemist: {
+        greeting: [
+            "*cackle* Fresh dice! Fresh subjects for my experiments!",
+            "Ohoho! You want to SPLICE your fates together? Delicious!",
+            "The bubbling grows stronger when you're near... the dice WANT this!"
+        ],
+        working: [
+            "*mad cackling* It's WORKING! The fates are MERGING!",
+            "A little chaos here... a drop of destiny there...",
+            "Soon you'll be ONE! Well, not literally. That would be messy."
+        ],
+        farewell: [
+            "Go! Go and roll your tangled fates! *maniacal laughter*",
+            "When you see the links trigger, think of me! *cackle*",
+            "Your dice are forever changed... and so are YOU!"
+        ]
+    },
+    priest: {
+        greeting: [
+            "Weary travelers... I sense the weight of DOOM upon you.",
+            "The light of HOPE shines in the darkness. Let me share it.",
+            "I have little to offer but faith... and sometimes, that is everything."
+        ],
+        blessing: [
+            "May HOPE shield you from the darkness ahead.",
+            "The forces of light smile upon your journey.",
+            "This blessing carries my prayers with it."
+        ],
+        farewell: [
+            "Walk in HOPE, friends. It is your greatest weapon.",
+            "Remember: even in the deepest DOOM, light persists.",
+            "May your rolls be blessed and your failures few."
+        ]
+    },
+    ferryman: {
+        greeting: [
+            "...",
+            "*extends weathered palm*",
+            "*silent stare*"
+        ],
+        payment: [
+            "*nods slowly*",
+            "*coins disappear into robes*",
+            "*gestures toward boat*"
+        ],
+        impressed: [
+            "*eyebrow raises almost imperceptibly*",
+            "...Impressive.",
+            "*the faintest hint of respect*"
+        ],
+        displeased: [
+            "*cold stare intensifies*",
+            "*marks something in ancient ledger*",
+            "...You will regret this."
+        ]
+    }
+};
+
+// Gambler Voice Lines - beginning and result stubs for mix/match
+const GAMBLER_LINES = {
+    beginning: [
+        "Step right up, step right up!",
+        "Swing batter batter swing...",
+        "Big bucks... no whammies...",
+        "Gotta play to win, friend!",
+        "Shuffle shuffle shuffle...",
+        "Round and round the gambling die goes...",
+        "Lady Luck's in a good mood today, I can feel it!",
+        "Place your bets, place your bets!"
+    ],
+    result_good: [
+        "YEEHAW! Congrats, bigshot!",
+        "Oh, we got a lucky one over here, huh?",
+        "Wow! You're on a ROLL! Get it? Haha!",
+        "Winner winner chicken dinner!",
+        "The house USUALLY wins, but not today!"
+    ],
+    result_bad: [
+        "Oof, sorry pal, better luck next time!",
+        "Woof. That's rough, buddy.",
+        "You are the weakest link. Goodbye!",
+        "The house always wins... eventually.",
+        "Ouch! The dice have spoken!"
+    ],
+    result_neutral: [
+        "Well, you didn't LOSE...",
+        "Could be worse, could be better!",
+        "Not bad, not bad at all!",
+        "Hey, a win's a win in my book!"
+    ]
+};
+
+// Loading Screen Tips - in-character advice
+const LOADING_TIPS = [
+    "Intertwining is powerful. Use it.",
+    "There's nothing wrong with being a sidekick.",
+    "High floor or high ceiling? Porque no los dos?",
+    "When in doubt, roll the die you're best at.",
+    "DOOM only affects DOOM rolls. Your skills remain sharp.",
+    "A Natural 20 on a DOOM roll grants HOPE. Silver linings!",
+    "The Ferryman remembers. Always.",
+    "Three successes in a row means the enemy doesn't get to attack.",
+    "Cover your allies' weaknesses with intertwined dice.",
+    "HOPE can save you from a failed DOOM roll. Cherish it.",
+    "The Mathematician's upgrades are always free. Math is its own reward.",
+    "Some say the Alchemist used to be three people. Nobody asks anymore.",
+    "Natural 1s always add DOOM. Plan accordingly.",
+    "The prophecy chose you. Don't let it down.",
+    "Pal believed in you. Prove him right.",
+    "Gold can buy certainty at neutral encounters.",
+    "Every boss has a different weakness. Adapt your approach.",
+    "BOMB cycles its immunities. Stay flexible.",
+    "Sometimes the preventative approach is the bravest choice.",
+    "Your dice are your identity. Upgrade them wisely."
+];
+
+// Helper functions for voice lines and tips
+function getRandomVoiceLine(npc, context) {
+    const lines = NPC_VOICE_LINES[npc]?.[context];
+    if (lines && lines.length > 0) {
+        return lines[Math.floor(Math.random() * lines.length)];
+    }
+    return '';
+}
+
+function getRandomGamblerLine(type) {
+    const lines = GAMBLER_LINES[type];
+    if (lines && lines.length > 0) {
+        return lines[Math.floor(Math.random() * lines.length)];
+    }
+    return '';
+}
+
+function getRandomLoadingTip() {
+    return LOADING_TIPS[Math.floor(Math.random() * LOADING_TIPS.length)];
+}
 
 const STAGE_5_ENCOUNTERS = {
     start: {

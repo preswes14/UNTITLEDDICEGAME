@@ -331,6 +331,38 @@ body {
     font-size: 0.9rem;
 }
 
+/* Loading Tips */
+.loading-tip {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    max-width: 500px;
+    padding: 15px 25px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    animation: tip-fade 8s ease-in-out infinite;
+}
+
+.tip-label {
+    color: #ffd700;
+    font-weight: bold;
+    margin-right: 8px;
+    font-family: 'Cinzel', serif;
+}
+
+#tipText {
+    color: #ccc;
+    font-style: italic;
+}
+
+@keyframes tip-fade {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
 /* ==================== HOW TO PLAY SCREEN ==================== */
 .howto-screen {
     background: rgba(0, 0, 0, 0.95);

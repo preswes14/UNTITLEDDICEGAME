@@ -893,7 +893,11 @@ function showGambleRangeChoice() {
     const inRangeChance = Math.round((rangeSize / 20) * 100);
     const outRangeChance = 100 - inRangeChance;
 
+    // Get a random gambler voice line
+    const gamblerQuote = getRandomGamblerLine('beginning');
+
     document.getElementById('upgradeDescription').innerHTML = `
+        <p style="color:#ffd700; font-style:italic; margin-bottom:15px;">"${gamblerQuote}"</p>
         <div style="padding:15px; background:rgba(255,215,0,0.15); border-radius:10px; border-left:4px solid #ffd700; margin:10px 0;">
             <h3 style="color:#ffd700;">Range: ${rangeStart} - ${rangeEnd}</h3>
             <p style="margin-top:10px;"><strong>IN RANGE</strong> (${inRangeChance}% chance): <span style="color:#4ade80;">+5 to segment of your choice!</span></p>

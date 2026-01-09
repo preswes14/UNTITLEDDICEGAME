@@ -497,13 +497,16 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
         const betIn = state.bet === 'in';
         const won = (inRange && betIn) || (!inRange && !betIn);
 
+        // Get gambler voice line based on result
+        const gamblerQuote = getRandomGamblerLine(won ? 'result_good' : 'result_bad');
+
         if (won) {
             const reward = inRange ? state.inRangeReward : state.outRangeReward;
-            log(`YOU WIN! +${reward} to a segment of your choice!`, 'crit');
+            log(`"${gamblerQuote}" YOU WIN! +${reward} to a segment of your choice!`, 'crit');
             showUpgradeModal(reward);
         } else {
             const reward = inRange ? state.inRangeReward : state.outRangeReward;
-            log(`Close! You still get +${reward} to a random segment.`, 'success');
+            log(`"${gamblerQuote}" You still get +${reward} to a random segment.`, 'success');
             applyRandomUpgrade(reward);
             setTimeout(completeEncounter, 1500);
         }
