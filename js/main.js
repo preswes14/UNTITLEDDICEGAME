@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check for existing save and update title screen
     updateTitleScreenWithSave();
 
+    // Initialize loading tip rotation
+    initLoadingTips();
+
     // Setup keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -27,6 +30,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('UNTITLED DICE GAME initialized');
 });
+
+// Initialize and rotate loading tips on title screen
+function initLoadingTips() {
+    const tipText = document.getElementById('tipText');
+    if (!tipText) return;
+
+    // Set initial random tip
+    tipText.textContent = getRandomLoadingTip();
+
+    // Rotate tips every 8 seconds
+    setInterval(() => {
+        tipText.style.opacity = '0';
+        setTimeout(() => {
+            tipText.textContent = getRandomLoadingTip();
+            tipText.style.opacity = '1';
+        }, 500);
+    }, 8000);
+}
 
 // Global error handler
 window.onerror = function(msg, url, lineNo, columnNo, error) {
