@@ -60,7 +60,7 @@ function renderPlayers() {
             <div class="player-header">
                 <img src="${avatar.image}" alt="${avatar.color}" class="character-avatar">
                 <div class="player-info">
-                    <h3>${player.name}</h3>
+                    <h3>${sanitizeHTML(player.name)}</h3>
                     <div class="player-dice-mini">
                         ${Object.entries(player.dice).map(([type, die]) => {
                             const hasSwaps = die.swaps && die.swaps.length > 0;
@@ -90,7 +90,7 @@ function renderDiceTray() {
     gameState.players.forEach((player, pIdx) => {
         const group = document.createElement('div');
         group.className = `player-dice-group player-${player.id}`;
-        group.innerHTML = `<h4>${player.name}</h4>`;
+        group.innerHTML = `<h4>${sanitizeHTML(player.name)}</h4>`;
 
         const row = document.createElement('div');
         row.className = 'dice-row';
@@ -190,7 +190,7 @@ function closePauseMenu() {
 
 // Quit to menu
 function quitToMenu() {
-    autoSave();
+    debouncedAutoSave();
     document.getElementById('pauseModal').classList.remove('show');
     document.getElementById('gameScreen').classList.add('hidden');
     document.getElementById('titleScreen').classList.remove('hidden');
@@ -348,7 +348,7 @@ function continueFromShop() {
     log(`--- Stage ${gameState.currentStage}: ${stageInfo.name} ---`, 'info');
     log(`You arrive at ${stageInfo.location}...`, 'info');
 
-    autoSave();
+    debouncedAutoSave();
 }
 
 // Purchase upgrade in shop
@@ -416,7 +416,7 @@ function purchaseUpgrade(player, playerIdx, upgrade) {
 
     updateShopDisplay();
     renderShopPlayers();
-    autoSave();
+    debouncedAutoSave();
 }
 
 // Show upgrade modal
@@ -545,7 +545,7 @@ function purchaseConsumable(itemId) {
 
     // Refresh the shop
     showConsumablesShop();
-    autoSave();
+    debouncedAutoSave();
 }
 
 // Show inventory and use items
@@ -674,7 +674,7 @@ function useConsumable(itemId) {
 
     document.getElementById('upgradeModal').classList.remove('show');
     updateDoomHopeDisplay();
-    autoSave();
+    debouncedAutoSave();
 }
 
 // ==================== SOLO MODE DICE PANEL ====================
@@ -1174,5 +1174,5 @@ function continueFromFavorShop() {
     log(`--- Stage ${gameState.currentStage}: ${stageInfo.name} ---`, 'info');
     log(`You arrive at ${stageInfo.location}...`, 'info');
 
-    autoSave();
+    debouncedAutoSave();
 }

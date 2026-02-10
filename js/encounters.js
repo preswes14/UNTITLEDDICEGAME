@@ -24,7 +24,7 @@ function selectNode(nodeId) {
     renderMap();
     showEncounter(node);
     log(`Entered: ${node.name}`, 'info');
-    autoSave();
+    debouncedAutoSave();
 }
 
 // Show encounter
@@ -72,6 +72,25 @@ function showEncounter(node) {
 
 // Start voting for an encounter
 function startVoting(node) {
+    // In solo mode, skip voting — just show options directly
+    if (gameState.gameMode === 'solo') {
+        const optionsDiv = document.getElementById('encounterOptions');
+        optionsDiv.innerHTML = '';
+        node.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            if (opt.types) btn.classList.add(opt.types[0]);
+            btn.textContent = opt.text;
+            if (opt.cost && gameState.gold < opt.cost) {
+                btn.disabled = true;
+                btn.title = 'Not enough gold';
+            }
+            btn.onclick = () => handleOption(opt, node);
+            optionsDiv.appendChild(btn);
+        });
+        return;
+    }
+
     gameState.voting = {
         active: true,
         options: node.options,
@@ -126,197 +145,152 @@ function resolveVote() {
     }
 }
 
-// Handle encounter option
-function handleOption(option, node) {
-    switch(option.action) {
-        case 'leave':
-            completeEncounter();
-            break;
-        case 'combat':
-            startCombat(option, node);
-            break;
-        case 'upgrade_plus1':
-            showUpgradeModal(1);
-            break;
-        case 'upgrade_plus2':
-            showUpgradeModal(2);
-            break;
-        case 'math_free':
-            showUpgradeModal(2);
-            break;
-        case 'upgrade_plus3':
-            if (spendGold(option.cost)) showUpgradeModal(3);
-            break;
-        case 'upgrade_plus5':
-            if (spendGold(option.cost)) showUpgradeModal(5);
-            break;
-        case 'swap_low_to_ally':
-            showSwapModal('low');
-            break;
-        case 'swap_high_to_ally':
-            if (spendGold(option.cost)) showSwapModal('high');
-            break;
-        case 'blessing_hope':
-            addHope(3);
-            log('The priest\'s blessing fills you with HOPE!', 'hope');
-            completeEncounter();
-            break;
-        case 'blessing_greater': {
-            addHope(5);
-            const randomP = gameState.players[Math.floor(Math.random() * 3)];
-            const randomDie = Object.values(randomP.dice)[Math.floor(Math.random() * 3)];
-            const markValue = Math.floor(Math.random() * 10) + 6;
-            randomDie.crossedSegments.push(markValue);
-            log(`Greater blessing! +5 HOPE, but ${randomP.name}'s ${randomDie.name} is marked.`, 'hope');
-            completeEncounter();
-            break;
-        }
-        case 'math_tradeoff':
-            showMathTradeoffModal();
-            break;
-        case 'math_sculpt':
-            showSculptFacesModal();
-            break;
-        case 'alchemist_risky':
-            showRiskySwapModal();
-            break;
-        case 'gamble_range': {
-            const rangeStart = Math.floor(Math.random() * 8) + 5;
-            const rangeEnd = rangeStart + Math.floor(Math.random() * 5) + 3;
-            gameState.canRoll = true;
-            gameState.encounterState = {
-                type: 'gamble',
-                rangeMin: rangeStart,
-                rangeMax: Math.min(rangeEnd, 18),
-                inRangeReward: 5,
-                outRangeReward: 2
-            };
-            document.getElementById('encounterDescription').innerHTML = `
-                <p>The Gambler spins the wheel...</p>
-                <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.15); border-radius:10px; border-left:4px solid #ffd700;">
-                    <h3 style="color:#ffd700;">Target Range: ${rangeStart} - ${Math.min(rangeEnd, 18)}</h3>
-                    <p><strong>IN RANGE:</strong> +5 to segment of choice!</p>
-                    <p><strong>OUT OF RANGE:</strong> +2 to random segment</p>
-                </div>
-                <p style="margin-top:15px; color:#88ccff;">Roll any die!</p>
-            `;
-            document.getElementById('encounterOptions').innerHTML = '';
-            renderDiceTray();
-            break;
-        }
-        case 'ferryman_roll':
-            handleFerrymanRoll();
-            break;
-        case 'ferryman_paid':
-            if (spendGold(5)) {
-                addHope(1);
-                log('The Ferryman takes your gold and nods. "The river blesses you." +1 HOPE', 'hope');
-                completeEncounter();
-            } else {
-                log('Not enough gold! You need 5G.', 'fail');
-            }
-            break;
-        case 'ferryman_wade':
-            addDoom(1, 'The cold waters chill your spirit');
-            log('You wade through the shallows safely, though the cold seeps into your bones.', 'info');
-            completeEncounter();
-            break;
-        case 'trapper_trade':
-            showTrapperTrade();
-            break;
-        case 'trapper_exotic':
-            showExoticDiceTrade();
-            break;
-        case 'trapper_paid':
-            if (spendGold(8)) {
-                showTrapperPaidTrade();
-            } else {
-                log('Not enough gold! You need 8G.', 'fail');
-            }
-            break;
-        case 'drunk_blessing':
-            handleDrunkBlessing();
-            break;
-        case 'drunk_paid':
-            if (spendGold(5)) {
-                addHope(2);
-                log('The priest focuses intently. "BLESSINGS!" A powerful blessing lands. +2 HOPE!', 'hope');
-                completeEncounter();
-            } else {
-                log('Not enough gold! You need 5G.', 'fail');
-            }
-            break;
-        case 'cultist_drink':
-            handleCultistDrink();
-            break;
-        case 'cultist_paid':
-            if (spendGold(10)) {
-                handleCultistPaid();
-            } else {
-                log('Not enough gold! You need 10G.', 'fail');
-            }
-            break;
-        case 'blessing_segment':
-            showBlessSegmentModal();
-            break;
-        case 'alchemist_double':
-            showDoubleLinkModal();
-            break;
-        case 'alchemist_potions':
-            showAlchemistPotions();
-            break;
-        case 'math_draft':
-            showMathematicianOptions();
-            break;
-        case 'gamble_range_choice':
-            showGambleRangeChoice();
-            break;
-        case 'boss_combat':
-            startBossCombat(option, node);
-            break;
-        // Stage 5 warped encounter actions
-        case 'restore_die': {
-            const randomPlayer = gameState.players[Math.floor(Math.random() * 3)];
-            const dieTypes = ['physical', 'verbal', 'preventative'];
-            const randomDieType = dieTypes[Math.floor(Math.random() * 3)];
-            const randomDie = randomPlayer.dice[randomDieType];
-            const oneIdx = randomDie.faces.indexOf(1);
-            if (oneIdx > 0) {
-                randomDie.faces[oneIdx] = oneIdx + 1;
-                log(`${randomPlayer.name}'s ${randomDie.name} is partially restored!`, 'success');
-                trackDiceChange();
-            } else {
-                log('The fragment pulses but finds nothing to heal.', 'info');
-            }
-            completeEncounter();
-            break;
-        }
-        case 'sanctuary_rest':
+// Encounter option dispatch map — maps action strings to handler functions
+const OPTION_HANDLERS = {
+    leave: () => completeEncounter(),
+    combat: (option, node) => startCombat(option, node),
+    upgrade_plus1: () => showUpgradeModal(1),
+    upgrade_plus2: () => showUpgradeModal(2),
+    math_free: () => showUpgradeModal(2),
+    upgrade_plus3: (option) => { if (spendGold(option.cost)) showUpgradeModal(3); },
+    upgrade_plus5: (option) => { if (spendGold(option.cost)) showUpgradeModal(5); },
+    swap_low_to_ally: () => showSwapModal('low'),
+    swap_high_to_ally: (option) => { if (spendGold(option.cost)) showSwapModal('high'); },
+    blessing_hope: () => {
+        addHope(3);
+        log('The priest\'s blessing fills you with HOPE!', 'hope');
+        completeEncounter();
+    },
+    blessing_greater: () => {
+        addHope(5);
+        const randomP = gameState.players[Math.floor(Math.random() * 3)];
+        const randomDie = Object.values(randomP.dice)[Math.floor(Math.random() * 3)];
+        const markValue = Math.floor(Math.random() * 10) + 6;
+        randomDie.crossedSegments.push(markValue);
+        log(`Greater blessing! +5 HOPE, but ${randomP.name}'s ${randomDie.name} is marked.`, 'hope');
+        completeEncounter();
+    },
+    math_tradeoff: () => showMathTradeoffModal(),
+    math_sculpt: () => showSculptFacesModal(),
+    alchemist_risky: () => showRiskySwapModal(),
+    gamble_range: () => {
+        const rangeStart = Math.floor(Math.random() * 8) + 5;
+        const rangeEnd = rangeStart + Math.floor(Math.random() * 5) + 3;
+        gameState.canRoll = true;
+        gameState.encounterState = {
+            type: 'gamble',
+            rangeMin: rangeStart,
+            rangeMax: Math.min(rangeEnd, 18),
+            inRangeReward: 5,
+            outRangeReward: 2
+        };
+        document.getElementById('encounterDescription').innerHTML = `
+            <p>The Gambler spins the wheel...</p>
+            <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.15); border-radius:10px; border-left:4px solid #ffd700;">
+                <h3 style="color:#ffd700;">Target Range: ${rangeStart} - ${Math.min(rangeEnd, 18)}</h3>
+                <p><strong>IN RANGE:</strong> +5 to segment of choice!</p>
+                <p><strong>OUT OF RANGE:</strong> +2 to random segment</p>
+            </div>
+            <p style="margin-top:15px; color:#88ccff;">Roll any die!</p>
+        `;
+        document.getElementById('encounterOptions').innerHTML = '';
+        renderDiceTray();
+    },
+    ferryman_roll: () => handleFerrymanRoll(),
+    ferryman_paid: () => {
+        if (spendGold(5)) {
             addHope(1);
-            log('A moment of peace in the chaos. The party gathers strength. +1 HOPE', 'success');
+            log('The Ferryman takes your gold and nods. "The river blesses you." +1 HOPE', 'hope');
             completeEncounter();
-            break;
-        case 'accept_destiny':
+        } else {
+            log('Not enough gold! You need 5G.', 'fail');
+        }
+    },
+    ferryman_wade: () => {
+        addDoom(1, 'The cold waters chill your spirit');
+        log('You wade through the shallows safely, though the cold seeps into your bones.', 'info');
+        completeEncounter();
+    },
+    trapper_trade: () => showTrapperTrade(),
+    trapper_exotic: () => showExoticDiceTrade(),
+    trapper_paid: () => {
+        if (spendGold(8)) {
+            showTrapperPaidTrade();
+        } else {
+            log('Not enough gold! You need 8G.', 'fail');
+        }
+    },
+    drunk_blessing: () => handleDrunkBlessing(),
+    drunk_paid: () => {
+        if (spendGold(5)) {
             addHope(2);
-            log('You are the chosen ones. The 20th prophecy will succeed. +2 HOPE', 'crit');
+            log('The priest focuses intently. "BLESSINGS!" A powerful blessing lands. +2 HOPE!', 'hope');
             completeEncounter();
-            break;
-        case 'rift_touch':
-            addHope(1);
-            log('Warmth flows through the tear. You feel hope. +1 HOPE', 'hope');
-            completeEncounter();
-            break;
-        // Merchant encounter actions
-        case 'merchant_browse':
-            showMerchantBrowse();
-            break;
-        case 'merchant_wheel':
-            if (spendGold(5)) {
-                showMerchantWheel();
-            } else {
-                log('Not enough gold! You need 5G.', 'fail');
-            }
-            break;
+        } else {
+            log('Not enough gold! You need 5G.', 'fail');
+        }
+    },
+    cultist_drink: () => handleCultistDrink(),
+    cultist_paid: () => {
+        if (spendGold(10)) {
+            handleCultistPaid();
+        } else {
+            log('Not enough gold! You need 10G.', 'fail');
+        }
+    },
+    blessing_segment: () => showBlessSegmentModal(),
+    alchemist_double: () => showDoubleLinkModal(),
+    alchemist_potions: () => showAlchemistPotions(),
+    math_draft: () => showMathematicianOptions(),
+    gamble_range_choice: () => showGambleRangeChoice(),
+    boss_combat: (option, node) => startBossCombat(option, node),
+    restore_die: () => {
+        const randomPlayer = gameState.players[Math.floor(Math.random() * 3)];
+        const dieTypes = ['physical', 'verbal', 'preventative'];
+        const randomDieType = dieTypes[Math.floor(Math.random() * 3)];
+        const randomDie = randomPlayer.dice[randomDieType];
+        const oneIdx = randomDie.faces.indexOf(1);
+        if (oneIdx !== -1) {
+            randomDie.faces[oneIdx] = clampFace(Math.floor(Math.random() * 6) + 5);
+            log(`${randomPlayer.name}'s ${randomDie.name} is partially restored! 1 -> ${randomDie.faces[oneIdx]}`, 'success');
+            trackDiceChange();
+        } else {
+            log('The fragment pulses but finds nothing to heal.', 'info');
+        }
+        completeEncounter();
+    },
+    sanctuary_rest: () => {
+        addHope(1);
+        log('A moment of peace in the chaos. The party gathers strength. +1 HOPE', 'success');
+        completeEncounter();
+    },
+    accept_destiny: () => {
+        addHope(2);
+        log('You are the chosen ones. The 20th prophecy will succeed. +2 HOPE', 'crit');
+        completeEncounter();
+    },
+    rift_touch: () => {
+        addHope(1);
+        log('Warmth flows through the tear. You feel hope. +1 HOPE', 'hope');
+        completeEncounter();
+    },
+    merchant_browse: () => showMerchantBrowse(),
+    merchant_wheel: () => {
+        if (spendGold(5)) {
+            showMerchantWheel();
+        } else {
+            log('Not enough gold! You need 5G.', 'fail');
+        }
+    }
+};
+
+// Handle encounter option via dispatch map
+function handleOption(option, node) {
+    const handler = OPTION_HANDLERS[option.action];
+    if (handler) {
+        handler(option, node);
+    } else {
+        console.warn('Unknown encounter action:', option.action);
     }
 }
 
@@ -345,7 +319,7 @@ function handleFerrymanRoll() {
         const randomDieType = dieTypes[Math.floor(Math.random() * 3)];
         const die = randomPlayer.dice[randomDieType];
 
-        const crossedFace = Math.floor(Math.random() * 8) + 11;
+        const crossedFace = Math.floor(Math.random() * 14) + 5; // Range 5-18
         die.crossedSegments = die.crossedSegments || [];
         die.crossedSegments.push(crossedFace);
 
@@ -404,9 +378,9 @@ function handleCultistDrink() {
 
         const minVal = Math.min(...die.faces);
         const minIdx = die.faces.indexOf(minVal);
-        die.faces[minIdx] += 5;
+        die.faces[minIdx] = clampFace(minVal + 5);
 
-        log(`The cosmic bond empowers you! ${die.name} lowest face ${minVal} -> ${minVal + 5}`, 'crit');
+        log(`The cosmic bond empowers you! ${die.name} lowest face ${minVal} -> ${die.faces[minIdx]}`, 'crit');
         log('Your fates are intertwined with your allies!', 'success');
 
     } else if (outcome === 'neutral') {
@@ -478,9 +452,9 @@ function showMathTradeoffModal() {
             opt.onclick = () => {
                 const maxIdx = die.faces.indexOf(maxVal);
                 const minIdx = die.faces.indexOf(minVal);
-                die.faces[maxIdx] -= 1;
-                die.faces[minIdx] += 4;
-                log(`${player.name}'s ${die.name}: ${maxVal}->${maxVal-1}, ${minVal}->${minVal+4}!`, 'success');
+                die.faces[maxIdx] = clampFace(maxVal - 1);
+                die.faces[minIdx] = clampFace(minVal + 4);
+                log(`${player.name}'s ${die.name}: ${maxVal}->${die.faces[maxIdx]}, ${minVal}->${die.faces[minIdx]}!`, 'success');
                 modal.classList.remove('show');
                 renderDiceTray();
                 completeEncounter();
@@ -599,7 +573,7 @@ function showRiskySwapModal() {
                 });
 
                 const minIdx = die.faces.indexOf(Math.min(...die.faces));
-                die.faces[minIdx] += 2;
+                die.faces[minIdx] = clampFace(die.faces[minIdx] + 2);
 
                 log(`Risky splice! ${swapValue} on ${die.name} -> ${targetPlayer.name}'s ${targetPlayer.dice[targetDieType].name}, plus +2!`, 'success');
                 modal.classList.remove('show');
@@ -662,7 +636,8 @@ function showTrapperTrade() {
 
 // Show exotic dice trade
 function showExoticDiceTrade() {
-    const shuffled = [...EXOTIC_DICE].sort(() => Math.random() - 0.5);
+    const shuffled = [...EXOTIC_DICE];
+    shuffleArray(shuffled);
     const offered = shuffled.slice(0, 3).sort((a, b) => a.power - b.power);
 
     const modal = document.getElementById('upgradeModal');
@@ -1104,7 +1079,7 @@ function applyDraftUpgrade(item, slot) {
             const dieTypes = Object.keys(player.dice);
             const randomDie = player.dice[dieTypes[Math.floor(Math.random() * dieTypes.length)]];
             const minIdx = randomDie.faces.indexOf(Math.min(...randomDie.faces));
-            randomDie.faces[minIdx] += effect.amount || 2;
+            randomDie.faces[minIdx] = clampFace(randomDie.faces[minIdx] + (effect.amount || 2));
             log(`${player.name}'s ${randomDie.name} +${effect.amount || 2}!`, 'success');
             trackDiceChange();
             break;
@@ -1112,7 +1087,7 @@ function applyDraftUpgrade(item, slot) {
         case 'upgrade_all':
             Object.values(player.dice).forEach(die => {
                 const minIdx = die.faces.indexOf(Math.min(...die.faces));
-                die.faces[minIdx] += effect.amount || 1;
+                die.faces[minIdx] = clampFace(die.faces[minIdx] + (effect.amount || 1));
             });
             log(`${player.name}'s all dice +${effect.amount || 1}!`, 'success');
             trackDiceChange(3);
@@ -1197,8 +1172,8 @@ function generateBossRewards(stage) {
     }
 
     // Shuffle and return subset
-    const shuffled = baseRewards.sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, Math.min(5, 3 + Math.floor(stage / 2)));
+    shuffleArray(baseRewards);
+    return baseRewards.slice(0, Math.min(5, 3 + Math.floor(stage / 2)));
 }
 
 // ==================== ALCHEMIST POTIONS (Dibs Mode) ====================
@@ -1256,7 +1231,7 @@ function applyAlchemistPotion(item) {
             const dieTypes = Object.keys(player.dice);
             const die = player.dice[dieTypes[Math.floor(Math.random() * dieTypes.length)]];
             const minIdx = die.faces.indexOf(Math.min(...die.faces));
-            die.faces[minIdx] += effect.amount;
+            die.faces[minIdx] = clampFace(die.faces[minIdx] + effect.amount);
 
             // Add random swap
             const otherPlayers = gameState.players.filter((_, i) => i !== slot);
@@ -1289,8 +1264,8 @@ function applyAlchemistPotion(item) {
             const dieToMod = player.dice[dType];
             const lowIdx = dieToMod.faces.indexOf(Math.min(...dieToMod.faces));
             const highIdx = dieToMod.faces.indexOf(Math.max(...dieToMod.faces));
-            dieToMod.faces[lowIdx] += 6;
-            dieToMod.faces[highIdx] = Math.max(1, dieToMod.faces[highIdx] - 2);
+            dieToMod.faces[lowIdx] = clampFace(dieToMod.faces[lowIdx] + 6);
+            dieToMod.faces[highIdx] = clampFace(dieToMod.faces[highIdx] - 2);
             log(`${player.name}'s ${dieToMod.name}: lowest +6, highest -2!`, 'info');
             trackDiceChange(2);
             break;
@@ -1371,9 +1346,9 @@ function applyMathematicianUpgrade(item) {
             const minVal = Math.min(...die.faces);
             const maxIdx = die.faces.indexOf(maxVal);
             const minIdx = die.faces.indexOf(minVal);
-            die.faces[maxIdx] -= 1;
-            die.faces[minIdx] += 4;
-            log(`${player.name}'s ${die.name}: ${maxVal}->${maxVal-1}, ${minVal}->${minVal+4}!`, 'success');
+            die.faces[maxIdx] = clampFace(maxVal - 1);
+            die.faces[minIdx] = clampFace(minVal + 4);
+            log(`${player.name}'s ${die.name}: ${maxVal}->${die.faces[maxIdx]}, ${minVal}->${die.faces[minIdx]}!`, 'success');
             trackDiceChange(2);
             break;
     }
@@ -1531,7 +1506,7 @@ function purchaseMerchantUpgrade(player, die, faceIndex) {
 
     // Upgrade the face
     const oldValue = die.faces[faceIndex];
-    die.faces[faceIndex] = Math.min(19, oldValue + 1);
+    die.faces[faceIndex] = clampFace(oldValue + 1);
 
     // Track that merchant upgraded this face
     if (!die.merchantUpgrades) die.merchantUpgrades = [];
