@@ -1,5 +1,18 @@
 // ==================== COMBAT SYSTEMS ====================
 
+// Shared helper: build progress bar HTML for an approach type
+function buildCombatProgress(type, color, thresholds, counters, dcs) {
+    const needed = thresholds[type];
+    const current = counters[type];
+    const dc = dcs[type];
+    let dots = '';
+    for (let i = 0; i < needed; i++) {
+        dots += i < current ? '\u25CF' : '\u25CB';
+    }
+    const dcColor = dc < 10 ? '#4ade80' : dc < 14 ? '#ffd700' : '#f87171';
+    return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)} <span style="color:${dcColor}; font-size:0.85em;">(DC ${dc})</span>: ${dots}</span>`;
+}
+
 // Start regular combat
 function startCombat(option, node) {
     gameState.canRoll = true;
@@ -30,16 +43,15 @@ function startCombat(option, node) {
             Math.floor(Math.random() * 4) + 10,
             Math.floor(Math.random() * 4) + 14
         ];
-        const shuffled = dcOptions.sort(() => Math.random() - 0.5);
+        shuffleArray(dcOptions);
         approachDCs = {
-            physical: shuffled[0],
-            verbal: shuffled[1],
-            preventative: shuffled[2]
+            physical: dcOptions[0],
+            verbal: dcOptions[1],
+            preventative: dcOptions[2]
         };
     }
 
     const thresholds = node.successThresholds || { physical: 2, verbal: 2, preventative: 2 };
-    const totalSuccessesNeeded = Object.values(thresholds).reduce((a, b) => Math.min(a, b), Infinity);
 
     gameState.encounterState = {
         type: 'combat',
@@ -65,27 +77,15 @@ function updateCombatUI(node) {
     const counters = state.successCounters;
     const dcs = state.approachDCs || { physical: gameState.targetDC, verbal: gameState.targetDC, preventative: gameState.targetDC };
 
-    const buildProgress = (type, color) => {
-        const needed = thresholds[type];
-        const current = counters[type];
-        const dc = dcs[type];
-        let dots = '';
-        for (let i = 0; i < needed; i++) {
-            dots += i < current ? '\u25CF' : '\u25CB';
-        }
-        const dcColor = dc < 10 ? '#4ade80' : dc < 14 ? '#ffd700' : '#f87171';
-        return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)} <span style="color:${dcColor}; font-size:0.85em;">(DC ${dc})</span>: ${dots}</span>`;
-    };
-
     document.getElementById('encounterDescription').innerHTML = `
         <p>${node.description}</p>
         <div style="margin-top:20px; padding:15px; background:rgba(255,50,50,0.15); border-radius:10px; border-left:4px solid #f87171;">
             <h3 style="color:#f87171;">${node.name}</h3>
             <p style="color:#aaa; margin-bottom:10px;">Each approach has a different DC! Choose wisely.</p>
             <div id="combatProgress" style="font-size:1.1rem; display:flex; flex-direction:column; gap:8px;">
-                ${buildProgress('physical', 'var(--physical-primary)')}
-                ${buildProgress('verbal', 'var(--verbal-primary)')}
-                ${buildProgress('preventative', 'var(--preventative-primary)')}
+                ${buildCombatProgress('physical', 'var(--physical-primary)', thresholds, counters, dcs)}
+                ${buildCombatProgress('verbal', 'var(--verbal-primary)', thresholds, counters, dcs)}
+                ${buildCombatProgress('preventative', 'var(--preventative-primary)', thresholds, counters, dcs)}
             </div>
         </div>
         <p style="margin-top:15px; color:#88ccff;">Roll any die to make progress! Fill a bar to win!</p>
@@ -101,24 +101,12 @@ function refreshCombatProgress() {
     const counters = state.successCounters;
     const dcs = state.approachDCs || { physical: gameState.targetDC, verbal: gameState.targetDC, preventative: gameState.targetDC };
 
-    const buildProgress = (type, color) => {
-        const needed = thresholds[type];
-        const current = counters[type];
-        const dc = dcs[type];
-        let dots = '';
-        for (let i = 0; i < needed; i++) {
-            dots += i < current ? '\u25CF' : '\u25CB';
-        }
-        const dcColor = dc < 10 ? '#4ade80' : dc < 14 ? '#ffd700' : '#f87171';
-        return `<span style="color:${color};">${type.charAt(0).toUpperCase() + type.slice(1)} <span style="color:${dcColor}; font-size:0.85em;">(DC ${dc})</span>: ${dots}</span>`;
-    };
-
     const progressDiv = document.getElementById('combatProgress');
     if (progressDiv) {
         progressDiv.innerHTML = `
-            ${buildProgress('physical', 'var(--physical-primary)')}
-            ${buildProgress('verbal', 'var(--verbal-primary)')}
-            ${buildProgress('preventative', 'var(--preventative-primary)')}
+            ${buildCombatProgress('physical', 'var(--physical-primary)', thresholds, counters, dcs)}
+            ${buildCombatProgress('verbal', 'var(--verbal-primary)', thresholds, counters, dcs)}
+            ${buildCombatProgress('preventative', 'var(--preventative-primary)', thresholds, counters, dcs)}
         `;
     }
 }
@@ -140,8 +128,8 @@ function startBossCombat(option, node) {
             Math.floor(Math.random() * 3) + baseMin + 2,
             Math.floor(Math.random() * 3) + baseMin + 1
         ];
-        const shuffled = dcOptions.sort(() => Math.random() - 0.5);
-        approachDCs = { physical: shuffled[0], verbal: shuffled[1], preventative: shuffled[2] };
+        shuffleArray(dcOptions);
+        approachDCs = { physical: dcOptions[0], verbal: dcOptions[1], preventative: dcOptions[2] };
     }
 
     // Apply favor boss DC reduction
@@ -205,7 +193,7 @@ function updateBossCombatUI() {
 
     const needToRoll = gameState.players
         .filter((p, idx) => !state.playersRolledThisRound.includes(idx) && p.hp > 0)
-        .map(p => p.name);
+        .map(p => sanitizeHTML(p.name));
 
     const waitingText = needToRoll.length > 0
         ? `<strong>${needToRoll.join(', ')}</strong> - your turn to roll!`
@@ -356,6 +344,8 @@ function startNewBossRound(state) {
     state.roundResults = []; // Reset traffic light
     state.roundNumber++;
     gameState.canRoll = true;
+    // Unlock all approaches each round so players aren't stuck on one type
+    gameState.allowedDiceTypes = ['physical', 'verbal', 'preventative'];
     updateBossCombatUI();
     renderDiceTray();
     log(`--- Round ${state.roundNumber} ---`, 'info');
@@ -478,8 +468,8 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
             if (current >= threshold) {
                 gameState.canRoll = false;
                 document.getElementById('rollOutcome').textContent += ' VICTORY!';
-                addGold(state.reward);
-                log(`${state.enemyName} defeated! +${state.reward} gold`, 'crit');
+                addGold(state.rewardPerSuccess);
+                log(`${state.enemyName} defeated! +${state.rewardPerSuccess} gold`, 'crit');
 
                 if (state.isBoss) {
                     setTimeout(showBossVictory, 1500);
@@ -500,14 +490,16 @@ function processRollResult(playerIndex, player, die, result, doomDelta) {
         // Get gambler voice line based on result
         const gamblerQuote = getRandomGamblerLine(won ? 'result_good' : 'result_bad');
 
+        // Reward is based on whether the player WON their bet, not the raw roll position
+        const winReward = betIn ? state.inRangeReward : state.outRangeReward;
+        const loseReward = betIn ? state.outRangeReward : state.inRangeReward;
+
         if (won) {
-            const reward = inRange ? state.inRangeReward : state.outRangeReward;
-            log(`"${gamblerQuote}" YOU WIN! +${reward} to a segment of your choice!`, 'crit');
-            showUpgradeModal(reward);
+            log(`"${gamblerQuote}" YOU WIN! +${winReward} to a segment of your choice!`, 'crit');
+            showUpgradeModal(winReward);
         } else {
-            const reward = inRange ? state.inRangeReward : state.outRangeReward;
-            log(`"${gamblerQuote}" You still get +${reward} to a random segment.`, 'success');
-            applyRandomUpgrade(reward);
+            log(`"${gamblerQuote}" You still get +${loseReward} to a random segment.`, 'success');
+            applyRandomUpgrade(loseReward);
             setTimeout(completeEncounter, 1500);
         }
         gameState.canRoll = false;
@@ -704,5 +696,5 @@ function completeEncounter() {
     gameState.canRoll = false;
     gameState.currentEncounter = null;
     renderDiceTray();
-    autoSave();
+    debouncedAutoSave();
 }

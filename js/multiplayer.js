@@ -2,6 +2,9 @@
 // Uses Supabase Realtime for state synchronization
 
 // Configuration - Supabase credentials
+// NOTE: The anon key is designed to be public, but ensure Row Level Security (RLS)
+// policies are enabled on all Supabase tables to prevent unauthorized data access.
+// Consider rate limiting and abuse prevention for production deployments.
 const SUPABASE_CONFIG = {
     url: 'https://dqsophptvtlweaiyqlco.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc29waHB0dnRsd2VhaXlxbGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2Njc3NDQsImV4cCI6MjA4MzI0Mzc0NH0.Ep4TYknEHpIa0cPyGnkk3qfiZkvh0woHCqMHDIPL0UQ'

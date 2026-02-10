@@ -31,16 +31,25 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('UNTITLED DICE GAME initialized');
 });
 
+// Track interval ID to prevent stacking
+let _loadingTipInterval = null;
+
 // Initialize and rotate loading tips on title screen
 function initLoadingTips() {
     const tipText = document.getElementById('tipText');
     if (!tipText) return;
 
+    // Clear any previous interval to prevent stacking
+    if (_loadingTipInterval) {
+        clearInterval(_loadingTipInterval);
+        _loadingTipInterval = null;
+    }
+
     // Set initial random tip
     tipText.textContent = getRandomLoadingTip();
 
     // Rotate tips every 8 seconds
-    setInterval(() => {
+    _loadingTipInterval = setInterval(() => {
         tipText.style.opacity = '0';
         setTimeout(() => {
             tipText.textContent = getRandomLoadingTip();

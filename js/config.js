@@ -1,5 +1,12 @@
 // ==================== GAME CONFIGURATION ====================
 // Constants, definitions, and game data
+//
+// ARCHITECTURE NOTE: All JS files share a single global scope via <script> tags.
+// For future maintainability, consider migrating to ES modules (import/export)
+// with <script type="module"> to prevent namespace collisions and improve
+// encapsulation. Load order is: config -> state -> save -> utils -> dice ->
+// combat -> ui -> encounters -> screens -> main -> multiplayer -> draftModes ->
+// confirmation -> dice3d -> playerView
 
 const CHARACTER_AVATARS = {
     1: { color: 'Blue Wizard', features: 'Mystical robes, Staff', image: 'assets/blue-wizard.png' },
@@ -150,12 +157,14 @@ function generateTotalDCSumDCs(config) {
     // Clamp hard DC within its range
     hardDC = Math.max(hardRange[0], Math.min(hardRange[1], hardDC));
 
-    // If clamping changed the total, adjust medium slightly
+    // If clamping changed the total, adjust medium to compensate
     const actualSum = easyDC + mediumDC + hardDC;
     const diff = totalDCSum - actualSum;
+    let adjustedMediumDC = mediumDC + diff;
+    adjustedMediumDC = Math.max(mediumRange[0], Math.min(mediumRange[1], adjustedMediumDC));
 
     // Randomly assign to approaches
-    const dcs = [easyDC, mediumDC, hardDC];
+    const dcs = [easyDC, adjustedMediumDC, hardDC];
     const approaches = ['physical', 'verbal', 'preventative'];
 
     // Shuffle approaches for random assignment
