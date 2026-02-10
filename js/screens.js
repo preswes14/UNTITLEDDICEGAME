@@ -1006,7 +1006,7 @@ function startGame() {
         log('Click to begin your journey...', 'info');
     }
 
-    autoSave();
+    debouncedAutoSave();
 }
 
 // Tutorial functions
@@ -1241,7 +1241,7 @@ function endTutorial() {
         renderMap();
 
         selectNode(0);
-        autoSave();
+        debouncedAutoSave();
     }, 1500);
 }
 

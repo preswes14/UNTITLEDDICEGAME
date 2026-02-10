@@ -143,8 +143,8 @@ function showRollResult(playerIndex, player, die, result, swapInfo = null, cross
         outcomeEl.textContent = 'Failed...';
     }
 
-    // Check for HOPE on this segment
-    if (die.hopeSegments && die.hopeSegments.includes(result)) {
+    // Check for HOPE on this segment (skip if nat-20 already granted HOPE)
+    if (result !== 20 && die.hopeSegments && die.hopeSegments.includes(result)) {
         addHope(1);
     }
 

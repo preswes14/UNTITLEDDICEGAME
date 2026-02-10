@@ -85,7 +85,16 @@ function resetGameState() {
     gameState.purchasedUpgrades = [];
     gameState.diceChanges = 0;
     gameState.consumables = [];
-    // Note: currentSaveSlot is NOT reset - it persists across games
+    gameState.totalFavor = 0;
+    gameState.favorModifiers = {
+        dcReduction: 0,
+        bossDcReduction: 0,
+        bossThresholdReduction: 0,
+        startingDoom: 1,
+        startingGold: 0,
+        startingShields: 0
+    };
+    // Note: currentSaveSlot and gameMode are NOT reset - they persist across games
 
     // Reset talent state
     talentState = {
@@ -159,11 +168,14 @@ function getSerializableState() {
             options: node.options
         })),
         favor: gameState.favor,
+        totalFavor: gameState.totalFavor,
+        favorModifiers: { ...gameState.favorModifiers },
+        gameMode: gameState.gameMode,
         purchasedUpgrades: [...gameState.purchasedUpgrades],
         tutorial: { ...gameState.tutorial },
-        // Save encounter state for mid-encounter resumption
-        encounterState: gameState.encounterState ? { ...gameState.encounterState } : null,
-        voting: gameState.voting ? { ...gameState.voting } : null
+        // Save encounter state for mid-encounter resumption (deep copy)
+        encounterState: gameState.encounterState ? JSON.parse(JSON.stringify(gameState.encounterState)) : null,
+        voting: gameState.voting ? JSON.parse(JSON.stringify(gameState.voting)) : null
     };
 }
 
@@ -187,6 +199,12 @@ function restoreFromSave(savedData) {
     gameState.diceChanges = savedData.diceChanges || 0;
     gameState.consumables = savedData.consumables || [];
     gameState.favor = savedData.favor;
+    gameState.totalFavor = savedData.totalFavor || 0;
+    gameState.favorModifiers = savedData.favorModifiers || {
+        dcReduction: 0, bossDcReduction: 0, bossThresholdReduction: 0,
+        startingDoom: 1, startingGold: 0, startingShields: 0
+    };
+    gameState.gameMode = savedData.gameMode || 'solo';
     gameState.purchasedUpgrades = savedData.purchasedUpgrades || [];
     gameState.tutorial = savedData.tutorial || { active: false, step: 0, currentEncounter: null };
 

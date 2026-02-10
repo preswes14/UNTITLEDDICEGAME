@@ -1,11 +1,44 @@
 // ==================== UTILITY FUNCTIONS ====================
 
+// Fisher-Yates shuffle (uniform, unbiased)
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// Sanitize a string for safe insertion into innerHTML
+function sanitizeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// Clamp a die face value to valid range [1, 20]
+function clampFace(value) {
+    return Math.max(1, Math.min(20, Math.round(value)));
+}
+
+// Debounced auto-save — collapses rapid successive calls into one
+let _autoSaveTimer = null;
+function debouncedAutoSave() {
+    if (_autoSaveTimer) clearTimeout(_autoSaveTimer);
+    _autoSaveTimer = setTimeout(() => {
+        _autoSaveTimer = null;
+        if (gameState.players.length > 0 && gameState.currentStage >= 0) {
+            saveGame();
+        }
+    }, 500);
+}
+
 // Add gold to player's inventory
 function addGold(amount) {
     gameState.gold += amount;
     updateDoomHopeDisplay();
     log(`+${amount} Gold!`, 'crit');
-    autoSave();
+    debouncedAutoSave();
 }
 
 // Spend gold (returns true if successful)
@@ -13,7 +46,7 @@ function spendGold(amount) {
     if (gameState.gold >= amount) {
         gameState.gold -= amount;
         updateDoomHopeDisplay();
-        autoSave();
+        debouncedAutoSave();
         return true;
     }
     return false;
@@ -21,12 +54,25 @@ function spendGold(amount) {
 
 // Add DOOM to the meter
 function addDoom(amount, reason = '') {
-    gameState.doom += amount;
+    // DOOM rubber-banding: diminishing gains at high DOOM levels
+    // At DOOM 10+, each point of DOOM added is halved (rounded up)
+    let actualAmount = amount;
+    if (gameState.doom >= 10) {
+        actualAmount = Math.ceil(amount / 2);
+    }
+    // Cap DOOM at 15 to prevent unwinnable death spirals
+    const maxDoom = 15;
+    actualAmount = Math.min(actualAmount, maxDoom - gameState.doom);
+    if (actualAmount <= 0) {
+        if (reason) log(`DOOM at maximum!`, 'doom');
+        return;
+    }
+    gameState.doom += actualAmount;
     updateDoomHopeDisplay();
     if (reason) {
-        log(`+${amount} DOOM: ${reason}`, 'doom');
+        log(`+${actualAmount} DOOM: ${reason}`, 'doom');
     }
-    autoSave();
+    debouncedAutoSave();
 }
 
 // Reduce DOOM
@@ -34,7 +80,7 @@ function reduceDoom(amount) {
     const reduced = Math.min(gameState.doom, amount);
     gameState.doom -= reduced;
     updateDoomHopeDisplay();
-    autoSave();
+    debouncedAutoSave();
     return reduced;
 }
 
@@ -45,7 +91,7 @@ function addHope(amount = 1) {
         gameState.hope += added;
         log(`+${added} HOPE charge!`, 'hope');
         updateDoomHopeDisplay();
-        autoSave();
+        debouncedAutoSave();
     } else {
         log(`HOPE at max capacity`, 'info');
     }
@@ -57,7 +103,7 @@ function useHope() {
         gameState.hope--;
         log(`HOPE charge used to prevent doom!`, 'hope');
         updateDoomHopeDisplay();
-        autoSave();
+        debouncedAutoSave();
         return true;
     }
     return false;
@@ -70,7 +116,7 @@ function addShield(amount = 1) {
         gameState.shields += added;
         log(`+${added} SHIELD charge!`, 'info');
         updateDoomHopeDisplay();
-        autoSave();
+        debouncedAutoSave();
     } else {
         log(`SHIELD at max capacity`, 'info');
     }
@@ -82,7 +128,7 @@ function useShield() {
         gameState.shields--;
         log(`SHIELD charge used - DOOM roll prevented!`, 'info');
         updateDoomHopeDisplay();
-        autoSave();
+        debouncedAutoSave();
         return true;
     }
     return false;
@@ -115,10 +161,11 @@ function showPalDialogue(text) {
 
     const palMsg = document.createElement('div');
     palMsg.className = 'log-entry pal-dialogue';
+    const safeText = sanitizeHTML(text);
     palMsg.innerHTML = `
         <div style="display: flex; align-items: flex-start; gap: 10px;">
             <img src="assets/pal.png" alt="Pal" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: rgba(0,0,0,0.3);">
-            <div><strong>Pal:</strong> "${text}"</div>
+            <div><strong>Pal:</strong> "${safeText}"</div>
         </div>
     `;
     palMsg.style.cssText = 'background: rgba(147, 51, 234, 0.2); border-left: 3px solid #a855f7; padding: 8px; margin: 5px 0; border-radius: 5px;';
