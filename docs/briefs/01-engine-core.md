@@ -3,6 +3,12 @@
 **Depends on:** nothing (rng.ts is already implemented).
 **Blocks:** every other engine brief. Build this first.
 
+> **STATUS: DONE.** reducer dispatch, invariants, lifecycle.startRun,
+> testkit, waitingOn, and all required tests are implemented and green
+> (`src/engine/reducer.test.ts`). Still open from this brief: the
+> `CONTINUE` stage-flow arms (they belong to briefs 05/07/12 as those
+> phases come alive). This document remains the spec of record.
+
 ## Goal
 
 Make the engine skeleton stand up: a working `reduce()` dispatcher, run

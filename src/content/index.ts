@@ -23,8 +23,49 @@ export const ENCOUNTERS: Record<string, EncounterDef> = {};
  *  content/balance.ts, structure in README "Boss Thresholds" table). */
 export const ENEMIES: Record<string, EnemyDef> = {};
 
-/** TODO(brief-06): the 10 unique exotic dice (README "Exotic Dice"). */
-export const EXOTIC_DICE: Record<string, ExoticDieDef> = {};
+/** The 10 unique exotic dice (README "Exotic Dice").
+ *  The four behavior-hooked dice are defined now because the roll resolver
+ *  (engine/systems/rolls.ts) implements their hooks; TODO(brief-06): the
+ *  remaining six are plain face lists (d6, Coin Flip, Cursed Hope,
+ *  BlackJack Dealer, Low Roller, Odd Couple). */
+export const EXOTIC_DICE: Record<string, ExoticDieDef> = {
+  'lucky-sevens': {
+    id: 'lucky-sevens',
+    nameKey: 'exotic.lucky-sevens.name',
+    rank: 2,
+    faces: Array.from({ length: 20 }, (_, i) => ({
+      kind: 'value', value: i + 1, provenance: 'trapper',
+    })),
+    behavior: 'lucky-sevens',
+  },
+  doubler: {
+    id: 'doubler',
+    nameKey: 'exotic.doubler.name',
+    rank: 3,
+    faces: Array.from({ length: 20 }, (_, i) => ({
+      kind: 'value', value: (i % 10) + 1, provenance: 'trapper',
+    })),
+    behavior: 'doubler',
+  },
+  'six-nine': {
+    id: 'six-nine',
+    nameKey: 'exotic.six-nine.name',
+    rank: 5,
+    faces: Array.from({ length: 20 }, (_, i) => ({
+      kind: 'value', value: i + 1, provenance: 'trapper',
+    })),
+    behavior: 'six-nine',
+  },
+  wildcard: {
+    id: 'wildcard',
+    nameKey: 'exotic.wildcard.name',
+    rank: 10,
+    faces: Array.from({ length: 20 }, () => ({
+      kind: 'scratched', provenance: 'trapper',
+    })),
+    behavior: 'wildcard',
+  },
+};
 
 /** TODO(brief-07): the FAVOR store (README "FAVOR STORE FIRST DRAFT"). */
 export const FAVOR_STORE: Record<string, FavorUpgradeDef> = {};

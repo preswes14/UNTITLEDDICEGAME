@@ -28,8 +28,12 @@ export type ClientToHost =
   | { t: 'ping' };
 
 export type HostToClient =
-  | { t: 'welcome'; seat: PlayerId; snapshot: RunState | null }
-  | { t: 'sync'; tick: number; snapshot: RunState; events: GameEvent[] }
+  /** Addressed to one endpoint (`forClient`); everyone else ignores it.
+   *  seat === null means the room is full (spectating not supported yet). */
+  | { t: 'welcome'; forClient: string; seat: PlayerId | null; snapshot: RunState | null }
+  /** seq orders broadcasts (a rejected action emits events without
+   *  advancing the engine tick, so dedup keys on seq, not tick). */
+  | { t: 'sync'; seq: number; tick: number; snapshot: RunState; events: GameEvent[] }
   | { t: 'lobby'; players: LobbyPlayer[] }
   | { t: 'paused'; reason: 'disconnect'; missing: PlayerId[] }
   | { t: 'resumed' }
@@ -42,13 +46,15 @@ export interface LobbyPlayer {
 }
 
 export interface Transport {
+  /** Stable id of THIS endpoint (used to match `welcome.forClient`). */
+  readonly endpointId: string;
   /** Host: create a room; resolves to the join code (e.g. 4 letters). */
   host(): Promise<string>;
   /** Client: join an existing room by code. */
   join(code: string): Promise<void>;
   send(msg: NetMessage): void;
   onMessage(cb: (msg: NetMessage, senderId: string) => void): () => void;
-  /** Presence changes (join/leave/timeout). */
+  /** Presence changes (join/leave/timeout) — full list of present ids. */
   onPresence(cb: (present: string[]) => void): () => void;
   close(): Promise<void>;
 }

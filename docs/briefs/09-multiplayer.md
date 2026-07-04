@@ -3,6 +3,18 @@
 **Depends on:** 01 (types; testable with a scripted reducer before other
 systems land). **Blocks:** 10, 11.
 
+> **STATUS: CORE DONE.** localTransport hub, host/client sessions (lobby,
+> seat claiming, serial application, seq-ordered snapshot sync, anti-spoof,
+> disconnect-pause, rejoin-by-name, solo-over-loopback), and the
+> supabaseTransport are implemented; session tests green
+> (`src/app/session.test.ts`). Remaining: (1) verify supabaseTransport
+> against a live Supabase project — it cannot run in CI; (2) heartbeat
+> ping/pong timers for timeout-based liveness over real networks
+> (localTransport presence is connect/close so tests don't exercise
+> timeouts); (3) autosave wiring once brief 08 lands (TODO in session.ts).
+> Note the protocol change: sync dedup keys on `seq`, not engine tick —
+> rejected actions emit events without advancing the tick.
+
 ## Goal
 
 The `Session` glue and both `Transport` implementations, per the protocol

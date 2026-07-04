@@ -2,6 +2,14 @@
 
 **Depends on:** 01. **Blocks:** 04 (combat), 06 (encounters), 07 (economy).
 
+> **STATUS: DONE.** resolveRoll (full chain: value/scratch/intertwine/
+> chaos, cycle cap, riders, naturalness rules), all faces.ts helpers,
+> the four exotic behavior hooks, and the required tests are implemented
+> and green (`src/engine/systems/rolls.test.ts`, `faces.test.ts`).
+> Moved out of this brief: BASE_DICE draft content (brief 12), the six
+> plain-face exotic dice (brief 06). Documented rulings live in the
+> rolls.ts header — read them before touching resolution.
+
 ## Goal
 
 Implement the game's signature mechanic: rolling a die whose faces can be

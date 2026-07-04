@@ -4,6 +4,7 @@
 
 export { reduce, reject, type ReduceResult } from './reducer';
 export { assertInvariants } from './invariants';
+export { startRun, makeBaseDie, SCHEMA_VERSION } from './lifecycle';
 export * from './types';
 export type { GameAction, EncounterPick, FavorTarget } from './actions';
 export type { GameEvent } from './events';
