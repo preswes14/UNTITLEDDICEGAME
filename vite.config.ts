@@ -8,6 +8,10 @@ import { fileURLToPath } from 'node:url';
 export default defineConfig({
   root: 'src',
   base: './',
+  // The repo-level assets/ dir (character portraits) is shared between the
+  // legacy prototype and the new app; its files are copied verbatim into
+  // dist/ and served at /<filename> (e.g. /pal.png).
+  publicDir: '../assets',
   build: {
     outDir: '../dist',
     emptyOutDir: true,
