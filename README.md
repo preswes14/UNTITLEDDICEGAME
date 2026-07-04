@@ -2,6 +2,13 @@
 
 A companion app for collaborative TTRPG action. Designed for 3 players.
 
+> **Building the real thing?** This README is the *design doc*. The
+> engineering plan lives in [`ARCHITECTURE.md`](ARCHITECTURE.md) and the
+> work packages in [`docs/briefs/`](docs/briefs/README.md). The playable
+> prototype (`index.html` + `js/`) stays frozen until the rewrite reaches
+> parity (brief 13); its known bugs are catalogued in
+> [`REVIEW.md`](REVIEW.md).
+
 ---
 
 ## Table of Contents
